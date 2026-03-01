@@ -1,6 +1,6 @@
 <template>
   <div class="statistics-card flex-start gap-md">
-     <div class="card-icon">
+     <div class="card-icon flex-center" :style="{backgroundColor: IconBg}">
         <slot name="icon" />
      </div>
      <div class="card-title flex-column-start">
@@ -19,6 +19,10 @@
     title: {
       type: String,
       default: ""
+    },
+    IconBg: {
+      type: String,
+      default: "#64CBF4"
     }
   });
 </script>
@@ -31,7 +35,6 @@
   }
   .card-icon {
     border-radius: var(--radius-sm);
-    background-color: red;
     width: 48px;
     height: 48px;   
   }

@@ -3,7 +3,7 @@
     class="header-box flex-center" 
     :class="{ 'active': active }"
   >
-    <!-- Profile Mode -->
+    <!-- Profile Mode (unchanged) -->
     <template v-if="name">
         <div class="flex-between gap-sm">
             <div class="profile-info">
@@ -15,10 +15,16 @@
         </div>
     </template>
 
-    <!-- Action / Nav Mode -->
+    <!-- Action / Nav Mode (Updated with Props) -->
     <template v-else>
-      <div class="flex-center gap-xs">
-        <slot />
+      <div class="flex-center gap-xs header-item">
+          <component :is="icon" v-if="icon" />
+          
+          <h5 v-if="title" class="nowrap header-title">
+              {{ title }}
+          </h5>
+          
+          <slot v-else /> 
       </div>
       <span v-if="badge" class="header-badge flex-center">
         {{ badge }}
@@ -29,18 +35,11 @@
 
 <script setup>
 defineProps({
-  name: {
-    type: String,
-    default: null
-  },
-  badge: {
-    type: [String, Number],
-    default: null
-  },
-  active: {
-    type: Boolean,
-    default: false
-  }
+  name: { type: String, default: null },
+  badge: { type: [String, Number], default: null },
+  active: { type: Boolean, default: false },
+  title: { type: String, default: null }, 
+  icon: { type: [Object, Function, String], default: null } 
 })
 </script>
 
@@ -58,12 +57,19 @@ defineProps({
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
 .header-box:hover {
-    background: rgba(255, 255, 255, 0.15);
     border-color: var(--secondary-color);
 }
 .header-box.active {
     background-color: var(--secondary-color);
+}
+/* Logic for highlighting the title and icon correctly */
+
+.header-item.active .header-title,
+.header-item.active path {
+    color: #fff !important;
+    fill: #fff;
 }
 
 .header-badge {
