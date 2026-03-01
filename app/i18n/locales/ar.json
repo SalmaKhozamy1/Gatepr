@@ -1,0 +1,71 @@
+{
+  "lang": "rtl",
+  "locale": {
+    "ar": "EN",
+    "en": "العربية"
+  },
+  "labels": {
+
+  },
+  "buttons": {
+    "confirm": "تأكيد",
+    "login": "تسجيل دخول",
+    "signUp": "إنشاء حساب",
+    "send": "إرسال",
+    "save_changes": "حفظ التغييرات",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "createAccount": "إنشاء حساب جديد",
+    "sending": "جاري الإرسال...",
+    "cancel": "إلغاء",
+    "choose": "اختر",
+    "logout": "تسجيل الخروج",
+    "save": "حفظ",
+    "update": "تحديث",
+    "saving": "جاري الحفظ...",
+    "deleting": "جاري الحذف...",
+    "changeAvatar": "الصورة الشخصية",
+    "change": "تغيير",
+    "forgotYourPassword": "نسيت كلمة المرور؟",
+    "submitting": "جاري الإرسال...",
+    "submitVote": "إرسال التصويت",
+    "changeVote": "تغيير التصويت",
+    "search": "بحث",
+    "searching": "جاري البحث...",
+    "reset": "إعادة تعيين",
+    "showAllPosts": "عرض كل المنشورات",
+    "showAllBlogs": "عرض كل المدونات"
+  },
+  "errors": {
+    "pleaseKindlyTryAgain": "الرجاء المحاولة مرة أخرى",
+    "somethingWentWrong": "حدث خطأ ما",
+    "isRequired": "حقل {name} مطلوب",
+    "min": "{name} يجب أن يحتوي على {num} حرف على الأقل",
+    "notEqualPasswords": "كلمتان المرور غير متطابقتان",
+    "verificationDataNotFound": "لم يتم العثور على بيانات التحقق",
+    "verificationCode": "كود التحقق",
+    "phoneLength": "يجب أن يكون رقم الهاتف {length} رقمًا",
+    "passwordComplexity": "يجب أن يحتوي كلمة المرور على أحرف وأرقام ورموز",
+    "internalServerError": "خطأ في السيرفر الداخلي",
+    "errorDesc": "واجه السيرفر خطأ داخليًا أو تكوينًا خاطئًا ولم يتمكن من إكمال طلبك",
+    "somethingWrong": "حدث خطأ ما",
+    "emailFormat": "صيغة البريد الإلكتروني غير صحيحة",
+    "phoneFormat": "صيغة الهاتف غير صحيحة",
+    "shortPassword": "كلمة المرور قصيرة جدًا",
+    "pleaseFillAllFields": "يرجى ملئ جميع البيانات"
+  },
+  "months": {
+    "JAN": "يناير",
+    "FEB": "فبراير",
+    "MAR": "مارس",
+    "APR": "أبريل",
+    "MAY": "مايو",
+    "JUN": "يونيو",
+    "JUL": "يوليو",
+    "AUG": "أغسطس",
+    "SEP": "سبتمبر",
+    "OCT": "أكتوبر",
+    "NOV": "نوفمبر",
+    "DEC": "ديسمبر"
+  }
+}

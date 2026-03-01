@@ -1,0 +1,71 @@
+{
+  "lang": "ltr",
+  "locale": {
+    "ar": "EN",
+    "en": "العربية"
+  },
+  "labels": {
+   
+  },
+  "buttons": {
+    "confirm": "Confirm",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "send": "Send",
+    "save_changes": "Save Changes",
+    "edit": "Edit",
+    "delete": "Delete",
+    "createAccount": "Create New Account",
+    "sending": "Sending...",
+    "cancel": "Cancel",
+    "choose": "Submit",
+    "logout": "Logout",
+    "save": "Save",
+    "update": "Update",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "changeAvatar": "Avatar",
+    "change": "Change",
+    "forgotYourPassword": "Forgot Your Password?",
+    "submitting": "Submitting...",
+    "submitVote": "Submit Vote",
+    "changeVote": "Change Vote",
+    "search": "Search",
+    "searching": "Searching...",
+    "reset": "Reset",
+    "showAllPosts": "Show All Posts",
+    "showAllBlogs": "Show All Blogs"
+  },
+  "errors": {
+    "pleaseKindlyTryAgain": "Please Kindly Try Again",
+    "somethingWentWrong": "Something went wrong",
+    "isRequired": "{name} is required",
+    "min": "{name} must be at least {num} characters long",
+    "notEqualPasswords": "Passwords do not match",
+    "verificationDataNotFound": "Verification data not found",
+    "verificationCode": "Verification code",
+    "phoneLength": "Phone number must be {length} numbers long",
+    "passwordComplexity": "Password must include numbers, letters, and symbols.",
+    "internalServerError": "Internal server error",
+    "errorDesc": "The server encountered an internal error or misconfiguration and was unable to complete your request",
+    "somethingWrong": "Something went wrong",
+    "emailFormat": "Email address format is invalid",
+    "phoneFormat": "Phone format is invalid",
+    "shortPassword": "Password is too short",
+    "pleaseFillAllFields": "Please Fill All Fields"
+  },
+  "months": {
+    "JAN": "January",
+    "FEB": "February",
+    "MAR": "March",
+    "APR": "April",
+    "MAY": "May",
+    "JUN": "June",
+    "JUL": "July",
+    "AUG": "August",
+    "SEP": "September",
+    "OCT": "October",
+    "NOV": "November",
+    "DEC": "December"
+  }
+}
