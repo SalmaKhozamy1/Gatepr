@@ -19,7 +19,6 @@
 
 <script setup>
 import flatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
 import { ref, watch } from 'vue';
 
 const props = defineProps({
@@ -34,6 +33,7 @@ const date = ref(props.modelValue)
 const config = ref({
   disableMobile: "true",
   dateFormat: 'Y-m-d',
+  allowInput: true
 })
 
 watch(() => props.modelValue, (newVal) => {
@@ -45,12 +45,8 @@ watch(date, (newVal) => {
 })
 </script>
 
-<style scoped>
-input.form-control {
-  cursor: pointer;
-  padding-inline-end: 40px;
-  background-color: #fff !important;
-}
+<style>
+
 .calendar-icon {
   position: absolute;
   top: 50%;
@@ -58,14 +54,6 @@ input.form-control {
   inset-inline-end: var(--form-control-padding);
   pointer-events: none;
   color: var(--placeholder);
-}
-
-/* Flatpicker style */
-.input_flat_picker {
-  border-radius: var(--raduis-sm) !important;
-  padding: var(--form-control-padding);
-  border: 1px solid #d5d7da;
-  background-color: #fff !important;
 }
 .input-icon ,
 .flat_picker_icon {
@@ -76,36 +64,18 @@ input.form-control {
   color: var(--secondery-color);
   height: max-content;
 }
-.board-clip.input-icon {
-  top: 46px !important;
-}
-.single-upload:has(label) .input-icon {
-  position: absolute;
-  top: 50% !important;
-  inset-inline-end: 12px !important;
-  transform: translate(0px, -50%) !important;
-  color: var(--secondery-color);
-  height: max-content;
-}
-/* .form-group > .flat_picker_icon {
-    top: 12px !important;
-    transform: translate(0%, 0%) !important;
-} */
-.dropdown-center .input-icon{
-  top: unset !important;
-  bottom: 0px !important;
-}
-.input-icon {
-  cursor: pointer;
-  z-index: 111;
-}
+
 /* header */
 .flatpickr-months {
-  background-color: var(--secondery-color);
+  background-color: var(--secondary-color);
   padding: 5px 8px;
   color: #fff;
-  border-top-left-radius: var(--raduis-md);
-  border-top-right-radius: var(--raduis-md);
+  border-top-left-radius: var(--radius-sm);
+  border-top-right-radius: var(--radius-sm);
+}
+.flatpickr-months .flatpickr-prev-month:hover svg, 
+.flatpickr-months .flatpickr-next-month:hover svg {
+  fill: #fff !important;
 }
 .flatpickr-prev-month,
 .flatpickr-next-month {
@@ -160,7 +130,8 @@ select.flatpickr-monthDropdown-months:hover,
   background-color: var(--light-secondary-color) !important;
 }
 .flatpickr-day.selected {
-  background-color: var(--secondery-color) !important;
+  background-color: var(--secondary-color) !important;
+  color: #fff;
   border-radius: 50% !important;
 }
 .flatpickr-months .flatpickr-prev-month:hover svg, .flatpickr-months .flatpickr-next-month:hover svg {
@@ -168,7 +139,7 @@ select.flatpickr-monthDropdown-months:hover,
 }
 .flatpickr-day.today ,
 .flatpickr-day.today:hover {
-  color: var(--secondery-color) !important;
+  color: var(--secondary-color) !important;
   background: var(--light-secondary-color) !important;
 }
 </style>

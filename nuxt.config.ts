@@ -20,6 +20,7 @@ export default defineNuxtConfig({
   },
   css: [
     'bootstrap/dist/css/bootstrap.min.css',
+    'flatpickr/dist/flatpickr.css',
     '~/assets/styles/main.css'
   ]
 })

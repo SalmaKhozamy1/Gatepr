@@ -7,7 +7,7 @@
                             <HeaderItem>
                                <IconsSearch />   
                             </HeaderItem>
-                            <HeaderItem badge="ع">
+                            <HeaderItem class="lang" badge="ع">
                                <IconsLang />
                             </HeaderItem>
                             <HeaderItem badge="2">

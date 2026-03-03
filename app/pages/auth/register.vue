@@ -14,8 +14,8 @@
           <component :is="steps[activeIndex].component" />
  
           <div class="flex-end mt-4 gap-sm">
-              <button class="custom-btn border-seconadry-btn min-btn-width" @click="prevStep" v-if="activeIndex > 0">السابق</button>
-              <button class="custom-btn border-seconadry-btn min-btn-width" v-else>إلغاء</button>
+              <button class="custom-btn text-btn min-btn-width" @click="prevStep" v-if="activeIndex > 0">السابق</button>
+              <button class="custom-btn text-btn min-btn-width" v-else>إلغاء</button>
               
               <button class="custom-btn secondary-btn min-btn-width" @click="nextStep" v-if="activeIndex < steps.length - 1">التالي</button>
               <button class="custom-btn secondary-btn min-btn-width" @click="submit" v-else>إرسال</button>

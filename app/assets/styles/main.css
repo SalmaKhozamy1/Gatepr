@@ -1,3 +1,47 @@
+/* ========== Lama Sans Font Face ========== */
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lama Sans';
+  src: url('../fonts/Lama_Sans/LamaSans-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --primary-color: #22293E;
   --secondary-color: rgb(235, 176, 40);
@@ -5,6 +49,7 @@
   --light-primary-color: #F8F9FC;
   --light-secondary-color: rgba(240, 186, 62, 0.10);
   --gray-color: #606060;
+  --light-gray: #FBFBFC;
   --desc-color: #535862;
   --placeholder: #8F92A1;
   /*///////// Font Size /////////*/
@@ -20,7 +65,6 @@
   --main-inline-padding: 80px;
 
   /*/////////// Spacing //////////*/
-
   --gap-xs: 8px;
   --gap-sm: 12px;
   --gap-md: 16px;
@@ -30,22 +74,9 @@
   --media-sm: 576px;
   --media-md: 991px;
 
-  --third-color: #2A66BC;
-  
-
-  --light-gray: #75797b;
-  --black-color: #000000;
-  --white-color: #ffffff;
-  
- 
-
   --red: #ff3d54;
   --success-color: #039855;
   --body-bg: #efefef;
-
-  --aside-width: 75px;
-
-  --light-color: #F4F7FB;
 }
 /* Reset */
 h1, h2, h3, h4, h5, h6, p {
@@ -56,7 +87,7 @@ h1, h2, h3, h4, h5, h6, p {
   color: var(--gray-color);
 }
 body {
-  font-family: "Tajawal", sans-serif;
+  font-family: 'Lama Sans', sans-serif;
   font-weight: normal;
   font-size: 14px;
   background-color: var(--body-bg);
@@ -157,10 +188,12 @@ input {
   cursor: pointer;
   min-height: 40px;
   padding: 8px 14px;
+  font-size: var(--size-sm);
+  font-weight: 500;
   border-radius: var(--radius-sm);
 }
 .custom-btn:hover {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 .custom-table-btn {
   min-height: 36px;
@@ -354,15 +387,15 @@ html[dir="rtl"] [type="url"] {
   color: #fff;
   border: 1px solid var(--primary-color);
 }
-.third-btn {
-  background-color: var(--third-color);
-  color: #fff;
+.text-btn {
+  border: 1px solid #E0E1E5;
+  color: var(--text-color);
 }
-.edit-btn {
+/* .edit-btn {
   background: #FB6514;
   color: #fff;
   border: 1px solid #FB6514;
-}
+} */
 .success-btn {
    background-color: var(--success-color);
    color: #fff;
@@ -397,11 +430,11 @@ html[dir="rtl"] [type="url"] {
   border: 1px solid var(--red);
   color: var(--red);
 }
-.light-secondary-btn {
+/* .light-secondary-btn {
   background-color: var(--light-secondary-color);
   color: var(--secondary-color);
   border: 1px solid var(--light-secondary-color);
-}
+} */
 .max-height {
   max-height: 100% !important;
 }
@@ -439,6 +472,13 @@ html[dir="rtl"] [type="url"] {
 .nowrap{
   white-space: nowrap;
 } 
+.input-icon {
+  cursor: pointer;
+  z-index: 111;
+}
+html[dir="rtl"] .header-actions .lang .header-badge {
+  align-items: start;
+}
 @media screen and (max-width: 991.98px) {
   .navbar-nav {
     width: 100% !important;
