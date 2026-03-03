@@ -1,15 +1,20 @@
-<script setup lang="ts">
-import CustomCard from '../Cards/CustomCard.vue';
-
-</script>
 
 <template>
   <main>
-     <custom-card>
-        main
-     </custom-card>
+     <cards-custom-card :title="Title">
+        <slot />
+     </cards-custom-card>
   </main>
 </template>
+
+<script setup>
+defineProps({
+  Title: {
+    type: String,
+    default: ""
+  }
+})
+</script>
 
 <style scoped>
 .main-column {

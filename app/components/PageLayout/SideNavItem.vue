@@ -4,14 +4,15 @@
     :class="{ 'active': active }"
     @click="$emit('on-click')"
   >
-    <div class="content flex-between w-100">
-        <p class="title">{{ title }}</p>
+    <div class="content flex-start gap-sm w-100">
         <div class="icon-case flex-center">
             <component :is="icon" v-if="icon" />
             <slot name="icon" v-else />
         </div>
+        <h5 class="title">{{ title }}</h5>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -26,50 +27,42 @@ defineEmits(['on-click'])
 
 <style scoped>
 .side-nav-item {
-    padding: 14px 18px;
+    padding: 8px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--gray-color);
     margin-bottom: 4px;
+    position: relative;
+    overflow: hidden;
 }
-
+.icon-case {    
+    color: var(--placeholder);
+}
 .side-nav-item:hover {
-    background-color: var(--light-primary-color);
-    color: var(--primary-color);
-}
-
-.side-nav-item.active {
-    background-color: #FEF9EE; /* Light variant of secondary color */
+    background-color: var(--light-secondary-color);
     color: var(--secondary-color);
-    font-weight: 600;
 }
-
-.icon-case {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: transparent;
-    transition: inherit;
-}
-
+.side-nav-item:hover .icon-case ,
 .side-nav-item.active .icon-case {
-    background: var(--secondary-color);
+    color: var(--secondary-color);
 }
-
-/* Reach into icon SVG paths automatically */
-.side-nav-item :deep(path) {
-    stroke: var(--gray-color);
-    transition: inherit;
+.side-nav-item.active {
+    background-color: var(--light-secondary-color);
+    color: var(--secondary-color);
 }
-
-.side-nav-item.active :deep(path) {
-    stroke: #fff;
-    stroke-width: 2px;
+.side-nav-item.active::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    inset-inline-start: -2px;
+    width: 5px;
+    border-radius: 30px;
+    height: 67%;
+    background-color: var(--secondary-color);
 }
-
-/* Hover effects for icons */
-.side-nav-item:hover :deep(path) {
-    stroke: var(--primary-color);
+.icon-case {
+    width: 24px;
+    height: 24px;
 }
 </style>

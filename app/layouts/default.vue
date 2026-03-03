@@ -2,7 +2,7 @@
     <div class="layout" dir="rtl">
         <HeaderMainHeader />
         
-        <main class="content">
+        <main class="content-layout">
             <div class="container">
                 <slot />
             </div>
@@ -12,7 +12,7 @@
 
 <style>
 /* Global Layout Styles only */
-.content {
+.content-layout {
     position: relative;
     top: -56px;
 }

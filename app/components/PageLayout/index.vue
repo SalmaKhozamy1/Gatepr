@@ -1,32 +1,43 @@
 <template>
   <div class="side-page-layout grid grid-2 gap-md">
-      <page-layout-aside-content>
-           <slot />
-      </page-layout-aside-content>
-      <page-layout-main-content>
-           <slot />
+      <PageLayoutAsideContent
+      :title="asideTitle"
+      :items="asideItems"
+      :activeIndex="activeIndex"
+      @item-click="$emit('item-click', $event)"
+      />
+      <page-layout-main-content :Title="formTitle">
+          <slot name="main" />
       </page-layout-main-content>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  steps: {
-    type: Array,
+  asideTitle: {
+    type: String,
+    default: ""
+  }, 
+  asideItems:{
+    type:Array,
     default: () => []
   },
-  currentStep: {
+  activeIndex: {
     type: Number,
     default: 0
+  }, 
+  formTitle: {
+    type: String,
+    default: ""
   }
-});
+})
 
-defineEmits(['step-change']);
+defineEmits(['item-click'])
 </script>
 
 <style scoped>
 .side-page-layout {
-  grid-template-columns: .5fr 1fr;
+  grid-template-columns: .3fr 1fr;
 }
 
 /* Responsive handling */

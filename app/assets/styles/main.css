@@ -1,9 +1,11 @@
 :root {
   --primary-color: #22293E;
-  --secondary-color: #EBB028;
+  --secondary-color: rgb(235, 176, 40);
   --text-color: #101828;
   --light-primary-color: #F8F9FC;
+  --light-secondary-color: rgba(240, 186, 62, 0.10);
   --gray-color: #606060;
+  --desc-color: #535862;
   --placeholder: #8F92A1;
   /*///////// Font Size /////////*/
   --size-xs:12px;
@@ -35,7 +37,7 @@
   --black-color: #000000;
   --white-color: #ffffff;
   
-  --light-secondary-color: #eaf0f9;
+ 
 
   --red: #ff3d54;
   --success-color: #039855;
@@ -80,6 +82,8 @@ body {
   border-radius: 5px;
 }
 ::placeholder {
+  font-size: var(--size-sm);
+  font-weight: 400;
  color: var(--placeholder) !important;
 }
 h1 {
@@ -173,9 +177,12 @@ input {
 
 /*////////////////// Form Style /////////////////*/
 
-.form-select {
-  -webkit-text-fill-color: #939393;
+label.form-label {
+  font-size: var(--size-sm);
+  font-weight: 500;
+  margin-bottom: 8px;
 }
+input.form-control,
 select.form-control,
 select.form-select {
   border-radius: var(--radius-sm);
@@ -192,8 +199,9 @@ select.form-select:disabled {
 }
 .form-control:focus,
 .form-select:focus {
-  border: 1px solid #448bda;
-  box-shadow: 1px 1px 5px 1px #448ada34;
+  background-color: #f8f9fa !important;
+  box-shadow: none !important;
+  border: 1px solid var(--secondary-color) !important;
 }
 select.form-control,
 select.form-select {
@@ -318,6 +326,9 @@ html[dir="rtl"] [type="url"] {
 .grid-4 {
   -ms-grid-template-columns: repeat(auto-fit, minmax(24%, 1fr));
   grid-template-columns: repeat(auto-fit, minmax(24%, 1fr));
+}
+.full-width {
+  grid-column: 1 / -1;
 }
 /* errors / in-valid */
 .error {

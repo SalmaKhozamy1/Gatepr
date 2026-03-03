@@ -38,21 +38,3 @@ defineProps({
 defineEmits(['update:modelValue']);
 </script>
 
-<style scoped>
-label.form-label {
-  font-size: var(--size-sm);
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-input.form-control {
-  border-radius: var(--radius-sm);
-  padding: var(--form-control-padding);
-  border: 1px solid #E0E1E5;
-  background-color: #fff;
-}
-.form-control:focus {
-    background-color: #f8f9fa !important;
-    box-shadow: none;
-    border: 1px solid var(--secondary-color) !important;
-}
-</style>
