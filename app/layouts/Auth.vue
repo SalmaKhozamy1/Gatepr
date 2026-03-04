@@ -1,14 +1,20 @@
 <template>
   <div class="auth-wrapper">
-    <div class="grid-2 min-vh-100 align-items-center g-0">
+    <div class="grid grid-2 min-vh-100 align-items-center g-0">
+      <!-- Right Form Side -->
+      <div class="form-container fle-center mx-auto w-100">
+        <div class="auth-content w-100">
+          <slot />
+        </div>
+      </div>
       <!-- Left Branding Side -->
       <div class="branding-container h-100 ">
         <div class="branding-card h-100 d-flex flex-column position-relative">
           <div class="top-actions position-fixed">
-            <button class="lang-btn">
+            <button class="lang-btn" @click="toggleLocale">
               <IconsLang />
             </button>
-            <span class="lang-title flex-center">E</span>
+            <span class="lang-title flex-center">{{ locale === 'ar' ? 'ع' : 'E' }}</span>
           </div>
           
           <div class="logo-area flex-grow-1 d-flex align-items-center justify-content-center">
@@ -18,19 +24,16 @@
           </div>
         </div>
       </div>
-
-      <!-- Right Form Side -->
-      <div class="form-container fle-center mx-auto w-100">
-        <div class="auth-content w-100" :dir="'rtl'">
-          <slot />
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+const { locale, setLocale } = useI18n()
 
+const toggleLocale = () => {
+  setLocale(locale.value === 'ar' ? 'en' : 'ar')
+}
 </script>
 
 <style scoped>
@@ -47,7 +50,7 @@
 }
 .top-actions {
   top: 35px;
-  inset-inline-start: 35px;
+  inset-inline-end: 35px;
 }
 .lang-btn {
   background: rgba(255, 255, 255, 0.1);

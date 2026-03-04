@@ -32,7 +32,6 @@ defineEmits(['update:modelValue'])
   gap: 10px;
   cursor: pointer;
   user-select: none;
-  direction: rtl;
 }
 
 .approve-checkbox input[type="checkbox"] {

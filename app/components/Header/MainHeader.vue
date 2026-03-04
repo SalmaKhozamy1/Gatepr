@@ -7,8 +7,8 @@
                             <HeaderItem>
                                <IconsSearch />   
                             </HeaderItem>
-                            <HeaderItem class="lang" badge="ع">
-                               <IconsLang />
+                            <HeaderItem class="lang" :badge="locale === 'ar' ? 'E' : 'ع'" @click="toggleLocale">
+                                <IconsLang />
                             </HeaderItem>
                             <HeaderItem badge="2">
                                 <IconsNotification />
@@ -60,6 +60,12 @@ import {
     IconsSuppliers, 
     IconsLogs 
 } from '#components'
+
+const { locale, setLocale } = useI18n()
+
+const toggleLocale = () => {
+    setLocale(locale.value === 'ar' ? 'en' : 'ar')
+}
 
 const isMenuOpen = ref(false);
 

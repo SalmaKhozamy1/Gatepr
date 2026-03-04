@@ -5,12 +5,14 @@
 </template>
 
 <script setup>
-  const isArabic = ref(true);
-  useHead({
-    htmlAttrs: {
-      dir: computed(() => isArabic.value ? 'rtl' : 'ltr'),
-      lang: computed(() => isArabic.value ? 'ar' : 'en')
-    },
+  const { locale } = useI18n()
+  const head = useLocaleHead({
+    addDirAttribute: true,
+    identifierAttribute: 'id',
+    addSeoAttributes: true
   })
 
+  useHead({
+    htmlAttrs: computed(() => head.value.htmlAttrs),
+  })
 </script>

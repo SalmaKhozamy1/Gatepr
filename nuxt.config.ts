@@ -22,18 +22,11 @@ export default defineNuxtConfig({
     'bootstrap/dist/css/bootstrap.min.css',
     'flatpickr/dist/flatpickr.css',
     '~/assets/styles/main.css'
-  ]
+  ],
+  runtimeConfig: {
+    public: {
+      apiBase: 'https://gate.roqay.dev/api'
+    }
+  }
 })
 
-// export default defineNuxtConfig({
-//   modules: ['@nuxtjs/i18n'],
-
-//   i18n: {
-//     locales: [
-//       { code: 'en', name: 'English', dir: 'ltr' },
-//       { code: 'ar', name: 'العربية', dir: 'rtl' }
-//     ],
-//     defaultLocale: 'ar',
-//     strategy: 'prefix_except_default'
-//   }
-// })

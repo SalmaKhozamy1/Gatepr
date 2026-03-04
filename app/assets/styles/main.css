@@ -186,7 +186,7 @@ input {
   text-decoration: none;
   gap: 5px;
   cursor: pointer;
-  min-height: 40px;
+  min-height: 45px;
   padding: 8px 14px;
   font-size: var(--size-sm);
   font-weight: 500;
@@ -430,11 +430,6 @@ html[dir="rtl"] [type="url"] {
   border: 1px solid var(--red);
   color: var(--red);
 }
-/* .light-secondary-btn {
-  background-color: var(--light-secondary-color);
-  color: var(--secondary-color);
-  border: 1px solid var(--light-secondary-color);
-} */
 .max-height {
   max-height: 100% !important;
 }
@@ -476,9 +471,22 @@ html[dir="rtl"] [type="url"] {
   cursor: pointer;
   z-index: 111;
 }
-html[dir="rtl"] .header-actions .lang .header-badge {
+html[dir="rtl"] .header-actions .lang .header-badge,
+html[dir="rtl"] .top-actions .lang-title {
   align-items: start;
 }
+/* Chrome, Edge, Safari */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 991.98px) {
   .navbar-nav {
     width: 100% !important;

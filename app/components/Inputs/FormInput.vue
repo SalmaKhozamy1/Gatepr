@@ -8,10 +8,12 @@
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
-        class="form-control"
+        class="form-control w-100"
+        :class="{ 'is-invalid': error }"
       >
       <slot name="suffix" />
     </div>
+    <span v-if="error" class="error d-block">{{ error }}</span>
   </div>
 </template>
 
@@ -32,9 +34,14 @@ defineProps({
   placeholder: {
     type: String,
     default: ''
+  },
+  error: {
+    type: String,
+    default: ''
   }
 });
 
 defineEmits(['update:modelValue']);
 </script>
+
 
