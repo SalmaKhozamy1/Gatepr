@@ -1,24 +1,72 @@
 <template>
   <div>
     <div class="grid grid-3 gap-md">
-        <InputsFormInput label="اسم المنشأة بالعربي" placeholder="ادخل اسم المنشأة باللغة العربية" />
-        <InputsFormInput label="اسم المنشأة باللغة الإنجليزية" placeholder="ادخل اسم المنشأة باللغة الإنجليزية" />
-        <InputsDatePicker label="تاريخ بداية الرخصة" placeholder="اختر" />
+        <InputsFormInput 
+          v-model="nameAr" 
+          label="اسم المنشأة بالعربي" 
+          placeholder="ادخل اسم المنشأة باللغة العربية" 
+          :error="errors.nameAr"
+        />
+        <InputsFormInput 
+          v-model="nameEn" 
+          label="اسم المنشأة باللغة الإنجليزية" 
+          placeholder="ادخل اسم المنشأة باللغة الإنجليزية" 
+          :error="errors.nameEn"
+        />
+        <InputsDatePicker 
+          v-model="licenseStart" 
+          label="تاريخ بداية الرخصة" 
+          placeholder="اختر" 
+          :error="errors.licenseStart"
+        />
         
-        <InputsFormInput label="رقم الرخصة / السجل التجاري" placeholder="ادخل اسم المنشأة باللغة العربية" />
-        <InputsFormInput label="نائب المورد" placeholder="ادخل اسم المنشأة باللغة الإنجليزية" />
-        <InputsDatePicker label="تاريخ نهاية الرخصة" placeholder="اختر" />
+        <InputsFormInput 
+          v-model="licenseNumber" 
+          label="رقم الرخصة / السجل التجاري" 
+          placeholder="ادخل رقم الرخصة" 
+          :error="errors.licenseNumber"
+        />
+        <InputsFormInput 
+          v-model="supplierDeputy" 
+          label="نائب المورد" 
+          placeholder="ادخل اسم نائب المورد" 
+          :error="errors.supplierDeputy"
+        />
+        <InputsDatePicker 
+          v-model="licenseEnd" 
+          label="تاريخ نهاية الرخصة" 
+          placeholder="اختر" 
+          :error="errors.licenseEnd"
+        />
 
         <InputsFormSelect 
+            v-model="supplierType"
             label="نوع المورد" 
             placeholder="اختر نوع المورد" 
-            :options="[]" 
+            :options="['مورد 1', 'مورد 2']" 
+            :error="errors.supplierType"
         />
-        <InputsDatePicker label="تاريخ انتهاء الرخصة الصحية" placeholder="اختر" />
-        <InputsDatePicker label="تاريخ انتهاء الرخصة الصناعية" placeholder="اختر" />
+        <InputsDatePicker 
+          v-model="healthLicenseEnd" 
+          label="تاريخ انتهاء الرخصة الصحية" 
+          placeholder="اختر" 
+          :error="errors.healthLicenseEnd"
+        />
+        <InputsDatePicker 
+          v-model="industrialLicenseEnd" 
+          label="تاريخ انتهاء الرخصة الصناعية" 
+          placeholder="اختر" 
+          :error="errors.industrialLicenseEnd"
+        />
 
     <div class="full-width">
-          <InputsFormInput label="كلمة المرور" placeholder="ادخل كلمة المرور" type="password" />
+          <InputsFormInput 
+            v-model="password" 
+            label="كلمة المرور" 
+            placeholder="ادخل كلمة المرور" 
+            type="password" 
+            :error="errors.password"
+          />
     </div>
 
     <!-- Upload Section -->
@@ -43,10 +91,47 @@
 </template>
 
 <script setup>
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
 import { ref } from 'vue'
 
 const generalIndustryFiles = ref([])
 const facilityFiles = ref([])
+
+const schema = yup.object({
+  nameAr: yup.string().required('اسم المنشأة بالعربي مطلوب'),
+  nameEn: yup.string().required('اسم المنشأة باللغة الإنجليزية مطلوب'),
+  licenseStart: yup.string().required('تاريخ بداية الرخصة مطلوب'),
+  licenseNumber: yup.string().required('رقم الرخصة مطلوب'),
+  supplierDeputy: yup.string().required('نائب المورد مطلوب'),
+  licenseEnd: yup.string().required('تاريخ نهاية الرخصة مطلوب'),
+  supplierType: yup.string().required('نوع المورد مطلوب'),
+  healthLicenseEnd: yup.string().required('تاريخ انتهاء الرخصة الصحية مطلوب'),
+  industrialLicenseEnd: yup.string().required('تاريخ انتهاء الرخصة الصناعية مطلوب'),
+  password: yup.string().required('كلمة المرور مطلوبة').min(6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'),
+})
+
+const { errors, validate } = useForm({
+  validationSchema: schema,
+})
+
+const { value: nameAr } = useField('nameAr')
+const { value: nameEn } = useField('nameEn')
+const { value: licenseStart } = useField('licenseStart')
+const { value: licenseNumber } = useField('licenseNumber')
+const { value: supplierDeputy } = useField('supplierDeputy')
+const { value: licenseEnd } = useField('licenseEnd')
+const { value: supplierType } = useField('supplierType')
+const { value: healthLicenseEnd } = useField('healthLicenseEnd')
+const { value: industrialLicenseEnd } = useField('industrialLicenseEnd')
+const { value: password } = useField('password')
+
+defineExpose({
+  validate: async () => {
+    const { valid } = await validate()
+    return valid
+  }
+})
 </script>
 
 <style scoped>

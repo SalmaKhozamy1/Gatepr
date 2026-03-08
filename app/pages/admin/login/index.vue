@@ -4,11 +4,11 @@
     
     <form @submit="onSubmit" class="auth-form w-100 flex-column-start gap-sm">
       <InputsFormInput
-        v-model="code"
-        label="رقم الكود"
-        type="text"
-        placeholder="ادخل رقم الكود"
-        :error="errors.code"
+        v-model="email"
+        label="البريد الإلكتروني"
+        type="email"
+        placeholder="ادخل البريد الإلكتروني"
+        :error="errors.email"
       />
       
       <InputsFormInput
@@ -46,22 +46,24 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
-
+import { useApi } from '~/composables/useApi'
 definePageMeta({
   layout: 'auth'
 });
 
 const showPassword = ref(false);
-
+/* API */
+const api = useApi()
 const token = useCookie('token')
-const role = useCookie('role')
 
 /* 1️⃣ Schema */
 const schema = yup.object({
-  code: yup.string()
-  .required('رقم الكود مطلوب'),
+  email: yup.string()
+  .required('البريد الإلكتروني مطلوب')
+  .email('البريد الإلكتروني غير صحيح'),
   password: yup.string()
   .required('كلمة المرور مطلوبة')
+  .min(6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')
 })
 
 /* 2️⃣ useForm */
@@ -70,19 +72,34 @@ const { handleSubmit, errors} = useForm({
 })
 
 /* 3️⃣ useField */
-const { value: code } = useField('code');
+const { value: email } = useField('email');
 const { value: password } = useField('password');
 
 /* 4️⃣ Submit */
-const onSubmit = handleSubmit((values) => {
-  console.log('Login Values:', values)
-  
-  // حفظ التوكن والـ role في الكوكيز
-  token.value = 'mock-token-value'
-  role.value = 'admin' // أو القيمة القادمة من الـ API مستقبلاً
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    // 1️⃣ جلب CSRF cookie من السيرفر قبل أي POST
+    await $fetch('https://gate.roqay.dev/sanctum/csrf-cookie', {
+      credentials: 'include' // مهم عشان الكوكيز تتبعت
+    })
 
-  // تحويل للصفحة الرئيسية
-  navigateTo('/admin/home')
+    // 2️⃣ بعد كده اعمل login
+    const response = await api('/v1/admin/login', {
+      method: 'POST',
+      body: {
+        email: values.email,
+        password: values.password
+      }
+    })
+
+    // 3️⃣ حفظ التوكن بعد نجاح login
+    token.value = response.data.token
+
+    // 4️⃣ تحويل للصفحة الرئيسية
+    navigateTo('/')
+  } catch (error) {
+    console.error('Login Error:', error)
+  }
 })
 </script>
 

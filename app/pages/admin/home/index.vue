@@ -34,3 +34,6 @@
         </div>
     </CardsCustomCard>  
 </template>
+
+<script setup>
+</script>

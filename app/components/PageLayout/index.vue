@@ -6,9 +6,16 @@
       :activeIndex="activeIndex"
       @item-click="$emit('item-click', $event)"
       />
-      <page-layout-main-content :Title="formTitle">
-          <slot name="main" />
-      </page-layout-main-content>
+      <div class="d-flex flex-column gap-md">
+        <CardsCustomCard title="فلتر البحث">
+          <slot name="search"></slot>
+        </CardsCustomCard>
+
+        <page-layout-main-content :Title="formTitle">
+            <slot name="main" />
+        </page-layout-main-content>
+      </div>
+   
   </div>
 </template>
 

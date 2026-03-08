@@ -1,5 +1,9 @@
+import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.js'
+
 export default defineNuxtPlugin(() => {
-  if (import.meta.client) {
-    import('bootstrap/dist/js/bootstrap.bundle.min.js')
+  return {
+    provide: {
+      bootstrap: bootstrap
+    }
   }
 })

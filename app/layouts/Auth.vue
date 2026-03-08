@@ -2,24 +2,24 @@
   <div class="auth-wrapper">
     <div class="grid grid-2 min-vh-100 align-items-center g-0">
       <!-- Right Form Side -->
-      <div class="form-container fle-center mx-auto w-100">
+      <div class="form-container flex-center mx-auto w-100">
         <div class="auth-content w-100">
           <slot />
         </div>
       </div>
       <!-- Left Branding Side -->
-      <div class="branding-container h-100 ">
+      <div class="branding-container h-100 py-2">
         <div class="branding-card h-100 d-flex flex-column position-relative">
-          <div class="top-actions position-fixed">
+          <div class="top-actions position-absolute">
             <button class="lang-btn" @click="toggleLocale">
               <IconsLang />
             </button>
             <span class="lang-title flex-center">{{ locale === 'ar' ? 'ع' : 'E' }}</span>
           </div>
           
-          <div class="logo-area flex-grow-1 d-flex align-items-center justify-content-center">
+          <div class="logo-area flex-grow-1 flex-center">
             <div class="logo-wrapper d-flex align-items-center gap-3">
-              <img src="~/assets/images/login_logo.svg" alt="logo">
+              <img src="~/assets/images/login_logo.svg" alt="logo" class="w-100">
             </div>
           </div>
         </div>
@@ -40,6 +40,10 @@ const toggleLocale = () => {
 .auth-wrapper {
     background-color: #fff;
 }
+.logo-wrapper {
+  min-height: 340px;
+  max-width: 200px;
+}
 .auth-wrapper .grid-2 {
   padding: 12px;
 }
@@ -49,8 +53,8 @@ const toggleLocale = () => {
   border-radius: var(--radius-lg);
 }
 .top-actions {
-  top: 35px;
-  inset-inline-end: 35px;
+  top: clamp(10px,2%,2%);
+  inset-inline-end: clamp(20px,4%,4%);
 }
 .lang-btn {
   background: rgba(255, 255, 255, 0.1);
@@ -68,7 +72,7 @@ const toggleLocale = () => {
 }
 .lang-title {
     position: absolute;
-    inset-inline-start: 28px;
+    inset-inline-end: 28px;
     top: -8px;
     width: 22px;
     height: 22px;
@@ -81,6 +85,15 @@ const toggleLocale = () => {
 }
 .form-container  {
     padding-inline: 15%;
+}
+
+@media screen and (max-width: 767px) {
+  .branding-container {
+    order: -1;
+  }
+  .form-container {
+    padding-block: 40px;
+  }
 }
 </style>
 

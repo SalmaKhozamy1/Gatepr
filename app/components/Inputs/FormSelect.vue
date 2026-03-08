@@ -5,6 +5,7 @@
       :value="modelValue"
       @change="$emit('update:modelValue', $event.target.value)"
       class="form-select"
+      :class="{ 'is-invalid': error }"
       v-bind="$attrs"
     >
       <option disabled value="" v-if="placeholder">{{ placeholder }}</option>
@@ -16,6 +17,7 @@
         {{ option.label || option }}
       </option>
     </select>
+    <span v-if="error" class="error d-block">{{ error }}</span>
   </div>
 </template>
 
@@ -36,6 +38,10 @@ defineProps({
   placeholder: {
     type: String,
     default: 'اختر'
+  },
+  error: {
+    type: String,
+    default: ''
   }
 });
 

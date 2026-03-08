@@ -1,7 +1,7 @@
 <template>
    <div class="header">
                 <div class="container">
-                    <div class="flex-between gap-lg">
+                    <div class="flex-between gap-lg position-relative top-header">
                         <img class="main_logo" src="@/assets/images/login_logo.svg" alt="Gatepro_logo">
                         <div class="header-actions flex-start gap-sm">
                             <HeaderItem>
@@ -13,7 +13,7 @@
                             <HeaderItem badge="2">
                                 <IconsNotification />
                             </HeaderItem>
-                            <HeaderItem name="محمد أحمد" />
+                            <HeaderItem name="محمد أحمد" @open-change-password="showChangePassword = true" />
                         </div>
                     </div>
                     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -42,12 +42,15 @@
                                             :title="item.title" 
                                             :icon="item.icon" 
                                             :active="item.active" 
+                                            @click="handleNavClick(item)"
                                         />
                                     </li>
                                 </ul>
                             </div>
                     </nav>
                 </div>
+                <!-- Modals -->
+                <ModalsChangePasswordModal v-model:show="showChangePassword" />
             </div>
 </template>
 
@@ -68,15 +71,26 @@ const toggleLocale = () => {
 }
 
 const isMenuOpen = ref(false);
+const showChangePassword = ref(false);
+const route = useRoute();
 
-const menuItems = [
-    { title: 'الرئيسية', icon: IconsHome, active: true },
-    { title: 'الإعدادات', icon: IconsSettings, active: false },
-    { title: 'الفروع', icon: IconsBranches, active: false },
-    { title: 'الأصناف', icon: IconsCategories, active: false },
-    { title: 'الموردين', icon: IconsSuppliers, active: false },
-    { title: 'سجلات النظام', icon: IconsLogs, active: false },
-];
+const menuItems = computed(() => [
+    { title: 'الرئيسية', icon: IconsHome, path: '/admin/home' },
+    { title: 'الإعدادات', icon: IconsSettings, path: '/admin/settings' },
+    { title: 'الفروع', icon: IconsBranches, path: '/admin/branches' },
+    { title: 'الأصناف', icon: IconsCategories, path: '/admin/categories' },
+    { title: 'الموردين', icon: IconsSuppliers, path: '/admin/suppliers' },
+    { title: 'سجلات النظام', icon: IconsLogs, path: '/admin/logs' },
+].map(item => ({
+    ...item,
+    active: route.path.startsWith(item.path) || (item.path === '/admin/home' && route.path === '/admin')
+})));
+
+const handleNavClick = (item) => {
+    if (item.path) {
+        navigateTo(item.path);
+    }
+};
 </script>
 
 <style scoped>
@@ -112,5 +126,8 @@ const menuItems = [
 
 .nav-item :deep(path) {
     color: rgba(255, 255, 255, 0.70);
+}
+.top-header {
+    z-index: 2;
 }
 </style>

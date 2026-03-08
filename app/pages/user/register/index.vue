@@ -11,7 +11,7 @@
         <div class="step-content">
 
           <!-- Dynamic Step Rendering -->
-          <component :is="steps[activeIndex].component" />
+          <component :is="steps[activeIndex].component" ref="stepComponent" />
  
           <div class="flex-end mt-4 gap-sm">
               <button class="custom-btn text-btn min-btn-width" @click="prevStep" v-if="activeIndex > 0">السابق</button>
@@ -32,6 +32,7 @@ import { AuthRegisterCompanyData, AuthRegisterResponsibleData, AuthRegisterOffic
 import { ref } from 'vue'
 
 const activeIndex = ref(0)
+const stepComponent = ref(null)
 
 const steps = [
     { title: 'بيانات المنشأة', icon: IconsCompanyInformation, component: AuthRegisterCompanyData },
@@ -43,7 +44,11 @@ const changeStep = (index) => {
   activeIndex.value = index
 }
 
-const nextStep = () => {
+const nextStep = async () => {
+    if (stepComponent.value && typeof stepComponent.value.validate === 'function') {
+        const isValid = await stepComponent.value.validate()
+        if (!isValid) return
+    }
     if (activeIndex.value < steps.length - 1) {
         activeIndex.value++
     }
@@ -55,7 +60,11 @@ const prevStep = () => {
     }
 }
 
-const submit = () => {
+const submit = async () => {
+    if (stepComponent.value && typeof stepComponent.value.validate === 'function') {
+        const isValid = await stepComponent.value.validate()
+        if (!isValid) return
+    }
     console.log('Form submitted!')
 }
 </script>

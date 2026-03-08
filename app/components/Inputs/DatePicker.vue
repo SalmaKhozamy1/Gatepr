@@ -7,6 +7,7 @@
           v-model="date"
           :config="config"
           class="form-control"
+          :class="{ 'is-invalid': error }"
           :placeholder="placeholder"
         />
       </client-only>
@@ -14,6 +15,7 @@
         <IconsCalander />
       </div>
     </div>
+    <span v-if="error" class="error d-block">{{ error }}</span>
   </div>
 </template>
 
@@ -24,7 +26,8 @@ import { ref, watch } from 'vue';
 const props = defineProps({
   label: { type: String, default: '' },
   modelValue: { type: [String, Date], default: null },
-  placeholder: { type: String, default: 'اختر' }
+  placeholder: { type: String, default: 'اختر' },
+  error: { type: String, default: '' }
 })
 
 const emit = defineEmits(['update:modelValue'])

@@ -1,34 +1,36 @@
+<script setup>
+const token = useCookie('token')
+const role = useCookie('role')
+
+onMounted(() => {
+  // لو المستخدم مش عامل تسجيل دخول
+  if (!token.value) {
+    return navigateTo('/auth/login')
+  }
+
+  // لو Admin
+  if (role.value === 'admin') {
+    return navigateTo('/admin/home')
+  }
+
+  // لو User عادي
+  return navigateTo('/user/home')
+})
+</script>
+
 <template>
-  <div class="spotlight">
-    <input v-model="searchInput" placeholder="ابحث..." />
-
-    <div v-if="loading">Loading...</div>
-
-    <div v-if="results.length">
-      <div v-for="item in results" :key="item.id">
-        <NuxtLink :to="item.url">
-          <h4>{{ item.title }}</h4>
-          <p>{{ item.description }}</p>
-        </NuxtLink>
-      </div>
-    </div>
+  <div class="redirect-page">
+    <p>جاري التحويل...</p>
   </div>
 </template>
 
-<script setup>
-import { ref, watch } from 'vue'
-import { useSpotlight } from '@/composables/useSpotlight'
-
-const searchInput = ref('')
-const { results, loading, search } = useSpotlight()
-
-let timeout = null
-
-watch(searchInput, (value) => {
-  clearTimeout(timeout)
-
-  timeout = setTimeout(() => {
-    search(value)
-  }, 400)
-})
-</script>
+<style scoped>
+.redirect-page {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #666;
+}
+</style>

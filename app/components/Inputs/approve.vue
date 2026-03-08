@@ -7,6 +7,7 @@
     />
     <span class="checkmark"></span>
     <span class="approve-label">{{ label }}</span>
+    <span v-if="error" class="error d-block" style="margin-inline-start: 10px">{{ error }}</span>
   </label>
 </template>
 
@@ -19,6 +20,10 @@ defineProps({
   label: {
     type: String,
     default: 'أوافق علي الشروط والأحكام'
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
