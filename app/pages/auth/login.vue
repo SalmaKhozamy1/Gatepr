@@ -77,42 +77,9 @@ const { value: password } = useField('password');
 const onSubmit = handleSubmit((values) => {
   console.log('Login Values:', values)
   
-  // حفظ التوكن والـ role في الكوكيز
   token.value = 'mock-token-value'
-  role.value = 'admin' // أو القيمة القادمة من الـ API مستقبلاً
+  role.value = 'admin'
 
-  // تحويل للصفحة الرئيسية
   navigateTo('/admin/home')
 })
 </script>
-
-<style scoped>
-.login-page {
-  gap: 20px;
-}
-.auth-title {
-  font-size: var(--size-md);
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.password-toggle {
-  position: absolute;
-  inset-inline-end: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  color: #a0aec0;
-}
-
-.signup-link {
-  color: #f5a623;
-}
-
-.forgot-link {
- color: var(--text-color);
- font-size: var(--size-sm);
- font-weight: 400;
-}
-</style>

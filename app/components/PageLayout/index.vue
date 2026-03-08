@@ -12,6 +12,9 @@
         </CardsCustomCard>
 
         <page-layout-main-content :Title="formTitle">
+            <template #actions v-if="$slots['header-actions']">
+                <slot name="header-actions" />
+            </template>
             <slot name="main" />
         </page-layout-main-content>
       </div>
@@ -44,7 +47,7 @@ defineEmits(['item-click'])
 
 <style scoped>
 .side-page-layout {
-  grid-template-columns: .3fr 1fr;
+  grid-template-columns: .25fr 1fr;
 }
 
 /* Responsive handling */

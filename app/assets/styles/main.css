@@ -72,9 +72,10 @@
 
   /* ////////// Media Query ////////////*/
   --media-sm: 576px;
-  --media-md: 991px;
+  --media-md: 768px;
+  --media-lg: 991px;
 
-  --red: #ff3d54;
+  --red: #D92D20;
   --success-color: #039855;
   --body-bg: #efefef;
 }
@@ -186,7 +187,7 @@ input {
   text-decoration: none;
   gap: 5px;
   cursor: pointer;
-  min-height: 45px;
+  min-height: 43px;
   padding: 8px 14px;
   font-size: var(--size-sm);
   font-weight: 500;
@@ -199,7 +200,7 @@ input {
   min-height: 36px;
 }
 .min-btn-width {
-  min-width: 100px;
+  min-width: 125px;
 }
 
 .custom-ul {
@@ -207,7 +208,38 @@ input {
   margin: 0;
   list-style: none;
 }
-
+/* Table */
+.index-cell {
+  width: 40px;
+}
+.actions-cell {
+  width: 150px;
+}
+.actions-cell > div {
+  display: flex;
+  justify-content: start;
+  gap: var(--gap-sm);
+}
+.action-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #98A2B3;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease-in-out;
+}
+.action-btn:hover {
+  color: var(--secondary-color);
+  background-color: var(--light-secondary-color);
+}
+.action-btn.delete:hover {
+  color: var(--red);
+  background-color: color-mix(in srgb, var(--red), transparent 90%);
+}
 /*////////////////// Form Style /////////////////*/
 
 label.form-label {
@@ -503,7 +535,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-@media (max-width: 767px) {
+@media (max-width: 576px) {
   .grid-2,
   .grid-3,
   .grid-4 {

@@ -1,9 +1,12 @@
 <template>
   <div class="custom-card">
-    <div v-if="title || $slots.header" class="card-header">
+    <div v-if="title || $slots.header || $slots.actions" class="card-header flex-between">
       <slot name="header">
-        <h4>{{ title }}</h4>
+        <h4 class="mb-0">{{ title }}</h4>
       </slot>
+      <div v-if="$slots.actions" class="card-actions">
+        <slot name="actions" />
+      </div>
     </div>
     <div class="card-content">
       <slot />

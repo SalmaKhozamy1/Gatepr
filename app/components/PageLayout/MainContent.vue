@@ -2,6 +2,9 @@
 <template>
   <main>
      <cards-custom-card :title="Title">
+        <template #actions v-if="$slots.actions">
+          <slot name="actions" />
+        </template>
         <slot />
      </cards-custom-card>
   </main>

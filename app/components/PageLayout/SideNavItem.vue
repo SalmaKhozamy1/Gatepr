@@ -31,7 +31,7 @@ defineEmits(['on-click'])
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     position: relative;
     overflow: hidden;
 }
@@ -39,16 +39,16 @@ defineEmits(['on-click'])
     color: var(--placeholder);
 }
 .side-nav-item:hover {
-    background-color: var(--light-secondary-color);
-    color: var(--secondary-color);
+    background-color: var(--light-primary-color);
+    padding: 8px 11px;
 }
-.side-nav-item:hover .icon-case ,
 .side-nav-item.active .icon-case {
     color: var(--secondary-color);
 }
 .side-nav-item.active {
     background-color: var(--light-secondary-color);
     color: var(--secondary-color);
+    padding: 8px 12px;
 }
 .side-nav-item.active::before {
     content: "";

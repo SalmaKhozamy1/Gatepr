@@ -2,14 +2,11 @@
   <div>
     <Teleport to="#search-teleport-target">
       <div class="flex-start gap-sm w-100 flex-wrap">
-        <div class="flex-grow-1 flex-start gap-sm">
-            <InputsFormInput 
-            v-model="searchQuery"
-            placeholder="بحث عن منطقة .." 
-          />
-          <InputsFormSelect
-          />
-        </div>
+        <InputsFormInput 
+          v-model="searchQuery"
+          placeholder="بحث عن محافظة .." 
+          class="flex-grow-1 min-w-40 col"
+        />
         <div class="flex-start gap-sm">
           <button class="custom-btn primary-btn min-btn-width fltr_btn" @click="handleFilter">
             <IconsSearch />
@@ -29,11 +26,7 @@
       <template #body>
         <tr v-for="i in 6" :key="i">
           <th class="index-cell">{{ i }}</th>
-          <td>عبد الله بن حمد</td>
-          <td>info@gmail.com</td>
-          <td>+966 5855 5852</td>
           <td>الرياض</td>
-          <td>إدارة المشتريات</td>
           <td class="actions-cell">
             <div>
               <button class="action-btn view" title="عرض">
@@ -59,7 +52,7 @@ import { ref } from 'vue'
 const searchQuery = ref('')
 
 const handleFilter = () => {
-    console.log('Search Regions:', searchQuery.value)
+    console.log('Search Governorates:', searchQuery.value)
 }
 
 const resetFilters = () => {
@@ -72,12 +65,7 @@ const totalPages = ref(10)
 
 const headers = [
   { label: '#', class: 'index-cell' },
-  { label: 'الإسم', class: '' },
-  { label: 'البريد الإلكتروني', class: '' },
-  { label: 'الهاتف', class: '' },
-  { label: 'الفروع', class: '' },
-  { label: 'الدور', class: '' },
+  { label: 'اسم المحافظة', class: '' },
   { label: 'الإجراءات', class: 'actions-cell' }
 ]
 </script>
-

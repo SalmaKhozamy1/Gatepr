@@ -46,7 +46,7 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
-import { useApi } from '~/composables/useApi'
+import { useApi } from '@/Composables/useApi'
 definePageMeta({
   layout: 'auth'
 });
@@ -78,6 +78,7 @@ const { value: password } = useField('password');
 /* 4️⃣ Submit */
 const onSubmit = handleSubmit(async (values) => {
   try {
+
     // 1️⃣ جلب CSRF cookie من السيرفر قبل أي POST
     await $fetch('https://gate.roqay.dev/sanctum/csrf-cookie', {
       credentials: 'include' // مهم عشان الكوكيز تتبعت
@@ -95,6 +96,8 @@ const onSubmit = handleSubmit(async (values) => {
     // 3️⃣ حفظ التوكن بعد نجاح login
     token.value = response.data.token
 
+    console.log("token.value" + token.value);
+    
     // 4️⃣ تحويل للصفحة الرئيسية
     navigateTo('/')
   } catch (error) {
@@ -124,7 +127,7 @@ const onSubmit = handleSubmit(async (values) => {
 }
 
 .signup-link {
-  color: #f5a623;
+  color: var(--secondary-color);
 }
 
 .forgot-link {
