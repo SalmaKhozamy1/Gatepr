@@ -503,8 +503,8 @@ html[dir="rtl"] [type="url"] {
   cursor: pointer;
   z-index: 111;
 }
-html[dir="ltr"] .header-actions .lang .header-badge,
-html[dir="ltr"] .top-actions .lang-title {
+html[dir="rtl"] .header-actions .lang .header-badge,
+html[dir="rtl"] .top-actions .lang-title {
   align-items: start;
 }
 /* Chrome, Edge, Safari */

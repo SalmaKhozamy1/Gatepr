@@ -55,6 +55,7 @@ const showPassword = ref(false);
 /* API */
 const api = useApi()
 const token = useCookie('token')
+const user = useCookie('user')
 
 /* 1️⃣ Schema */
 const schema = yup.object({
@@ -79,11 +80,6 @@ const { value: password } = useField('password');
 const onSubmit = handleSubmit(async (values) => {
   try {
 
-    // 1️⃣ جلب CSRF cookie من السيرفر قبل أي POST
-    await $fetch('https://gate.roqay.dev/sanctum/csrf-cookie', {
-      credentials: 'include' // مهم عشان الكوكيز تتبعت
-    })
-
     // 2️⃣ بعد كده اعمل login
     const response = await api('/v1/admin/login', {
       method: 'POST',
@@ -95,11 +91,13 @@ const onSubmit = handleSubmit(async (values) => {
 
     // 3️⃣ حفظ التوكن بعد نجاح login
     token.value = response.data.token
+    user.value = response.data.user
 
-    console.log("token.value" + token.value);
+    console.log("token.value:" + token.value);
+    console.log(JSON.stringify(user.value))
     
     // 4️⃣ تحويل للصفحة الرئيسية
-    navigateTo('/')
+    navigateTo('/admin/home')
   } catch (error) {
     console.error('Login Error:', error)
   }

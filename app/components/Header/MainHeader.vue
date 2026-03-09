@@ -7,7 +7,7 @@
                             <HeaderItem>
                                <IconsSearch />   
                             </HeaderItem>
-                            <HeaderItem class="lang" :badge="locale === 'ar' ? 'E' : 'ع'" @click="toggleLocale">
+                            <HeaderItem class="lang" :badge="locale === 'ar' ? 'ع' : 'E'" @click="toggleLocale">
                                 <IconsLang />
                             </HeaderItem>
                             <HeaderItem badge="2">
@@ -18,8 +18,8 @@
                     </div>
                     <nav class="navbar navbar-expand-lg navbar-dark">
                             <div class="user_info">
-                                <h3 class="title nowrap mb-2">مرحبا, محمد </h3>
-                                <p class="nowrap">الأربعاء 17 سبتمبر, 2025</p>
+                                <h3 class="title nowrap mb-2">{{ $t('labels.welcome') }}, {{ user?.name?.[locale] || user?.LocalizedName }} </h3>
+                                <p class="nowrap">{{ currentDate }}</p>
                             </div>
                             <button 
                                 class="navbar-toggler" 
@@ -66,6 +66,15 @@ import {
 
 const { locale, setLocale } = useI18n()
 
+const currentDate = computed(() => {
+    return new Intl.DateTimeFormat(locale.value === 'ar' ? 'ar-EG' : 'en-US', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
+})
+
 const toggleLocale = () => {
     setLocale(locale.value === 'ar' ? 'en' : 'ar')
 }
@@ -73,6 +82,7 @@ const toggleLocale = () => {
 const isMenuOpen = ref(false);
 const showChangePassword = ref(false);
 const route = useRoute();
+const user = useCookie('user');
 
 const menuItems = computed(() => [
     { title: 'الرئيسية', icon: IconsHome, path: '/admin/home' },

@@ -14,7 +14,7 @@ onMounted(() => {
   }
 
   // لو User عادي
-  return navigateTo('/user/home')
+  return navigateTo('/profile')
 })
 </script>
 

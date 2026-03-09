@@ -2,15 +2,33 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/i18n'],
-  i18n: {
-    locales: [
-      { code: 'en', name: 'English', dir: 'ltr' },
-      { code: 'ar', name: 'العربية', dir: 'rtl' }
-    ],
-    defaultLocale: 'ar',
-    strategy: 'prefix_except_default'
+  modules: [
+    [
+    "@nuxtjs/i18n", 
+    {
+      defaultLocale: "ar",
+        locales: [
+          {
+            name: "English",
+            code: "en",
+            language: "en-US",
+            file: "en.json",
+            dir: "ltr",
+          },
+          {
+            name: "عربي ",
+            code: "ar",
+            language: "ar-EG",
+            file: "ar.json",
+            dir: "rtl",
+          },
+        ],
+        lazy: true,
+        detectBrowserLanguage: false,
   },
+  ]
+]
+  ,
   app: {
     head: {
       link: [

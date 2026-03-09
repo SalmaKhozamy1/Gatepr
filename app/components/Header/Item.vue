@@ -116,7 +116,7 @@ const handleLogout = () => {
 }
 
 .header-box:hover {
-    border-color: var(--secondary-color);
+    background-color: var(--light-primary-color);
 }
 .header-box.active {
     background-color: var(--secondary-color);
