@@ -16,18 +16,18 @@ export const useApi = () => {
         options.headers['Content-Type'] = 'application/json'
       }
 
-      // ارسال التوكن لو موجود
       if (token.value) {
         options.headers.Authorization = `Bearer ${token.value}`
       }
 
-      // لو فيه CSRF token في meta
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute('content')
+
       if (csrfToken) {
         options.headers['X-CSRF-TOKEN'] = csrfToken
       }
 
-      // مهم جدا للكوكيز
       options.credentials = 'include'
     }
   })

@@ -8,6 +8,7 @@
       <InputsFormInput 
         label="البريد الإلكتروني" 
         placeholder="ادخل البريد الإلكتروني" 
+        class="required"
         required
       />
     </div>

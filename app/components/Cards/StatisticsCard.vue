@@ -37,8 +37,6 @@
     border-radius: var(--radius-sm);
     width: 48px;
     height: 48px;   
-  }
-  .card-title {
-
+    color: #fff;
   }
 </style>

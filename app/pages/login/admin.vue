@@ -56,8 +56,7 @@ const showPassword = ref(false);
 /* API */
 const api = useApi()
 const token = useCookie('token')
-// const user = useCookie('user')
- 
+
 const authStore = useAuthStore()
 
 /* 1️⃣ Schema */

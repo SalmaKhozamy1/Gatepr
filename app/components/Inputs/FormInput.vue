@@ -44,5 +44,12 @@ defineProps({
 defineEmits(['update:modelValue']);
 </script>
 
+<style scoped>
+.required .form-label::after {
+    content: "*";
+    color: var(--red);
+    margin-inline-start: 5px;
+}
+</style>
 
 

@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
+    '@pinia/nuxt',
     [
     "@nuxtjs/i18n", 
     {
@@ -25,7 +26,7 @@ export default defineNuxtConfig({
         ],
         lazy: true,
         detectBrowserLanguage: false,
-  },
+    },
   ]
 ]
   ,
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: 'https://gate.roqay.dev/api'
+      apiBase: 'https://gate.roqay.dev/api/v1'
     }
   }
 })

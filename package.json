@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@nuxtjs/i18n": "^10.2.3",
+    "@pinia/nuxt": "^0.11.3",
     "@popperjs/core": "^2.11.8",
     "@primevue/themes": "^4.5.4",
     "bootstrap": "^5.3.8",
     "flatpickr": "^4.6.13",
     "nuxt": "^4.3.1",
+    "pinia": "^3.0.4",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.4",
     "v-calendar": "^3.1.2",

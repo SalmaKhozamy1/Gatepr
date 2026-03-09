@@ -109,19 +109,19 @@ const handleLogout = () => {
     padding: 8px;
     min-width: 48px;
     min-height: 48px;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.70);
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .header-box:hover {
-    background-color: var(--light-primary-color);
+    background-color: color-mix(in srgb, var(--light-primary-color), transparent 85%);;
 }
 .header-box.active {
     background-color: var(--secondary-color);
+    color: #fff;
 }
-
 .dropdown-arrow {
     transition: transform 0.3s ease;
 }
@@ -204,4 +204,5 @@ const handleLogout = () => {
 .username {
     white-space: nowrap;
 }
+
 </style>
