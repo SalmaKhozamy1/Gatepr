@@ -84,7 +84,7 @@ const toggleLocale = () => {
     pointer-events: none;
 }
 .form-container  {
-    padding-inline: 15%;
+    padding-inline: clamp(20px, 6.8vw, 300px);
 }
 
 @media screen and (max-width: 767px) {
@@ -93,6 +93,9 @@ const toggleLocale = () => {
   }
   .form-container {
     padding-block: 40px;
+  }
+  .form-container  {
+    padding-inline: clamp(20px, 3vw, 300px);
   }
 }
 </style>

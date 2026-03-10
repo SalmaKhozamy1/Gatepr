@@ -5,7 +5,18 @@
     "en": "العربية"
   },
   "labels": {
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember Me",
+    "dontHaveAccount": "Don't have an account? "
+  },
+  "auth": {
+    "loginTitle": "Login"
+  },
+  "placeholders": {
+    "email": "Enter email address",
+    "password": "Enter password"
   },
   "buttons": {
     "confirm": "Confirm",
@@ -34,7 +45,7 @@
     "searching": "Searching...",
     "reset": "Reset",
     "showAllPosts": "Show All Posts",
-    "showAllBlogs": "Show All Blogs"
+    "forgotYourPassword": "Forgot password?"
   },
   "errors": {
     "pleaseKindlyTryAgain": "Please Kindly Try Again",

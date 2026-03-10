@@ -18,7 +18,7 @@
                     </div>
                     <nav class="navbar navbar-expand-lg navbar-dark">
                             <div class="user_info">
-                                <h3 class="title nowrap mb-2">{{ $t('labels.welcome') }}, {{ user?.name?.[locale] || user?.LocalizedName }} </h3>
+                                <h3 class="title nowrap mb-2">{{ $t('labels.welcome') }}, {{ adminInfo.name || 'Admin' }}</h3>
                                 <p class="nowrap">{{ currentDate }}</p>
                             </div>
                             <button 
@@ -54,7 +54,7 @@
             </div>
 </template>
 
-<script setup>
+<!-- <script setup>
 import { 
     IconsHome, 
     IconsSettings, 
@@ -63,6 +63,7 @@ import {
     IconsSuppliers, 
     IconsLogs 
 } from '#components'
+import { useAuthStore } from '~/stores/auth'
 
 const { locale, setLocale } = useI18n()
 
@@ -82,7 +83,8 @@ const toggleLocale = () => {
 const isMenuOpen = ref(false);
 const showChangePassword = ref(false);
 const route = useRoute();
-const user = useCookie('user');
+const authStore = useAuthStore();
+const user = computed(() => authStore.user);
 
 const menuItems = computed(() => [
     { title: 'الرئيسية', icon: IconsHome, path: '/admin/home' },
@@ -101,6 +103,59 @@ const handleNavClick = (item) => {
         navigateTo(item.path);
     }
 };
+</script> -->
+
+<script setup>
+import { 
+    IconsHome, 
+    IconsSettings, 
+    IconsBranches, 
+    IconsCategories, 
+    IconsSuppliers, 
+    IconsLogs 
+} from '#components'
+import { useApi } from '@/Composables/useApi'
+import { computed, ref } from 'vue'
+
+const { locale, setLocale } = useI18n()
+const isMenuOpen = ref(false)
+const showChangePassword = ref(false)
+const route = useRoute()
+
+const api = useApi()
+
+// 1️⃣ useAsyncData بدون await
+const { data: dashboardData, pending, error } = useAsyncData('dashboard', () =>
+    api('/admin/dashboard', { method: 'GET' })
+)
+
+// 2️⃣ admin_info reactive
+const adminInfo = computed(() => dashboardData.value?.data?.admin_info || {})
+
+// 3️⃣ التاريخ
+const currentDate = computed(() => adminInfo.value.date || new Intl.DateTimeFormat(
+    locale.value === 'ar' ? 'ar-EG' : 'en-US', 
+    { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+).format(new Date()))
+
+const toggleLocale = () => setLocale(locale.value === 'ar' ? 'en' : 'ar')
+
+// 4️⃣ القائمة
+const menuItems = computed(() => [
+    { title: 'الرئيسية', icon: IconsHome, path: '/admin/home' },
+    { title: 'الإعدادات', icon: IconsSettings, path: '/admin/settings' },
+    { title: 'الفروع', icon: IconsBranches, path: '/admin/branches' },
+    { title: 'الأصناف', icon: IconsCategories, path: '/admin/categories' },
+    { title: 'الموردين', icon: IconsSuppliers, path: '/admin/suppliers' },
+    { title: 'سجلات النظام', icon: IconsLogs, path: '/admin/logs' },
+].map(item => ({
+    ...item,
+    active: route.path.startsWith(item.path) || (item.path === '/admin/home' && route.path === '/admin')
+})))
+
+const handleNavClick = (item) => {
+    if (item.path) navigateTo(item.path)
+}
 </script>
 
 <style scoped>

@@ -5,7 +5,18 @@
     "en": "العربية"
   },
   "labels": {
-    "welcome": "مرحبا"
+    "welcome": "مرحبا",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "rememberMe": "تذكرني",
+    "dontHaveAccount": "ليس لدي حساب؟ "
+  },
+  "auth": {
+    "loginTitle": "تسجيل الدخول"
+  },
+  "placeholders": {
+    "email": "ادخل البريد الإلكتروني",
+    "password": "ادخل كلمة المرور"
   },
   "buttons": {
     "confirm": "تأكيد",
