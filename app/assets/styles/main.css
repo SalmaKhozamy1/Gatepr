@@ -496,6 +496,9 @@ html[dir="rtl"] [type="url"] {
   text-transform: capitalize;
   text-decoration: none;
 }
+.text {
+  color: var(--text-color);
+}
 .nowrap{
   white-space: nowrap;
 } 

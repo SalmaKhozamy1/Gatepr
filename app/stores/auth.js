@@ -1,20 +1,24 @@
-
 // stores/auth.js
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', () => {
-  const userCookie = useCookie('user', { watch: true, default: () => null })
-  const user = ref(userCookie.value)
+
+  const user = ref(null)
 
   const setUser = (userData) => {
     user.value = userData
-    userCookie.value = userData
   }
 
   const logout = () => {
+    const token = useCookie('token')
+
     user.value = null
-    userCookie.value = null
+    token.value = null
   }
 
-  return { user, setUser, logout }
+  return {
+    user,
+    setUser,
+    logout
+  }
 })

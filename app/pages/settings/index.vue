@@ -4,6 +4,6 @@
 </template>
 
 <script setup>
-  navigateTo('/admin/settings/governorates')
+  navigateTo('/settings/governorates')
 </script>
 

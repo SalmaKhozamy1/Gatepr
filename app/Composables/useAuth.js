@@ -32,11 +32,27 @@ export const useAuth = () => {
       loading.value = false
     }
   }
+  // 🔴 Logout
+  const logout = async () => {
+    try {
+      await api('/v1/admin/logout', {
+        method: 'POST'
+      })
+    } catch (err) {
+      console.error('Logout error:', err)
+    }
 
+    // حذف التوكين
+    token.value = null
+    user.value = null
+
+    router.push('/login/admin')
+  }
   return {
     user,
     loading,
     error,
-    login
+    login,
+    logout
   }
 }

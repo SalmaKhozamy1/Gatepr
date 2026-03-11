@@ -6,6 +6,7 @@
   >
     <div class="change-password-content">
       <InputsFormInput 
+        v-model="email"
         label="البريد الإلكتروني" 
         placeholder="ادخل البريد الإلكتروني" 
         class="required"
@@ -15,8 +16,8 @@
 
     <template #footer>
       <div class="flex-end gap-2 w-100">
-        <button class="custom-btn text-btn px-5" @click="show = false">إلغاء</button>
-        <button class="custom-btn secondary-btn px-5" @click="nextStep">التالي</button>
+        <button class="custom-btn text-btn min-btn-width" @click="show = false">إلغاء</button>
+        <button class="custom-btn secondary-btn min-btn-width" @click="sendCode">التالي</button>
       </div>
     </template>
   </ModalsAppModal>
@@ -24,12 +25,32 @@
 
 <script setup>
 import { IconsLock } from '#components'
+import { useApi } from '@/Composables/useApi'
 
+const api = useApi()
 const show = defineModel('show')
 
-const nextStep = () => {
-  console.log('Next step triggered')
-  // Add logic to proceed to OTP
+const email = ref('')
+const emit = defineEmits(['open-otp'])
+
+const sendCode = async () => {
+  try {
+    await api('/admin/forgot-password', {
+      method: 'POST',
+      body: {
+        email: email.value
+      }
+    })
+    console.log("emaile", email.value);
+    
+    emit('open-otp', email.value)
+
+    show.value = false
+
+  } catch (err) {
+    console.error(err)
+  }
 }
+
 </script>
 

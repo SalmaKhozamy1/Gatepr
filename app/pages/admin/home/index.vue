@@ -50,6 +50,5 @@ const { data: dashboardData, error} = await useAsyncData('dashboard', () =>
 )
 
 const dashboard = computed(() => dashboardData.value?.data)
-console.log("dashboardData", dashboardData)
 
 </script>
