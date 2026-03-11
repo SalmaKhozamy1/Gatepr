@@ -37,13 +37,14 @@
                                 id="navbarSupportedContent"
                             >
                                 <ul class="navbar-nav gap-xs custom-ul">
-                                    <li v-for="item in menuItems" :key="item.title" class="nav-item">
-                                        <HeaderItem 
-                                            :title="item.title" 
-                                            :icon="item.icon" 
-                                            :active="item.active" 
-                                            @click="handleNavClick(item)"
-                                        />
+                                    <li v-for="item in menuItems" :key="item.path" class="nav-item">
+                                        <NuxtLink :to="item.path" class="custom-anc">
+                                            <HeaderItem 
+                                                :title="item.title" 
+                                                :icon="item.icon" 
+                                                :active="item.active" 
+                                            />
+                                        </NuxtLink>
                                     </li>
                                 </ul>
                             </div>
@@ -64,65 +65,37 @@ import {
     IconsSuppliers, 
     IconsLogs 
 } from '#components'
-import { useLocale } from '@/composables/useLocale'
-import { useI18n } from 'vue-i18n'
-import { useApi } from '@/Composables/useApi'
-import { computed, ref } from 'vue'
 
-const { locale: i18nLocale, setLocale } = useI18n()
+const { locale } = useI18n()
 const { changeLocale } = useLocale()
-const loadingLocale = ref(false)
-
-// expose current locale for template usage
-const locale = computed(() => i18nLocale.value)
 
 const isMenuOpen = ref(false)
 const showChangePassword = ref(false)
 const showOtpModal = ref(false)
 const resetEmail = ref('')
 const route = useRoute()
-
 const api = useApi()
 
+// ✅ بسيط زي الـ login
 const toggleLocale = async () => {
-  try {
-    loadingLocale.value = true
-
-    // اختر اللغة الجديدة
-    const newLocale = i18nLocale.value === 'ar' ? 'en' : 'ar'
-
-    // 1️⃣ ارسل الطلب للسيرفر
-    const serverLocale = await changeLocale(newLocale)
-
-    // 2️⃣ حدث i18n
-    setLocale(serverLocale)
-
-    console.log('Locale updated to:', serverLocale)
-  } catch (err) {
-    console.error('Failed to change locale:', err)
-  } finally {
-    loadingLocale.value = false
-  }
+  const newLocale = locale.value === 'ar' ? 'en' : 'ar'
+  await changeLocale(newLocale)
 }
 
-// 1️⃣ useAsyncData بدون await
-const { data: dashboardData, pending, error } = useAsyncData('dashboard', () =>
+const { data: dashboardData } = useAsyncData('dashboard', () =>
     api('/admin/dashboard', { method: 'GET' })
 )
 
-// 2️⃣ admin_info reactive
 const adminInfo = computed(() => dashboardData.value?.data?.admin_info || {})
 
-// // 3️⃣ التاريخ
-// const currentDate = computed(() => adminInfo.value.date || new Intl.DateTimeFormat(
-//     locale.value === 'ar' ? 'ar-EG' : 'en-US', 
-//     { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
-// ).format(new Date()))
+const currentDate = computed(() => adminInfo.value.date || new Intl.DateTimeFormat(
+    locale.value === 'ar' ? 'ar-EG' : 'en-US', 
+    { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+).format(new Date()))
 
-// 4️⃣ القائمة
 const menuItems = computed(() => [
     { title: 'الرئيسية', icon: IconsHome, path: '/admin/home' },
-    { title: 'الإعدادات', icon: IconsSettings, path: '/admin/settings' },
+    { title: 'الإعدادات', icon: IconsSettings, path: '/settings' },
     { title: 'الفروع', icon: IconsBranches, path: '/admin/branches' },
     { title: 'الأصناف', icon: IconsCategories, path: '/admin/categories' },
     { title: 'الموردين', icon: IconsSuppliers, path: '/admin/suppliers' },
@@ -131,10 +104,6 @@ const menuItems = computed(() => [
     ...item,
     active: route.path.startsWith(item.path) || (item.path === '/admin/home' && route.path === '/admin')
 })))
-
-const handleNavClick = (item) => {
-    if (item.path) navigateTo(item.path)
-}
 
 const openOtp = (email) => {
     resetEmail.value = email

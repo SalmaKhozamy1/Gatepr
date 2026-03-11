@@ -46,7 +46,7 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
-import { useApi } from '@/Composables/useApi'
+import { useApi } from '~/composables/useApi'
 import { useAuthStore } from '~/stores/auth'
 definePageMeta({
   layout: 'auth'

@@ -20,12 +20,14 @@ export const useApi = () => {
         options.headers.Authorization = `Bearer ${token.value}`
       }
 
-      const csrfToken = document
-        .querySelector('meta[name="csrf-token"]')
-        ?.getAttribute('content')
+      if (import.meta.client) {
+        const csrfToken = useCookie('XSRF-TOKEN').value 
+          || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 
-      if (csrfToken) {
-        options.headers['X-CSRF-TOKEN'] = csrfToken
+        if (csrfToken) {
+          options.headers['X-CSRF-TOKEN'] = csrfToken
+          options.headers['X-XSRF-TOKEN'] = csrfToken
+        }
       }
 
       options.credentials = 'include'

@@ -104,8 +104,8 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
-import { useApi } from '@/Composables/useApi'
-import { useView } from '@/Composables/useView'
+import { useApi } from '~/composables/useApi'
+import { useView } from '~/composables/useView'
 import { IconsSettingsUsers } from '#components'
 
 const api = useApi()

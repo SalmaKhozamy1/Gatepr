@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useApi } from '@/Composables/useApi'
+import { useApi } from '~/composables/useApi'
 
 export const useView = () => {
 
@@ -10,7 +10,7 @@ export const useView = () => {
   const viewItem = async (endpoint, id) => {
     try {
       loading.value = true
-      const res = await api(`/admin/${endpoint}/${id}`)
+      const res = await api(`/v1/admin/${endpoint}/${id}`)
       return res.data
     } catch (error) {
       console.error(`Error fetching ${endpoint}:`, error)

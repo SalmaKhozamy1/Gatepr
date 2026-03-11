@@ -14,7 +14,7 @@ export const useAuth = () => {
     loading.value = true
     error.value = null
     try {
-      const response = await api('/v1/admin/login', {
+      const response = await api('/admin/login', {
         method: 'POST',
         body: { email, password }
       })
@@ -35,7 +35,7 @@ export const useAuth = () => {
   // 🔴 Logout
   const logout = async () => {
     try {
-      await api('/v1/admin/logout', {
+      await api('/admin/logout', {
         method: 'POST'
       })
     } catch (err) {

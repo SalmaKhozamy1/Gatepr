@@ -19,7 +19,7 @@
     >
       <template #body>
         <tr v-if="!loading && governorates.length === 0">
-          <td :colspan="headers.length" class="text-center">
+          <td :colspan="headers.length" class="text-center danger">
             لا توجد محافظات للعرض
           </td>
         </tr>
@@ -85,8 +85,8 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
-import { useApi } from '@/Composables/useApi'
-import { useView } from '@/Composables/useView'
+import { useApi } from '~/composables/useApi'
+import { useView } from '~/composables/useView'
 import { IconsGovernorates } from '#components' 
 
 const api = useApi()
@@ -154,7 +154,7 @@ const fetchGovernorates = async () => {
       per_page: perPage,
       ...(searchQuery.value && { search: searchQuery.value })
     })
-    const res = await api(`/admin/governorates?${params}`)
+    const res = await api(`/v1/admin/governorates?${params}`)
     governorates.value = res.data || []
     const meta = parseMeta(res.meta)
     totalPages.value = meta.lastPage
@@ -184,7 +184,7 @@ const handleView = async (id) => {
 const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api('/admin/governorates', {
+    await api('/v1/admin/governorates', {
       method: 'POST',
       body: data
     })
@@ -212,7 +212,7 @@ const handleEdit = (gov) => {
 const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/admin/governorates/${selectedEditGovernorate.value.id}`, {
+    await api(`/v1/admin/governorates/${selectedEditGovernorate.value.id}`, {
       method: 'PUT',
       body: data
     })
@@ -240,7 +240,7 @@ const handleDelete = (gov) => {
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/admin/governorates/${selectedDeleteGovernorate.value.id}`, {
+    await api(`/v1/admin/governorates/${selectedDeleteGovernorate.value.id}`, {
       method: 'DELETE'
     })
     close()             // ✅ هنا بعد نجاح الـ request

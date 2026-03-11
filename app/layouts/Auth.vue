@@ -14,7 +14,7 @@
             <button class="lang-btn" @click="toggleLocale">
               <IconsLang />
             </button>
-            <span class="lang-title flex-center">{{ locale === 'ar' ? 'ع' : 'E' }}</span>
+            <span class="lang-title flex-center">{{ currentLocale === 'ar' ? 'ع' : 'E' }}</span>
           </div>
           
           <div class="logo-area flex-grow-1 flex-center">
@@ -29,11 +29,11 @@
 </template>
 
 <script setup>
-const { locale, setLocale } = useI18n()
+  const { changeLocale, currentLocale } = useLocale()
 
-const toggleLocale = () => {
-  setLocale(locale.value === 'ar' ? 'en' : 'ar')
-}
+  const toggleLocale = async () => {
+    await changeLocale(currentLocale.value === 'ar' ? 'en' : 'ar')
+  }
 </script>
 
 <style scoped>
@@ -87,7 +87,7 @@ const toggleLocale = () => {
     padding-inline: clamp(20px, 6.8vw, 300px);
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 576px) {
   .branding-container {
     order: -1;
   }

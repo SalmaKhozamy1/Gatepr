@@ -349,9 +349,6 @@ html[dir="rtl"] [type="url"] {
 .secondary {
   color: var(--secondary-color) !important;
 }
-.third {
-    color: var(--third-color);
-}
 .white {
   color: var(--white-color);
 }
@@ -361,7 +358,7 @@ html[dir="rtl"] [type="url"] {
 .light-gray {
   color: var(--light-gray);
 }
-.red {
+.danger {
   color: var(--red) !important;
 }
 .green {

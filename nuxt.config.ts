@@ -27,7 +27,7 @@ export default defineNuxtConfig({
         lazy: true,
         detectBrowserLanguage: false,
     },
-  ]
+    ]
 ]
   ,
   app: {
@@ -44,7 +44,8 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: 'https://gate.roqay.dev/api/v1'
+      apiBase: 'https://gate.roqay.dev/api',
+      defaultLocale: 'ar' 
     }
   }
 })

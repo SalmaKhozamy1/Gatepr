@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useApi } from '@/Composables/useApi'
+import { useApi } from '~/composables/useApi'
 
 export const useOptions = () => {
   const api = useApi()

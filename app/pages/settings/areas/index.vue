@@ -86,8 +86,8 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
-import { useApi } from '@/Composables/useApi'
-import { useView } from '@/Composables/useView'
+import { useApi } from '~/composables/useApi'
+import { useView } from '~/composables/useView'
 import { IconsSettingsRegions } from '#components'
 
 const api = useApi()
@@ -161,7 +161,7 @@ const fetchAreas = async () => {
     if (searchQuery.value.trim()) {
       params.append('search', searchQuery.value.trim())
     }
-    const res = await api(`/admin/areas?${params}`)
+    const res = await api(`/v1/admin/areas?${params}`)
     areas.value = res.data || []
     const meta = parseMeta(res.meta)
     totalPages.value = meta.lastPage
@@ -191,7 +191,7 @@ const handleView = async (id) => {
 const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api('/admin/areas', {
+    await api('/v1/admin/areas', {
       method: 'POST',
       body: data
     })
@@ -218,7 +218,7 @@ const handleEdit = (area) => {
 const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/admin/areas/${selectedEditArea.value.id}`, {
+    await api(`/v1/admin/areas/${selectedEditArea.value.id}`, {
       method: 'PUT',
       body: data
     })
@@ -245,7 +245,7 @@ const handleDelete = (area) => {
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/admin/areas/${selectedDeleteArea.value.id}`, {
+    await api(`/v1/admin/areas/${selectedDeleteArea.value.id}`, {
       method: 'DELETE'
     })
     close()

@@ -11,6 +11,15 @@
     "rememberMe": "Remember Me",
     "dontHaveAccount": "Don't have an account? "
   },
+  "home": {
+    "overview": "Overview",
+    "branches": "Branches Count",
+    "pending_suppliers": "Pending Registration Requests",
+    "approved_suppliers": "Approved Suppliers",
+    "pending_items": "Pending Item Requests",
+    "accepted_items": "Accepted Item Requests",
+    "total_items": "Total Items"
+  },
   "auth": {
     "loginTitle": "Login"
   },

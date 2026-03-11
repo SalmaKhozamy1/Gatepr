@@ -25,7 +25,7 @@
 
 <script setup>
 import { IconsLock } from '#components'
-import { useApi } from '@/Composables/useApi'
+import { useApi } from '~/composables/useApi'
 
 const api = useApi()
 const show = defineModel('show')

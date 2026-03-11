@@ -62,7 +62,7 @@ const route = useRoute()
 
 const settingsMenu = [
   { title: 'المحافظات', icon: IconsGovernorates, path: '/settings/governorates', addTitle: 'محافظة' },
-  { title: 'المناطق', icon: IconsSettingsRegions, path: '/settings/regions', addTitle: 'منطقة' },
+  { title: 'المناطق', icon: IconsSettingsRegions, path: '/settings/areas', addTitle: 'منطقة' },
   { title: 'المستخدمين', icon: IconsSettingsUsers, path: '/settings/users', addTitle: 'مستخدم' },
   { title: 'الأدوار', icon: IconsSettingsRoles, path: '/settings/roles', addTitle: 'دور' },
   { title: 'أنواع الموردين', icon: IconsSuppliers, path: '/settings/supplier-types', addTitle: 'نوع مورد' },

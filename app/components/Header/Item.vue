@@ -57,7 +57,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useAuth } from '@/Composables/useAuth'
+import { useAuth } from '~/composables/useAuth'
 
 const { logout } = useAuth()
 const props = defineProps({

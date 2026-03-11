@@ -21,7 +21,7 @@
         </div>
 
         <!-- Headerless Close Button -->
-        <div v-else class="position-relative" style="min-height: 40px;">
+        <div v-if="closeBtn" class="position-relative" style="min-height: 40px;">
            <button type="button" class="btn-close position-absolute top-10 start-10 m-0 shadow-none border-0" @click="closeModal" aria-label="Close"></button>
         </div>
 
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Modal Footer -->
-        <div v-if="$slots.footer" class="modal-footer border-0 pt-0 d-flex gap-xs w-100 pb-3">
+        <div v-if="$slots.footer" class="modal-footer border-0 d-flex gap-xs w-100">
           <slot name="footer" />
         </div>
       </div>
@@ -47,6 +47,7 @@ const props = defineProps({
   title: { type: String, default: '' },
   icon: { type: [Object, Function, String], default: null },
   hasHeader: { type: Boolean, default: true },
+  closeBtn: { type: Boolean, default: false },
   width: { type: String, default: '540px' }
 })
 
@@ -91,6 +92,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.modal-dialog {
+  min-width: fit-content;
+}
 .modal-content {
   border-radius: var(--radius-md);
   background: linear-gradient(181deg, #FFF8EA 0.83%, #FFF 31.44%);
@@ -100,7 +104,14 @@ onUnmounted(() => {
 .modal-header {
   border-bottom: 1px solid #E2E5E9;
 }
-
+.modal-body {
+  padding-inline: 24px;
+  padding-top: 24px;
+}
+.modal-footer {
+  padding: 24px;
+  padding-top: 0px;
+}
 .modal-title {
   font-size: 18px;
   color: var(--primary-color);

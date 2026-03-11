@@ -35,7 +35,7 @@ const getValue = (key) => key.split('.').reduce((o, i) => o?.[i], props.data)
 .item_details {
   padding: 8px;
 }
-.item_details:hover {
+.item_details:nth-child(even) {
   background-color: var(--light-primary-color);
   border-radius: var(--radius-sm);
 }

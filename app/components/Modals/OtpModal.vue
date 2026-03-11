@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { useApi } from '@/Composables/useApi'
+import { useApi } from '~/composables/useApi'
 
 const api = useApi()
 const show = defineModel('show')

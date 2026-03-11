@@ -1,32 +1,32 @@
 <template>
     <CardsCustomCard title="نظرة عامة">
         <div class="grid grid-3">
-            <CardsStatisticsCard :CardNo="dashboard?.branches?.count" IconBg="#64CBF4" title="عدد الفروع">
+            <CardsStatisticsCard :CardNo="dashboard?.branches?.count" IconBg="#64CBF4" :title="t('home.branches')">
                <template #icon>
                 <IconsFillBranches />
                </template>
             </CardsStatisticsCard>
-            <CardsStatisticsCard :CardNo="dashboard?.pending_suppliers?.count" IconBg="#F0BA3E" title="طلبات التسجيل قيد الإنتظار">
+            <CardsStatisticsCard :CardNo="dashboard?.pending_suppliers?.count" IconBg="#F0BA3E" :title="t('home.pending_suppliers')">
                 <template #icon>
                     <IconsRegistrationPending />
                 </template>
             </CardsStatisticsCard>
-            <CardsStatisticsCard :CardNo="dashboard?.approved_suppliers?.count" IconBg="#408BFB" title="الموردين المقبولين">
+            <CardsStatisticsCard :CardNo="dashboard?.approved_suppliers?.count" IconBg="#408BFB" :title="t('home.approved_suppliers')">
                 <template #icon>
                     <IconsFillSuplliers />
                 </template>
             </CardsStatisticsCard>
-            <CardsStatisticsCard :CardNo="dashboard?.pending_items?.count" IconBg="#F3616A" title="طلبات الأصناف قيد الإنتظار">
+            <CardsStatisticsCard :CardNo="dashboard?.pending_items?.count" IconBg="#F3616A" :title="t('home.pending_items')">
                 <template #icon>    
                     <IconsRequestPending />
                 </template>
             </CardsStatisticsCard>
-            <CardsStatisticsCard :CardNo="dashboard?.accepted_items?.count" IconBg="#02C697" title="طلبات الأصناف المقبولة">
+            <CardsStatisticsCard :CardNo="dashboard?.accepted_items?.count" IconBg="#02C697" :title="t('home.accepted_items')">
                 <template #icon>
                     <IconsRequestApprove />
                 </template>
             </CardsStatisticsCard>
-            <CardsStatisticsCard :CardNo="dashboard?.total_items?.count" IconBg="#AF72FF" title="عدد الأصناف">
+            <CardsStatisticsCard :CardNo="dashboard?.total_items?.count" IconBg="#AF72FF" :title="t('home.total_items')">
                 <template #icon>
                     <IconsCategories />
                 </template>
@@ -36,19 +36,23 @@
 </template>
 
 <script setup>
-import { useApi } from '@/Composables/useApi'
+definePageMeta({
+  middleware: 'auth'
+});
+
 import { useAuthStore } from '@/stores/auth'
 
+const { t } = useI18n()
 const api = useApi()
-const authStore = useAuthStore();
-console.log(authStore.user)
+const dashboard = ref(null)
 
-const { data: dashboardData, error} = await useAsyncData('dashboard', () =>
-  api('/admin/dashboard', {
-    method: 'GET'
-  })
-)
-
-const dashboard = computed(() => dashboardData.value?.data)
-
+onMounted(async () => {
+  try {
+    const res = await api('/v1/admin/dashboard', { method: 'GET' }) 
+    console.log('res:', res)
+    dashboard.value = res.data
+  } catch (err) {
+    console.error('Dashboard error:', err)
+  }
+})
 </script>

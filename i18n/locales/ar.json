@@ -11,6 +11,15 @@
     "rememberMe": "تذكرني",
     "dontHaveAccount": "ليس لدي حساب؟ "
   },
+  "home": {
+    "overview": "نظرة عامة",
+    "branches": "عدد الفروع",
+    "pending_suppliers": "طلبات التسجيل قيد الإنتظار",
+    "approved_suppliers": "الموردين المقبولين",
+    "pending_items": "طلبات الأصناف قيد الإنتظار",
+    "accepted_items": "طلبات الأصناف المقبولة",
+    "total_items": "عدد الأصناف"
+  },
   "auth": {
     "loginTitle": "تسجيل الدخول"
   },

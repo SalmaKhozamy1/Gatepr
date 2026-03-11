@@ -46,10 +46,10 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
-import { useApi } from '@/Composables/useApi'
 import { useAuthStore } from '~/stores/auth'
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'guest'
 });
 
 const showPassword = ref(false);
@@ -83,7 +83,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
 
     //  بعد كده اعمل login
-    const response = await api('/admin/login', {
+    const response = await api('/v1/admin/login', {
       method: 'POST',
       body: {
         email: values.email,
