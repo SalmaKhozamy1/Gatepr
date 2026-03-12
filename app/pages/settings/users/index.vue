@@ -1,27 +1,13 @@
 <template>
   <div>
-   <Teleport to="#search-teleport-target">
+    <Teleport to="#search-teleport-target">
       <div class="flex-start gap-sm w-100 flex-wrap">
-        <div class="flex-grow-1 flex-start gap-sm">
-          <InputsFormInput
-            v-model="searchQuery"
-            placeholder="بحث عن منطقة .."
-          />
-          <!-- ✅ Filter بالمحافظة -->
-          <InputsFormSelect
-            v-model="selectedGovernorateFilter"
-            :options="governorateOptions"
-            placeholder="كل المحافظات"
-            @update:model-value="handleFilter(searchQuery)"
-          />
-        </div>
-        <div class="flex-start gap-sm">
-          <button class="custom-btn primary-btn min-btn-width fltr_btn" @click="handleFilter(searchQuery)">
-            <IconsSearch />
-            <span>بحث</span>
-          </button>
-          <ButtonsResetButton @reset="resetFilters" />
-        </div>
+        <SearchBar
+          placeholder="بحث عن مستخدم .."
+          :filters="searchFilters"
+          @filter="handleFilter"
+          @reset="resetFilters"
+        />
       </div>
     </Teleport>
 
@@ -64,7 +50,6 @@
     </TablesAppTable>
   </div>
 
-  <!-- View Modal -->
   <ModalsAppViewModal
     v-model="showViewModal"
     title="عرض مستخدم"
@@ -73,7 +58,6 @@
     :icon="IconsSettingsUsers"
   />
 
-  <!-- Add Modal -->
   <ModalsAppAddModal
     v-model="showAddModal"
     title="إضافة مستخدم"
@@ -82,7 +66,6 @@
     @submit="handleAddSubmit"
   />
 
-  <!-- Edit Modal -->
   <ModalsAppEditModal
     v-model="showEditModal"
     title="تعديل مستخدم"
@@ -92,7 +75,6 @@
     @submit="handleEditSubmit"
   />
 
-  <!-- Delete Modal -->
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
     title="حذف المستخدم"
@@ -103,7 +85,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsSettingsUsers } from '#components'
@@ -115,7 +97,10 @@ const { viewItem, loading: viewLoading } = useView()
    STATE
 ============================== */
 const searchQuery = ref('')
+const branchFilter = ref(null)
 const users = ref([])
+const roleOptions = ref([])
+const branchOptions = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const perPage = 15
@@ -143,32 +128,64 @@ const userViewFields = [
   { label: 'اسم المستخدم باللغة العربية', key: 'name.ar' },
   { label: 'اسم المستخدم باللغة الإنجليزية', key: 'name.en' },
   { label: 'البريد الإلكتروني', key: 'email' },
-  { label: 'كلمة المرور', key: 'password' },
   { label: 'الهاتف', key: 'phone' },
   { label: 'الدور', key: 'role.name' },
   { label: 'الفرع', key: 'branches' },
 ]
 
-const userFormFields = [
-  { key: 'name.ar', label: 'اسم المستخدم باللغة العربية ', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'الاسم بالإنجليزي', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
+const userFormFields = computed(() => [
+  { key: 'name.ar', label: 'اسم المستخدم باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
+  { key: 'name.en', label: 'اسم المستخدم باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
   { key: 'email', label: 'البريد الإلكتروني', placeholder: 'example@email.com', type: 'email' },
   { key: 'phone', label: 'الهاتف', placeholder: '96512345678', type: 'tel' },
-   { key: 'password', label: 'كلمة المرور ', placeholder: 'اتركه فارغاً إن لم تريد التغيير', type: 'password' },
-  { key: 'role_id', label: 'الأدوار', placeholder: 'ادخل رقم الدور', type: 'number' },
-  { key: 'branches', label: 'الفروع', placeholder: 'ادخل رقم الفرع', type: 'number' },
-] 
+  { key: 'password', label: 'كلمة المرور', placeholder: 'ادخل كلمة المرور', type: 'password' },
+  {
+    key: 'role_id',
+    label: 'الدور',
+    type: 'select',
+    placeholder: 'اختر الدور',
+    options: roleOptions.value
+  },
+  {
+    key: 'branch_ids',
+    label: 'الفروع',
+    type: 'multi-select',
+    options: branchOptions.value
+  },
+])
 
-// Edit بدون password - اختياري
-const userEditFields = [
-  { key: 'name.ar', label: 'اسم المستخدم باللغة الإنجليزية ', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'اسم المستخدم باللغة الإنجليزية ', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
+const userEditFields = computed(() => [
+  { key: 'name.ar', label: 'اسم المستخدم باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
+  { key: 'name.en', label: 'اسم المستخدم باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
   { key: 'email', label: 'البريد الإلكتروني', placeholder: 'example@email.com', type: 'email' },
   { key: 'phone', label: 'الهاتف', placeholder: '96512345678', type: 'tel' },
-  { key: 'password', label: 'كلمة المرور ', placeholder: 'اتركه فارغاً إن لم تريد التغيير', type: 'password' },
-  { key: 'role_id', label: 'الأدوار', placeholder: 'ادخل رقم الدور', type: 'number' },
-  { key: 'branches', label: 'الفروع', placeholder: 'ادخل رقم الفرع', type: 'number' },
-]
+  { key: 'password', label: 'كلمة المرور الجديدة', placeholder: 'اتركه فارغاً إن لم تريد التغيير', type: 'password' },
+  {
+    key: 'role_id',
+    label: 'الدور',
+    type: 'select',
+    placeholder: 'اختر الدور',
+    options: roleOptions.value
+  },
+  {
+    key: 'branch_id',
+    label: 'الفروع',
+    type: 'multi-select',
+    placeholder: 'اختر الفرع',
+    options: branchOptions.value
+  },
+])
+
+// ✅ بيظهر select الفروع بس لو الـ API شغالة
+const searchFilters = computed(() =>
+  branchOptions.value.length ? [
+    {
+      key: 'branch_id',
+      placeholder: 'كل الفروع',
+      options: branchOptions.value
+    }
+  ] : []
+)
 
 /* =============================
    HELPER
@@ -187,7 +204,39 @@ const parseMeta = (meta = {}) => {
 }
 
 /* =============================
-   FETCH DATA
+   FETCH ROLES
+============================== */
+const fetchRoles = async () => {
+  try {
+    const res = await api('/v1/admin/roles?per_page=100')
+    roleOptions.value = (res.data || []).map(item => ({
+      label: item.name,
+      value: item.id
+    }))
+  } catch (err) {
+    console.error('Error fetching roles:', err)
+    roleOptions.value = []
+  }
+}
+
+/* =============================
+   FETCH BRANCHES
+============================== */
+const fetchBranches = async () => {
+  try {
+    const res = await api('/v1/admin/branches')
+    branchOptions.value = (res.data || []).map(item => ({
+      label: item.name?.ar,
+      value: item.id
+    }))
+  } catch (err) {
+    console.error('Error fetching branches - skipping:', err)
+    branchOptions.value = []
+  }
+}
+
+/* =============================
+   FETCH USERS
 ============================== */
 const fetchUsers = async () => {
   try {
@@ -197,10 +246,10 @@ const fetchUsers = async () => {
       per_page: perPage,
       sort: 'created_at',
     })
-    if (searchQuery.value.trim()) {
-      params.append('search', searchQuery.value.trim())
-    }
-    const res = await api(`/admin/users?${params}`)
+    if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim())
+    if (branchFilter.value) params.append('branch_id', branchFilter.value)
+
+    const res = await api(`/v1/admin/users?${params}`)
     users.value = res.data || []
     const meta = parseMeta(res.meta)
     totalPages.value = meta.lastPage
@@ -230,11 +279,11 @@ const handleView = async (id) => {
 const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api('/admin/users', {
+    await api('/v1/admin/users', {
       method: 'POST',
       body: {
         ...data,
-        branch_ids: [],   // ✅ required في الـ API
+        branch_ids: data.branch_ids?.length ? data.branch_ids : []
       }
     })
     close()
@@ -260,11 +309,12 @@ const handleEdit = (user) => {
 const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    // شيل الـ password لو فاضي
-    const body = { ...data, branch_ids: [] }
+    const body = { ...data,
+       branch_ids: data.branch_ids.length ? data.branch_ids : [] 
+     }
     if (!body.password) delete body.password
 
-    await api(`/admin/users/${selectedEditUser.value.id}`, {
+    await api(`/v1/admin/users/${selectedEditUser.value.id}`, {
       method: 'PUT',
       body
     })
@@ -291,9 +341,7 @@ const handleDelete = (user) => {
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/admin/users/${selectedDeleteUser.value.id}`, {
-      method: 'DELETE'
-    })
+    await api(`/v1/admin/users/${selectedDeleteUser.value.id}`, { method: 'DELETE' })
     close()
     fetchUsers()
   } catch (err) {
@@ -315,14 +363,16 @@ const handlePageChange = (page) => {
 /* =============================
    SEARCH & FILTER
 ============================== */
-const handleFilter = (query) => {
-  searchQuery.value = query
+const handleFilter = ({ search, branch_id } = {}) => {
+  searchQuery.value = search ?? ''
+  branchFilter.value = branch_id || null
   currentPage.value = 1
   fetchUsers()
 }
 
 const resetFilters = () => {
   searchQuery.value = ''
+  branchFilter.value = null
   currentPage.value = 1
   fetchUsers()
 }
@@ -339,10 +389,10 @@ const unregisterAddModal = inject('unregisterAddModal')
 watch(currentPage, () => fetchUsers())
 
 onMounted(() => {
-  fetchUsers()
-  registerAddModal?.(() => {
-    showAddModal.value = true
-  })
+  fetchUsers().catch(console.error)
+  fetchRoles().catch(console.error)
+  fetchBranches().catch(console.error)
+  registerAddModal?.(() => { showAddModal.value = true })
 })
 
 onBeforeUnmount(() => {

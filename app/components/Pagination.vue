@@ -101,19 +101,23 @@ const pages = computed(() => {
     padding-inline: 10px;
     gap: 3px;
 }
-.pagination_ul .page-link {
+.pagination_ul .page-link ,
+.pagination_ul .page-link:focus {
     border-radius: var(--radius-sm);
     padding: 10px 16px;
     border: 0px;
+    box-shadow: none;
+    outline: none;
+}
+.pagination_ul .page-item:hover .page-link {
+    background-color: var(--light-secondary-color) !important;
+    color: var(--text-color);
 }
 .pagination_ul .page-item.active .page-link {
     background-color: var(--secondary-color) !important;
     color: #fff !important;
     box-shadow: none;
-}
-.pagination_ul .page-item:hover .page-link {
-    background-color: var(--light-secondary-color);
-    color: var(--text-color);
+    outline: none;
 }
 .page-item.disabled .page-link {
     pointer-events: none;

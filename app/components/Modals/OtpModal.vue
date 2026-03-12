@@ -35,6 +35,7 @@
 </template>
 
 <script setup>
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 
 const api = useApi()
@@ -42,46 +43,36 @@ const show = defineModel('show')
 const email = defineModel('email')
 const emit = defineEmits(['open-reset-password'])
 const otp = ref(['', '', '', '', '', ''])
+const otpInputs = ref([])  
 const timeLeft = ref(59)
+let timerInterval = null    
 
 const otpCode = computed(() => otp.value.join(''))
 
 /* ======================
    INPUT HANDLING
 ====================== */
-
 const handleInput = (index) => {
-
-  otp.value[index] = otp.value[index].replace(/[^0-9]/g,'')
-
-  if(otp.value[index] && index < 5){
-    otpInputs.value[index+1].focus()
+  otp.value[index] = otp.value[index].replace(/[^0-9]/g, '')
+  if (otp.value[index] && index < 5) {
+    otpInputs.value[index + 1].focus()
   }
-
 }
 
-const handleKeydown = (event,index) => {
-
-  if(event.key === 'Backspace' && !otp.value[index] && index > 0){
-    otpInputs.value[index-1].focus()
+const handleKeydown = (event, index) => {
+  if (event.key === 'Backspace' && !otp.value[index] && index > 0) {
+    otpInputs.value[index - 1].focus()
   }
-
 }
 
 const handlePaste = (event) => {
-
-  const paste = event.clipboardData.getData('text').replace(/\D/g,'')
-
-  if(paste.length === 6){
-
+  const paste = event.clipboardData.getData('text').replace(/\D/g, '')
+  if (paste.length === 6) {
     otp.value = paste.split('')
-
-    nextTick(()=>{
+    nextTick(() => {
       otpInputs.value[5].focus()
     })
-
   }
-
 }
 
 /* ======================
@@ -89,7 +80,6 @@ const handlePaste = (event) => {
 ====================== */
 const submitOtp = async () => {
   try {
-
     await api('/admin/verify-code', {
       method: 'POST',
       body: {
@@ -97,49 +87,46 @@ const submitOtp = async () => {
         code: otpCode.value
       }
     })
-
-    console.log('OTP verified')
-
     show.value = false
-
     emit('open-reset-password', {
       email: email.value,
       code: otpCode.value
     })
-
   } catch (err) {
     console.error('Invalid code')
   }
 }
+
 const resendCode = async () => {
   try {
     await api('/admin/resend-code', {
       method: 'POST',
-      body: {
-        email: email.value
-      }
+      body: { email: email.value }
     })
-
     startTimer()
-
   } catch (err) {
     console.error(err)
   }
 }
-const startTimer = () => {
-  timeLeft.value = 59
 
-  const timer = setInterval(() => {
+const startTimer = () => {
+  clearInterval(timerInterval)    
+  timeLeft.value = 59
+  timerInterval = setInterval(() => {
     if (timeLeft.value > 0) {
       timeLeft.value--
     } else {
-      clearInterval(timer)
+      clearInterval(timerInterval)
     }
   }, 1000)
 }
 
 onMounted(() => {
   startTimer()
+})
+
+onBeforeUnmount(() => {
+  clearInterval(timerInterval)     // ✅ نظف لما الـ component يتشال
 })
 </script>
 
@@ -169,5 +156,12 @@ onMounted(() => {
 
 .timer {
   font-weight: 500;
+}
+.custom-anc.secondary {
+  border: 0px;
+  background-color: transparent;
+}
+.custom-anc.secondary:disabled {
+  cursor: not-allowed;
 }
 </style>

@@ -249,12 +249,13 @@ label.form-label {
 }
 input.form-control,
 select.form-control,
-select.form-select {
-  border-radius: var(--radius-sm);
-  padding: var(--form-control-padding);
-  border: 1px solid #d5d7da;
-  background-color: #fff;
-  line-height: unset;
+select.form-select,
+.p-multiselect {
+  border-radius: var(--radius-sm) !important;
+  padding: var(--form-control-padding) !important;
+  border: 1px solid #d5d7da !important;
+  background-color: #fff !important;
+  line-height: unset !important;
 }
 select.form-control:disabled,
 select.form-select:disabled {
@@ -263,7 +264,8 @@ select.form-select:disabled {
   color: red;
 }
 .form-control:focus,
-.form-select:focus {
+.form-select:focus,
+.custom-multiselect:focus {
   background-color: #f8f9fa !important;
   box-shadow: none !important;
   border: 1px solid var(--secondary-color) !important;
@@ -519,6 +521,42 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   pointer-events: none;
 }
 
+/* PrimeVue 4 overlay fix */
+.p-multiselect-overlay {
+  z-index: 9999 !important;
+  font-family: inherit;
+  direction: rtl;
+  background-color: #fff !important;
+}
+
+.p-multiselect-overlay .p-multiselect-option {
+  font-size: var(--size-sm);
+  direction: rtl;
+  padding: 8px 12px;
+}
+
+.p-multiselect-overlay .p-multiselect-option.p-selected {
+  background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  color: var(--primary-color);
+}
+
+.p-multiselect-overlay .p-multiselect-option:hover {
+  background-color: var(--light-primary-color, #f0f4ff);
+}
+
+.p-multiselect-overlay .p-checkbox .p-checkbox-box {
+  border-color: var(--primary-color);
+}
+
+.p-multiselect-overlay .p-checkbox.p-highlight .p-checkbox-box {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.p-multiselect-filter {
+  font-family: inherit;
+  direction: rtl;
+}
 @media screen and (max-width: 991.98px) {
   .navbar-nav {
     width: 100% !important;

@@ -35,7 +35,7 @@ export const useAuth = () => {
   // 🔴 Logout
   const logout = async () => {
     try {
-      await api('/admin/logout', {
+      await api('/v1/admin/logout', {
         method: 'POST'
       })
     } catch (err) {

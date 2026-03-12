@@ -92,9 +92,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.modal-dialog {
-  min-width: fit-content;
-}
 .modal-content {
   border-radius: var(--radius-md);
   background: linear-gradient(181deg, #FFF8EA 0.83%, #FFF 31.44%);

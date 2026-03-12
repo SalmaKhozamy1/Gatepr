@@ -35,7 +35,7 @@ const emit = defineEmits(['open-otp'])
 
 const sendCode = async () => {
   try {
-    await api('/admin/forgot-password', {
+    await api('/v1/admin/forgot-password', {
       method: 'POST',
       body: {
         email: email.value

@@ -67,8 +67,8 @@ const settingsMenu = [
   { title: 'الأدوار', icon: IconsSettingsRoles, path: '/settings/roles', addTitle: 'دور' },
   { title: 'أنواع الموردين', icon: IconsSuppliers, path: '/settings/supplier-types', addTitle: 'نوع مورد' },
   { title: 'التصنيفات', icon: IconsCategories, path: '/settings/categories', addTitle: 'تصنيف' },
-  { title: 'وحدات الشراء', icon: IconsUnits, path: '/settings/purchase-units', addTitle: 'وحدة شراء' },
-  { title: 'أنواع الإستلام', icon: IconsReceiveType, path: '/settings/reception-types', addTitle: 'نوع استلام' },
+  { title: 'وحدات الشراء', icon: IconsUnits, path: '/settings/purchasing-units', addTitle: 'وحدة شراء' },
+  { title: 'أنواع الإستلام', icon: IconsReceiveType, path: '/settings/receipt-types', addTitle: 'نوع استلام' },
   { title: 'الشروط والأحكام', icon: IconsTerms, path: '/settings/terms', addTitle: 'شرط' },
 ]
 

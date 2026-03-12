@@ -3,8 +3,7 @@
     <Teleport to="#search-teleport-target">
       <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن منطقة .."
-          :filters="searchFilters"
+          placeholder="بحث عن تصنيف .."
           @filter="handleFilter"
           @reset="resetFilters"
         />
@@ -19,25 +18,25 @@
       @update:current-page="handlePageChange"
     >
       <template #body>
-        <tr v-if="!loading && areas.length === 0">
+        <tr v-if="!loading && categories.length === 0">
           <td :colspan="headers.length" class="text-center">
-            لا توجد مناطق للعرض
+            لا توجد تصنيفات للعرض
           </td>
         </tr>
 
-        <tr v-for="area in areas" :key="area.id">
-          <th class="index-cell">{{ area.id }}</th>
-          <td>{{ area.name?.ar }}</td>
-          <td>{{ area.governorate?.name || '—' }}</td>
+        <tr v-for="category in categories" :key="category.id">
+          <th class="index-cell">{{ category.id }}</th>
+          <td>{{ category.name?.ar }}</td>
+          <td>{{ category.code }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(area.id)" :disabled="viewLoading">
+              <button class="action-btn view" title="عرض" @click="handleView(category.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(area)">
+              <button class="action-btn edit" title="تعديل" @click="handleEdit(category)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(area)">
+              <button class="action-btn delete" title="حذف" @click="handleDelete(category)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -49,43 +48,43 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض منطقة"
-    :data="selectedArea"
-    :fields="areaViewFields"
-    :icon="IconsSettingsRegions"
+    title="عرض تصنيف"
+    :data="selectedCategory"
+    :fields="categoryViewFields"
+    :icon="IconsCategories"
   />
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة منطقة"
-    :icon="IconsSettingsRegions"
-    :fields="areaFormFields"
+    title="إضافة تصنيف"
+    :icon="IconsCategories"
+    :fields="categoryFormFields"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل منطقة"
-    :icon="IconsSettingsRegions"
-    :fields="areaFormFields"
-    :initial-data="selectedEditArea"
+    title="تعديل تصنيف"
+    :icon="IconsCategories"
+    :fields="categoryFormFields"
+    :initial-data="selectedEditCategory"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف المنطقة"
-    itemType="منطقة"
-    :itemName="selectedDeleteArea?.name?.ar"
+    title="حذف التصنيف"
+    itemType="تصنيف"
+    :itemName="selectedDeleteCategory?.name?.ar"
     @confirm="handleDeleteConfirm"
   />
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
-import { IconsSettingsRegions } from '#components'
+import { IconsCategories } from '#components'
 
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
@@ -94,56 +93,38 @@ const { viewItem, loading: viewLoading } = useView()
    STATE
 ============================== */
 const searchQuery = ref('')
-const governorateFilter = ref(null)   // ✅ filter المحافظة
-const governorateOptions = ref([])    // ✅ options للـ select
-const areas = ref([])
+const categories = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const perPage = 15
 const loading = ref(false)
 
 const showViewModal = ref(false)
-const selectedArea = ref(null)
+const selectedCategory = ref(null)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
-const selectedEditArea = ref(null)
+const selectedEditCategory = ref(null)
 const showDeleteModal = ref(false)
-const selectedDeleteArea = ref(null)
+const selectedDeleteCategory = ref(null)
 
 const headers = [
   { label: '#', class: 'index-cell' },
-  { label: 'اسم المنطقة', class: '' },
-  { label: 'اسم المحافظة', class: '' },
+  { label: 'اسم التصنيف', class: '' },
+  { label: 'الكود', class: '' },
   { label: 'الإجراءات', class: 'actions-cell' }
 ]
 
-const areaViewFields = [
-  { label: 'اسم المنطقة بالعربي', key: 'name.ar' },
-  { label: 'اسم المنطقة بالإنجليزي', key: 'name.en' },
-  { label: 'المحافظة', key: 'governorate.name' },
+const categoryViewFields = [
+  { label: 'اسم التصنيف باللغة العربية', key: 'name.ar' },
+  { label: 'اسم التصنيف باللغة الإنجليزية', key: 'name.en' },
+  { label: 'الكود', key: 'code' },
 ]
 
-// ✅ computed عشان الـ options تتحدث تلقائي
-const areaFormFields = computed(() => [
-  { key: 'name.ar', label: 'اسم المنطقة بالعربي', placeholder: 'ادخل اسم المنطقة باللغة العربية' },
-  { key: 'name.en', label: 'اسم المنطقة بالإنجليزي', placeholder: 'ادخل اسم المنطقة باللغة الإنجليزية' },
-  {
-    key: 'governorate_id',
-    label: 'المحافظة',
-    type: 'select',
-    placeholder: 'اختر المحافظة',
-    options: governorateOptions.value
-  },
-])
-
-// ✅ searchFilters للـ SearchBar
-const searchFilters = computed(() => [
-  {
-    key: 'governorate_id',
-    placeholder: 'كل المحافظات',
-    options: governorateOptions.value
-  }
-])
+const categoryFormFields = [
+  { key: 'name.ar', label: 'اسم التصنيف باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
+  { key: 'name.en', label: 'اسم التصنيف باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
+  { key: 'code', label: 'كود التصنيف', placeholder: 'ادخل الكود', type: 'number' },
+]
 
 /* =============================
    HELPER
@@ -162,43 +143,26 @@ const parseMeta = (meta = {}) => {
 }
 
 /* =============================
-   FETCH GOVERNORATES للـ select
+   FETCH DATA
 ============================== */
-const fetchGovernorates = async () => {
-  try {
-    const res = await api('/v1/admin/governorates?per_page=100')
-    governorateOptions.value = (res.data || []).map(item => ({
-      label: item.name?.ar,
-      value: item.id
-    }))
-  } catch (err) {
-    console.error('Error fetching governorates:', err)
-  }
-}
-
-/* =============================
-   FETCH AREAS
-============================== */
-const fetchAreas = async () => {
+const fetchCategories = async () => {
   try {
     loading.value = true
     const params = new URLSearchParams({
       page: currentPage.value,
       per_page: perPage,
       sort: 'created_at',
-      with: 'governorate',
     })
     if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim())
-    if (governorateFilter.value) params.append('governorate_id', governorateFilter.value)
 
-    const res = await api(`/v1/admin/areas?${params}`)
-    areas.value = res.data || []
+    const res = await api(`/v1/admin/categories?${params}`)
+    categories.value = res.data || []
     const meta = parseMeta(res.meta)
     totalPages.value = meta.lastPage
     if (currentPage.value > meta.lastPage) currentPage.value = 1
   } catch (err) {
-    console.error('Error fetching areas:', err)
-    areas.value = []
+    console.error('Error fetching categories:', err)
+    categories.value = []
     totalPages.value = 1
   } finally {
     loading.value = false
@@ -210,20 +174,26 @@ const fetchAreas = async () => {
 ============================== */
 const handleView = async (id) => {
   try {
-    const data = await viewItem('areas', id)
-    selectedArea.value = data
+    const data = await viewItem('categories', id)
+    selectedCategory.value = data
     showViewModal.value = true
   } catch (err) {
-    console.error('Error viewing area:', err)
+    console.error('Error viewing category:', err)
   }
 }
 
 const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api('/v1/admin/areas', { method: 'POST', body: data })
+    await api('/v1/admin/categories', {
+      method: 'POST',
+      body: {
+        ...data,
+        code: Number(data.code)   // ✅ API بتتوقع number
+      }
+    })
     close()
-    fetchAreas()
+    fetchCategories()
   } catch (err) {
     if (err?.data?.errors) {
       const apiErrors = {}
@@ -237,17 +207,24 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   }
 }
 
-const handleEdit = (area) => {
-  selectedEditArea.value = area
+const handleEdit = (category) => {
+  selectedEditCategory.value = category
   showEditModal.value = true
 }
 
 const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/v1/admin/areas/${selectedEditArea.value.id}`, { method: 'PUT', body: data })
+    await api(`/v1/admin/categories/${selectedEditCategory.value.id}`, {
+      method: 'PUT',
+      body: {
+        ...data,
+        code: Number(data.code),             // ✅ number
+        category_id: selectedEditCategory.value.id  // ✅ required في الـ PUT
+      }
+    })
     close()
-    fetchAreas()
+    fetchCategories()
   } catch (err) {
     if (err?.data?.errors) {
       const apiErrors = {}
@@ -261,19 +238,21 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   }
 }
 
-const handleDelete = (area) => {
-  selectedDeleteArea.value = area
+const handleDelete = (category) => {
+  selectedDeleteCategory.value = category
   showDeleteModal.value = true
 }
 
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
-    await api(`/v1/admin/areas/${selectedDeleteArea.value.id}`, { method: 'DELETE' })
+    await api(`/v1/admin/categories/${selectedDeleteCategory.value.id}`, {
+      method: 'DELETE'
+    })
     close()
-    fetchAreas()
+    fetchCategories()
   } catch (err) {
-    console.error('Error deleting area:', err)
+    console.error('Error deleting category:', err)
   } finally {
     setLoading(false)
   }
@@ -291,18 +270,16 @@ const handlePageChange = (page) => {
 /* =============================
    SEARCH & FILTER
 ============================== */
-const handleFilter = ({ search, governorate_id }) => {
-  searchQuery.value = search
-  governorateFilter.value = governorate_id || null
+const handleFilter = ({ search } = {}) => {
+  searchQuery.value = search ?? ''
   currentPage.value = 1
-  fetchAreas()
+  fetchCategories()
 }
 
 const resetFilters = () => {
   searchQuery.value = ''
-  governorateFilter.value = null
   currentPage.value = 1
-  fetchAreas()
+  fetchCategories()
 }
 
 /* =============================
@@ -314,11 +291,10 @@ const unregisterAddModal = inject('unregisterAddModal')
 /* =============================
    WATCHERS & LIFECYCLE
 ============================== */
-watch(currentPage, () => fetchAreas())
+watch(currentPage, () => fetchCategories())
 
 onMounted(() => {
-  fetchAreas()
-  fetchGovernorates()   // ✅ جلب المحافظات للـ select
+  fetchCategories()
   registerAddModal?.(() => { showAddModal.value = true })
 })
 
@@ -326,4 +302,3 @@ onBeforeUnmount(() => {
   unregisterAddModal?.()
 })
 </script>
-

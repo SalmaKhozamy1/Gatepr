@@ -1,13 +1,17 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
     '@pinia/nuxt',
+    ['@primevue/nuxt-module', {    // ✅ حط الـ options جوه الـ module مباشرة
+      options: {
+        ripple: true
+      }
+    }],
     [
-    "@nuxtjs/i18n", 
-    {
-      defaultLocale: "ar",
+      "@nuxtjs/i18n",
+      {
+        defaultLocale: "ar",
         locales: [
           {
             name: "English",
@@ -26,10 +30,9 @@ export default defineNuxtConfig({
         ],
         lazy: true,
         detectBrowserLanguage: false,
-    },
+      },
     ]
-]
-  ,
+  ],
   app: {
     head: {
       link: [
@@ -45,8 +48,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: 'https://gate.roqay.dev/api',
-      defaultLocale: 'ar' 
+      defaultLocale: 'ar'
     }
   }
 })
-
