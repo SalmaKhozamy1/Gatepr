@@ -1,5 +1,5 @@
 <template>
-    <div class="layout" dir="rtl">
+    <div class="layout">
         <HeaderMainHeader />
         
         <main class="content-layout">
@@ -16,4 +16,5 @@
     position: relative;
     top: -56px;
 }
+
 </style>

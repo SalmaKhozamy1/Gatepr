@@ -3,6 +3,7 @@
     :model-value="modelValue"
     :title="title"
     :icon="icon"
+    :close-on-backdrop="false"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <div class="grid grid-2 gap-sm">

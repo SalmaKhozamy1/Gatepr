@@ -1,43 +1,39 @@
 <template>
-  <div class="form-group">
-    <label v-if="label" class="form-label">{{ label }}</label>
+  <div class="form-group custom-datepicker">
+    <label v-if="label" class="form-label ms-1 fs-14 fw-medium text-dark-blue">{{ label }}</label>
     <div class="input-wrapper position-relative">
-      <client-only>
-        <flat-pickr
-          v-model="date"
-          :config="config"
-          class="form-control"
-          :class="{ 'is-invalid': error }"
-          :placeholder="placeholder"
-        />
-      </client-only>
-      <div class="calendar-icon">
-        <IconsCalander />
-      </div>
+      <DatePicker
+        v-model="date"
+        :dateFormat="dateFormat"
+        :placeholder="placeholder"
+        :class="{ 'p-invalid': error }"
+        fluid
+        showIcon
+        iconDisplay="input"
+      >
+        <template #inputicon>
+          <IconsCalander class="p-datepicker-filter-icon calendar-custom-icon" />
+        </template>
+      </DatePicker>
     </div>
-    <span v-if="error" class="error d-block">{{ error }}</span>
+    <span v-if="error" class="error d-block fs-13 mt-1 text-danger">{{ error }}</span>
   </div>
 </template>
 
 <script setup>
-import flatPickr from 'vue-flatpickr-component';
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   label: { type: String, default: '' },
-  modelValue: { type: [String, Date], default: null },
-  placeholder: { type: String, default: 'اختر' },
-  error: { type: String, default: '' }
+  modelValue: { type: [String, Date, Array], default: null },
+  placeholder: { type: String, default: 'YYYY-MM-DD' },
+  error: { type: String, default: '' },
+  dateFormat: { type: String, default: 'yy-mm-dd' }
 })
 
 const emit = defineEmits(['update:modelValue'])
-const date = ref(props.modelValue)
 
-const config = ref({
-  disableMobile: "true",
-  dateFormat: 'Y-m-d',
-  allowInput: true
-})
+const date = ref(props.modelValue)
 
 watch(() => props.modelValue, (newVal) => {
   date.value = newVal
@@ -48,101 +44,121 @@ watch(date, (newVal) => {
 })
 </script>
 
-<style>
-
-.calendar-icon {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  inset-inline-end: var(--form-control-padding);
-  pointer-events: none;
-  color: var(--placeholder);
-}
-.input-icon ,
-.flat_picker_icon {
-  position: absolute;
-  top: 21px;
-  inset-inline-end: 12px;
-  transform: translate(0px, -50%);
-  color: var(--secondery-color);
-  height: max-content;
+<style scoped>
+/* Main Wrapper Styling */
+.custom-datepicker :deep(.p-datepicker) {
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #eef0f2;
+  font-family: 'Tajawal', sans-serif;
+  overflow: hidden;
 }
 
-/* header */
-.flatpickr-months {
-  background-color: var(--secondary-color);
-  padding: 5px 8px;
+/* Input Field Styling */
+.custom-datepicker :deep(.p-inputtext) {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  font-size: 15px;
+  background-color: #fff;
+  transition: all 0.25s ease;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.custom-datepicker :deep(.p-inputtext:focus) {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(var(--secondary-color-rgb), 0.15);
+  outline: none;
+}
+
+.custom-datepicker :deep(.p-inputtext.p-invalid) {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+/* Header Styling */
+.custom-datepicker :deep(.p-datepicker-header) {
+  background: var(--secondary-color);
   color: #fff;
-  border-top-left-radius: var(--radius-sm);
-  border-top-right-radius: var(--radius-sm);
+  padding: 12px 14px;
 }
-.flatpickr-months .flatpickr-prev-month:hover svg, 
-.flatpickr-months .flatpickr-next-month:hover svg {
-  fill: #fff !important;
+
+.custom-datepicker :deep(.p-datepicker-header .p-datepicker-title) {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
-.flatpickr-prev-month,
-.flatpickr-next-month {
-  position: static !important;
-  text-align: center;
-  display: flex;
-  fill: #fff !important;
-  color: #fff !important;
-  font-weight: 800;
-  font-size: 20px;
-}
-.flatpickr-current-month {
-  display: flex !important;
-  gap: 10%;
-  align-items: center;
-  justify-content: center;
-  width: 100% !important;
-  right: unset !important;
-  left: unset !important;
-  padding: 0px 30px !important;
-}
-.numInputWrapper,
-.flatpickr-monthDropdown-months {
-  width: 45% !important;
-}
-.numInput.cur-year {
-  direction: ltr !important;
-  color: #fff !important;
-}
-select.flatpickr-monthDropdown-months {
-  color: #fff !important;
-}
-select.flatpickr-monthDropdown-months option {
-  color: #1b1b1b !important;
-}
-select.flatpickr-monthDropdown-months:hover,
-.numInputWrapper:hover {
-  background-color: transparent !important;
-}
-/* calendar body */
-.calendar-toolbar {
-  background: #fff;
-  border-radius: var(--raduis-md);
-  padding: 16px;
-}
-.flatpickr-day {
-  border-radius: 50% !important;
-  border: 0px !important;
-  padding: 0px !important;
-}
-.flatpickr-day:hover {
-  background-color: var(--light-secondary-color) !important;
-}
-.flatpickr-day.selected {
-  background-color: var(--secondary-color) !important;
+
+.custom-datepicker :deep(.p-datepicker-header .p-datepicker-title .p-datepicker-month),
+.custom-datepicker :deep(.p-datepicker-header .p-datepicker-title .p-datepicker-year) {
   color: #fff;
-  border-radius: 50% !important;
+  font-weight: 600;
+  font-size: 15px;
 }
-.flatpickr-months .flatpickr-prev-month:hover svg, .flatpickr-months .flatpickr-next-month:hover svg {
-  fill: rgb(187, 186, 186) !important;
+
+.custom-datepicker :deep(.p-datepicker-header .p-link) {
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  transition: background 0.2s;
 }
-.flatpickr-day.today ,
-.flatpickr-day.today:hover {
-  color: var(--secondary-color) !important;
-  background: var(--light-secondary-color) !important;
+
+.custom-datepicker :deep(.p-datepicker-header .p-link:hover) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Calendar Body Styling */
+.custom-datepicker :deep(.p-datepicker-calendar td) {
+    padding: 2px;
+}
+
+.custom-datepicker :deep(.p-datepicker-calendar td > span) {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.custom-datepicker :deep(.p-datepicker-calendar td > span.p-highlight) {
+  background: var(--secondary-color);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(var(--secondary-color-rgb), 0.3);
+}
+
+.custom-datepicker :deep(.p-datepicker-calendar td > span:not(.p-highlight):not(.p-disabled):hover) {
+  background: #f1f5f9;
+  color: var(--secondary-color);
+}
+
+/* Icon Support */
+.calendar-custom-icon {
+  width: 18px;
+  height: 18px;
+  color: #94a3b8;
+}
+
+.custom-datepicker :deep(.p-datepicker-trigger-icon) {
+    color: #94a3b8;
+}
+
+/* Helpers */
+.fs-14 { font-size: 14px; }
+.text-dark-blue { color: #1e293b; }
+.fs-13 { font-size: 13.5px; }
+
+/* RTL Fine-tuning */
+[dir="rtl"] .custom-datepicker :deep(.p-inputtext) {
+    padding-left: 40px; /* Space for icon if needed */
+}
+
+[dir="rtl"] .custom-datepicker :deep(.p-datepicker-header .p-datepicker-prev) {
+    order: 2;
+}
+[dir="rtl"] .custom-datepicker :deep(.p-datepicker-header .p-datepicker-next) {
+    order: 0;
 }
 </style>

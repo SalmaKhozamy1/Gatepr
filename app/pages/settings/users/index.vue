@@ -1,14 +1,13 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن مستخدم .."
+          :placeholder="t('pages.search')"
           :filters="searchFilters"
+          :loading="loading"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
     </Teleport>
 
     <TablesAppTable
@@ -18,29 +17,29 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && users.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا يوجد مستخدمون للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="user in users" :key="user.id">
-          <th class="index-cell">{{ user.id }}</th>
-          <td>{{ user.name?.ar }}</td>
+        <tr v-for="(user, index) in users" :key="user.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ user.name?.[locale] || user.name?.ar }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
-          <td>{{ user.branches?.length ? user.branches.map(b => b.name).join('، ') : '—' }}</td>
+          <td>{{ user.branches?.length ? user.branches.map(b => b.name?.[locale] || b.name).join('، ') : '—' }}</td>
           <td>{{ user.role?.name || '—' }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(user.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(user.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(user)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(user)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(user)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(user)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -52,7 +51,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض مستخدم"
+    :title="t('buttons.view') + ' ' + t('labels.user')"
     :data="selectedUser"
     :fields="userViewFields"
     :icon="IconsSettingsUsers"
@@ -60,26 +59,32 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة مستخدم"
+    :title="t('settings.add') + ' ' + t('labels.user')"
     :icon="IconsSettingsUsers"
     :fields="userFormFields"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل مستخدم"
+    :title="t('buttons.edit') + ' ' + t('labels.user')"
     :icon="IconsSettingsUsers"
     :fields="userEditFields"
     :initial-data="selectedEditUser"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف المستخدم"
-    itemType="مستخدم"
-    :itemName="selectedDeleteUser?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('labels.user')"
+    :itemType="t('labels.user')"
+    :itemName="selectedDeleteUser?.name?.[locale] || selectedDeleteUser?.name?.ar"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
@@ -89,7 +94,9 @@ import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsSettingsUsers } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -114,78 +121,76 @@ const selectedEditUser = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteUser = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'الإسم', class: '' },
-  { label: 'البريد الإلكتروني', class: '' },
-  { label: 'الهاتف', class: '' },
-  { label: 'الفروع', class: '' },
-  { label: 'الدور', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('labels.name'), class: '' },
+  { label: t('labels.email'), class: '' },
+  { label: t('labels.phone'), class: '' },
+  { label: t('labels.branches'), class: '' },
+  { label: t('labels.role'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const userViewFields = [
-  { label: 'اسم المستخدم باللغة العربية', key: 'name.ar' },
-  { label: 'اسم المستخدم باللغة الإنجليزية', key: 'name.en' },
-  { label: 'البريد الإلكتروني', key: 'email' },
-  { label: 'الهاتف', key: 'phone' },
-  { label: 'الدور', key: 'role.name' },
-  { label: 'الفرع', key: 'branches' },
-]
+const userViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+  { label: t('labels.email'), key: 'email' },
+  { label: t('labels.phone'), key: 'phone' },
+  { label: t('labels.role'), key: 'role.name' },
+  { label: t('labels.branches'), key: 'branches' },
+])
 
 const userFormFields = computed(() => [
-  { key: 'name.ar', label: 'اسم المستخدم باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'اسم المستخدم باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-  { key: 'email', label: 'البريد الإلكتروني', placeholder: 'example@email.com', type: 'email' },
-  { key: 'phone', label: 'الهاتف', placeholder: '96512345678', type: 'tel' },
-  { key: 'password', label: 'كلمة المرور', placeholder: 'ادخل كلمة المرور', type: 'password' },
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+  { key: 'email', label: t('labels.email'), placeholder: 'example@email.com', type: 'email' },
+  { key: 'phone', label: t('labels.phone'), placeholder: '96512345678', type: 'tel' },
+  { key: 'password', label: t('labels.password'), placeholder: t('placeholders.password'), type: 'password' },
   {
     key: 'role_id',
-    label: 'الدور',
+    label: t('labels.role'),
     type: 'select',
-    placeholder: 'اختر الدور',
+    placeholder: t('placeholders.role'),
     options: roleOptions.value
   },
   {
     key: 'branch_ids',
-    label: 'الفروع',
+    label: t('labels.branches'),
     type: 'multi-select',
     options: branchOptions.value
   },
 ])
 
 const userEditFields = computed(() => [
-  { key: 'name.ar', label: 'اسم المستخدم باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'اسم المستخدم باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-  { key: 'email', label: 'البريد الإلكتروني', placeholder: 'example@email.com', type: 'email' },
-  { key: 'phone', label: 'الهاتف', placeholder: '96512345678', type: 'tel' },
-  { key: 'password', label: 'كلمة المرور الجديدة', placeholder: 'اتركه فارغاً إن لم تريد التغيير', type: 'password' },
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+  { key: 'email', label: t('labels.email'), placeholder: 'example@email.com', type: 'email' },
+  { key: 'phone', label: t('labels.phone'), placeholder: '96512345678', type: 'tel' },
+  { key: 'password', label: t('labels.password'), placeholder: t('placeholders.password'), type: 'password' },
   {
     key: 'role_id',
-    label: 'الدور',
+    label: t('labels.role'),
     type: 'select',
-    placeholder: 'اختر الدور',
+    placeholder: t('placeholders.role'),
     options: roleOptions.value
   },
   {
     key: 'branch_id',
-    label: 'الفروع',
+    label: t('labels.branches'),
     type: 'multi-select',
-    placeholder: 'اختر الفرع',
+    placeholder: t('placeholders.branch'),
     options: branchOptions.value
   },
 ])
 
 // ✅ بيظهر select الفروع بس لو الـ API شغالة
-const searchFilters = computed(() =>
-  branchOptions.value.length ? [
-    {
-      key: 'branch_id',
-      placeholder: 'كل الفروع',
-      options: branchOptions.value
-    }
-  ] : []
-)
+const searchFilters = computed(() => [
+  {
+    key: 'branch_id',
+    placeholder: t('placeholders.all_branches'),
+    options: branchOptions.value  
+  }
+])
 
 /* =============================
    HELPER
@@ -210,7 +215,7 @@ const fetchRoles = async () => {
   try {
     const res = await api('/v1/admin/roles?per_page=100')
     roleOptions.value = (res.data || []).map(item => ({
-      label: item.name,
+      label: item.name?.[locale.value] || item.name?.ar || item.name,
       value: item.id
     }))
   } catch (err) {
@@ -224,9 +229,9 @@ const fetchRoles = async () => {
 ============================== */
 const fetchBranches = async () => {
   try {
-    const res = await api('/v1/admin/branches')
+    const res = await api('/v1/admin/branches?per_page=100')
     branchOptions.value = (res.data || []).map(item => ({
-      label: item.name?.ar,
+      label: item.name?.[locale.value] || item.name?.ar,
       value: item.id
     }))
   } catch (err) {

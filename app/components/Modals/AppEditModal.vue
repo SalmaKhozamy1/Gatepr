@@ -3,6 +3,7 @@
     :model-value="modelValue"
     :title="title"
     :icon="icon"
+    :close-on-backdrop="false"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <div class="grid grid-2 gap-sm">
@@ -61,6 +62,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useAppToast } from '~/composables/useAppToast'
+
+const { success } = useAppToast()  // ✅
 
 const props = defineProps({
   modelValue: Boolean,
@@ -80,10 +84,9 @@ const buildFormData = () => {
   props.fields?.forEach(field => {
     const keys = field.key.split('.')
     if (field.type === 'multi-select') {
-      // ✅ لو في initialData للـ branches خده منها
       const initial = props.initialData?.[field.key]
       data[field.key] = Array.isArray(initial)
-        ? initial.map(item => item?.id ?? item)  // لو array of objects خد الـ id
+        ? initial.map(item => item?.id ?? item)
         : []
     } else if (keys.length === 2) {
       if (!data[keys[0]]) data[keys[0]] = {}
@@ -96,16 +99,23 @@ const buildFormData = () => {
 }
 
 const formData = ref(buildFormData())
+const originalData = ref(JSON.stringify(buildFormData()))  // ✅ خزّن الأصل
 
 watch(() => props.modelValue, (val) => {
   if (val) {
-    formData.value = buildFormData()
+    const built = buildFormData()
+    formData.value = built
+    originalData.value = JSON.stringify(built)  // ✅ حدّث الأصل لما يتفتح
     errors.value = {}
   }
 })
 
 watch(() => props.initialData, () => {
-  if (props.modelValue) formData.value = buildFormData()
+  if (props.modelValue) {
+    const built = buildFormData()
+    formData.value = built
+    originalData.value = JSON.stringify(built)
+  }
 }, { deep: true })
 
 const getFieldValue = (key) => {
@@ -133,13 +143,24 @@ const toggleMultiSelect = (key, value) => {
 
 const handleSubmit = async () => {
   errors.value = {}
+
+  // ✅ لو مفيش تغيير مش بيعمل حاجة
+  const currentData = JSON.stringify(formData.value)
+  if (currentData === originalData.value) {
+    emit('update:modelValue', false)
+    return
+  }
+
   loading.value = true
   try {
     emit('submit', {
       data: formData.value,
       setErrors: (errs) => { errors.value = errs },
       setLoading: (val) => { loading.value = val },
-      close: () => emit('update:modelValue', false)
+      close: () => {
+        success('تم التعديل بنجاح')  // ✅
+        emit('update:modelValue', false)
+      }
     })
   } finally {
     loading.value = false

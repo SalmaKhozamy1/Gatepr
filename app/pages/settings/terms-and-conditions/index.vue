@@ -1,10 +1,5 @@
 <template>
-  <div>
-    
-  </div>
-
-
-
+  <AppTerms />
 </template>
 
 <script setup>

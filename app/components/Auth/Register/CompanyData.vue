@@ -3,67 +3,67 @@
     <div class="grid grid-3 gap-md">
         <InputsFormInput 
           v-model="nameAr" 
-          label="اسم المنشأة بالعربي" 
-          placeholder="ادخل اسم المنشأة باللغة العربية" 
+          :label="t('labels.company_name_ar')" 
+          :placeholder="t('placeholders.company_name_ar')" 
           :error="errors.nameAr"
         />
         <InputsFormInput 
           v-model="nameEn" 
-          label="اسم المنشأة باللغة الإنجليزية" 
-          placeholder="ادخل اسم المنشأة باللغة الإنجليزية" 
+          :label="t('labels.company_name_en')" 
+          :placeholder="t('placeholders.company_name_en')" 
           :error="errors.nameEn"
         />
         <InputsDatePicker 
           v-model="licenseStart" 
-          label="تاريخ بداية الرخصة" 
-          placeholder="اختر" 
+          :label="t('labels.license_start')" 
+          :placeholder="t('placeholders.select')" 
           :error="errors.licenseStart"
         />
         
         <InputsFormInput 
           v-model="licenseNumber" 
-          label="رقم الرخصة / السجل التجاري" 
-          placeholder="ادخل رقم الرخصة" 
+          :label="t('labels.license_number')" 
+          :placeholder="t('placeholders.license_number')" 
           :error="errors.licenseNumber"
         />
         <InputsFormInput 
           v-model="supplierDeputy" 
-          label="نائب المورد" 
-          placeholder="ادخل اسم نائب المورد" 
+          :label="t('labels.supplier_deputy')" 
+          :placeholder="t('placeholders.supplier_deputy')" 
           :error="errors.supplierDeputy"
         />
         <InputsDatePicker 
           v-model="licenseEnd" 
-          label="تاريخ نهاية الرخصة" 
-          placeholder="اختر" 
+          :label="t('labels.license_end')" 
+          :placeholder="t('placeholders.select')" 
           :error="errors.licenseEnd"
         />
 
         <InputsFormSelect 
             v-model="supplierType"
-            label="نوع المورد" 
-            placeholder="اختر نوع المورد" 
-            :options="['مورد 1', 'مورد 2']" 
+            :label="t('labels.event_type')" 
+            :placeholder="t('placeholders.supplier_type')" 
+            :options="['Type 1', 'Type 2']" 
             :error="errors.supplierType"
         />
         <InputsDatePicker 
           v-model="healthLicenseEnd" 
-          label="تاريخ انتهاء الرخصة الصحية" 
-          placeholder="اختر" 
+          :label="t('labels.health_license_end')" 
+          :placeholder="t('placeholders.select')" 
           :error="errors.healthLicenseEnd"
         />
         <InputsDatePicker 
           v-model="industrialLicenseEnd" 
-          label="تاريخ انتهاء الرخصة الصناعية" 
-          placeholder="اختر" 
+          :label="t('labels.industrial_license_end')" 
+          :placeholder="t('placeholders.select')" 
           :error="errors.industrialLicenseEnd"
         />
 
     <div class="full-width">
           <InputsFormInput 
             v-model="password" 
-            label="كلمة المرور" 
-            placeholder="ادخل كلمة المرور" 
+            :label="t('labels.password')" 
+            :placeholder="t('placeholders.password')" 
             type="password" 
             :error="errors.password"
           />
@@ -72,14 +72,14 @@
     <!-- Upload Section -->
     <div class="full-width grid grid-2 gap-md">
         <InputsFileUploader
-          label="شهادة الهيئة العامة للصناعة"
+          :label="t('labels.industry_authority_cert')"
           accept=".pdf,.xml,.doc,.docx"
           accept-label="PDF , XML , Word"
           @update:files="generalIndustryFiles = $event"
         />
 
         <InputsFileUploader
-          label="شهادة المنشأة الصناعية"
+          :label="t('labels.industrial_facility_cert')"
           accept=".pdf,.xml,.doc,.docx"
           accept-label="PDF , XML , Word"
           @update:files="facilityFiles = $event"
@@ -94,21 +94,24 @@
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const generalIndustryFiles = ref([])
 const facilityFiles = ref([])
 
 const schema = yup.object({
-  nameAr: yup.string().required('اسم المنشأة بالعربي مطلوب'),
-  nameEn: yup.string().required('اسم المنشأة باللغة الإنجليزية مطلوب'),
-  licenseStart: yup.string().required('تاريخ بداية الرخصة مطلوب'),
-  licenseNumber: yup.string().required('رقم الرخصة مطلوب'),
-  supplierDeputy: yup.string().required('نائب المورد مطلوب'),
-  licenseEnd: yup.string().required('تاريخ نهاية الرخصة مطلوب'),
-  supplierType: yup.string().required('نوع المورد مطلوب'),
-  healthLicenseEnd: yup.string().required('تاريخ انتهاء الرخصة الصحية مطلوب'),
-  industrialLicenseEnd: yup.string().required('تاريخ انتهاء الرخصة الصناعية مطلوب'),
-  password: yup.string().required('كلمة المرور مطلوبة').min(6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'),
+  nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.company_name_ar') })),
+  nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.company_name_en') })),
+  licenseStart: yup.string().required(t('errors.isRequired', { name: t('labels.license_start') })),
+  licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
+  supplierDeputy: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_deputy') })),
+  licenseEnd: yup.string().required(t('errors.isRequired', { name: t('labels.license_end') })),
+  supplierType: yup.string().required(t('errors.isRequired', { name: t('labels.event_type') })),
+  healthLicenseEnd: yup.string().required(t('errors.isRequired', { name: t('labels.health_license_end') })),
+  industrialLicenseEnd: yup.string().required(t('errors.isRequired', { name: t('labels.industrial_license_end') })),
+  password: yup.string().required(t('validation.password_required')).min(6, t('validation.password_min')),
 })
 
 const { errors, validate } = useForm({

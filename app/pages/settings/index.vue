@@ -4,6 +4,7 @@
 </template>
 
 <script setup>
-  navigateTo('/settings/governorates')
+  const localePath = useLocalePath()
+  navigateTo(localePath('/settings/governorates'))
 </script>
 

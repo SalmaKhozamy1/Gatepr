@@ -1,13 +1,11 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن تصنيف .."
+          :placeholder="t('pages.search')"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
     </Teleport>
 
     <TablesAppTable
@@ -17,26 +15,26 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && categories.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا توجد تصنيفات للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="category in categories" :key="category.id">
-          <th class="index-cell">{{ category.id }}</th>
-          <td>{{ category.name?.ar }}</td>
+        <tr v-for="(category, index) in categories" :key="category.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ category.name?.[locale] || category.name?.ar }}</td>
           <td>{{ category.code }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(category.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(category.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(category)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(category)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(category)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(category)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -48,7 +46,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض تصنيف"
+    :title="t('buttons.view') + ' ' + t('settings.add_category')"
     :data="selectedCategory"
     :fields="categoryViewFields"
     :icon="IconsCategories"
@@ -56,36 +54,44 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة تصنيف"
+    :title="t('settings.add') + ' ' + t('settings.add_category')"
     :icon="IconsCategories"
     :fields="categoryFormFields"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"  
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل تصنيف"
+    :title="t('buttons.edit') + ' ' + t('settings.add_category')"
     :icon="IconsCategories"
     :fields="categoryFormFields"
     :initial-data="selectedEditCategory"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف التصنيف"
-    itemType="تصنيف"
-    :itemName="selectedDeleteCategory?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('settings.add_category')"
+    :itemType="t('settings.add_category')"
+    :itemName="selectedDeleteCategory?.name?.[locale] || selectedDeleteCategory?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsCategories } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -107,24 +113,24 @@ const selectedEditCategory = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteCategory = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'اسم التصنيف', class: '' },
-  { label: 'الكود', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('settings.add_category'), class: '' },
+  { label: t('labels.code'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const categoryViewFields = [
-  { label: 'اسم التصنيف باللغة العربية', key: 'name.ar' },
-  { label: 'اسم التصنيف باللغة الإنجليزية', key: 'name.en' },
-  { label: 'الكود', key: 'code' },
-]
+const categoryViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+  { label: t('labels.code'), key: 'code' },
+])
 
-const categoryFormFields = [
-  { key: 'name.ar', label: 'اسم التصنيف باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'اسم التصنيف باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-  { key: 'code', label: 'كود التصنيف', placeholder: 'ادخل الكود', type: 'number' },
-]
+const categoryFormFields = computed(() => [
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+  { key: 'code', label: t('labels.code'), placeholder: t('placeholders.code'), type: 'number' },
+])
 
 /* =============================
    HELPER

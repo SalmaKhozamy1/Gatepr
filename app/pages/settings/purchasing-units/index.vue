@@ -1,13 +1,11 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن وحدة شراء .."
+          :placeholder="t('pages.search')"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
     </Teleport>
 
     <TablesAppTable
@@ -17,26 +15,26 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && purchasingUnits.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا توجد وحدات شراء للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="unit in purchasingUnits" :key="unit.id">
-          <th class="index-cell">{{ unit.id }}</th>
-          <td>{{ unit.name?.ar }}</td>
+        <tr v-for="(unit, index) in purchasingUnits" :key="unit.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ unit.name?.[locale] || unit.name?.ar }}</td>
           <td>{{ unit.code }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(unit.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(unit.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(unit)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(unit)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(unit)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(unit)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -48,7 +46,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض وحدة شراء"
+    :title="t('buttons.view') + ' ' + t('settings.add_purchasing_unit')"
     :data="selectedUnit"
     :fields="unitViewFields"
     :icon="IconsUnits"
@@ -56,36 +54,44 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة وحدة شراء"
+    :title="t('settings.add') + ' ' + t('settings.add_purchasing_unit')"
     :icon="IconsUnits"
-    :fields="unitFormFields"
+    :fields="unitFormFields"    
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل وحدة شراء"
+    :title="t('buttons.edit') + ' ' + t('settings.add_purchasing_unit')"
     :icon="IconsUnits"
     :fields="unitFormFields"
     :initial-data="selectedEditUnit"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف وحدة الشراء"
-    itemType="وحدة شراء"
-    :itemName="selectedDeleteUnit?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('settings.add_purchasing_unit')"
+    :itemType="t('settings.add_purchasing_unit')"
+    :itemName="selectedDeleteUnit?.name?.[locale] || selectedDeleteUnit?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsUnits } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -107,24 +113,24 @@ const selectedEditUnit = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteUnit = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'اسم الوحدة', class: '' },
-  { label: 'الكود', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('settings.add_purchasing_unit'), class: '' },
+  { label: t('labels.code'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const unitViewFields = [
-  { label: 'الاسم بالعربي', key: 'name.ar' },
-  { label: 'الاسم بالإنجليزي', key: 'name.en' },
-  { label: 'الكود', key: 'code' },
-]
+const unitViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+  { label: t('labels.code'), key: 'code' },
+])
 
-const unitFormFields = [
-  { key: 'name.ar', label: 'الاسم بالعربي', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'الاسم بالإنجليزي', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-  { key: 'code', label: 'الكود', placeholder: '12345678', type: 'text' },
-]
+const unitFormFields = computed(() => [
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+  { key: 'code', label: t('labels.code'), placeholder: t('placeholders.code'), type: 'text' },
+])
 
 /* =============================
    HELPER

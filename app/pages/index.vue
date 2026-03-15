@@ -1,26 +1,28 @@
 <script setup>
+const { t } = useI18n()
+const localePath = useLocalePath()
 const token = useCookie('token')
 const role = useCookie('role')
 
 onMounted(() => {
   // لو المستخدم مش عامل تسجيل دخول
   if (!token.value) {
-    return navigateTo('/auth/login')
+    return navigateTo(localePath('/login/admin'))
   }
 
   // لو Admin
   if (role.value === 'admin') {
-    return navigateTo('/admin/home')
+    return navigateTo(localePath('/admin/home'))
   }
 
   // لو User عادي
-  return navigateTo('/profile')
+  return navigateTo(localePath('/admin/home'))
 })
 </script>
 
 <template>
   <div class="redirect-page">
-    <p>جاري التحويل...</p>
+    <p>{{ t('buttons.redirecting') }}</p>
   </div>
 </template>
 

@@ -1,14 +1,15 @@
 <template>
   <ModalsAppModal
     v-model="show"
-    title="تعديل كلمة المرور"
+    :title="t('profile.change_password')"
     :icon="IconsLock"
+    :close-on-backdrop="false"
   >
     <div class="change-password-content">
       <InputsFormInput 
         v-model="email"
-        label="البريد الإلكتروني" 
-        placeholder="ادخل البريد الإلكتروني" 
+        :label="t('labels.email')" 
+        :placeholder="t('placeholders.email')" 
         class="required"
         required
       />
@@ -16,8 +17,8 @@
 
     <template #footer>
       <div class="flex-end gap-2 w-100">
-        <button class="custom-btn text-btn min-btn-width" @click="show = false">إلغاء</button>
-        <button class="custom-btn secondary-btn min-btn-width" @click="sendCode">التالي</button>
+        <button class="custom-btn text-btn min-btn-width" @click="show = false">{{ t('buttons.cancel') }}</button>
+        <button class="custom-btn secondary-btn min-btn-width" @click="sendCode">{{ t('buttons.next') }}</button>
       </div>
     </template>
   </ModalsAppModal>
@@ -26,6 +27,9 @@
 <script setup>
 import { IconsLock } from '#components'
 import { useApi } from '~/composables/useApi'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const api = useApi()
 const show = defineModel('show')

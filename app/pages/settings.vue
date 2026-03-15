@@ -1,24 +1,26 @@
 <template>
   <div class="settings-wrapper">
     <PageLayout
-      asideTitle="الإعدادات"
+      :asideTitle="t('settings.title')"
       :asideItems="settingsMenu"
       :activeIndex="activeIndex"
-      :formTitle="`سجل ${activeTabTitle}`"
+      :formTitle="`${t('settings.record')} ${activeTabTitle}`"
+      :hasSearch="activeHasSearch"
       @item-click="handleTabClick"
     >
+      <template #search>
+        <div id="search-teleport-target" class="w-100"></div>
+      </template>
+
       <template #header-actions>
-        <button 
+        <button
+          v-if="activeHasActions"
           class="custom-btn primary-btn min-btn-width fltr_btn py-2"
           @click="handleAddClick"
         >
           <span style="font-size: 20px">+</span>
-          <span class="ms-1">إضافة {{ activeTabAddTitle }}</span>
+          <span class="ms-1">{{ t('settings.add') }} {{ activeTabAddTitle }}</span>
         </button>
-      </template>
-
-      <template #search>
-        <div id="search-teleport-target" class="w-100"></div>
       </template>
 
       <template #main>
@@ -58,35 +60,42 @@ const handleAddClick = () => {
   addModalOpener.value?.()
 }
 
+const { t } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 
-const settingsMenu = [
-  { title: 'المحافظات', icon: IconsGovernorates, path: '/settings/governorates', addTitle: 'محافظة' },
-  { title: 'المناطق', icon: IconsSettingsRegions, path: '/settings/areas', addTitle: 'منطقة' },
-  { title: 'المستخدمين', icon: IconsSettingsUsers, path: '/settings/users', addTitle: 'مستخدم' },
-  { title: 'الأدوار', icon: IconsSettingsRoles, path: '/settings/roles', addTitle: 'دور' },
-  { title: 'أنواع الموردين', icon: IconsSuppliers, path: '/settings/supplier-types', addTitle: 'نوع مورد' },
-  { title: 'التصنيفات', icon: IconsCategories, path: '/settings/categories', addTitle: 'تصنيف' },
-  { title: 'وحدات الشراء', icon: IconsUnits, path: '/settings/purchasing-units', addTitle: 'وحدة شراء' },
-  { title: 'أنواع الإستلام', icon: IconsReceiveType, path: '/settings/receipt-types', addTitle: 'نوع استلام' },
-  { title: 'الشروط والأحكام', icon: IconsTerms, path: '/settings/terms', addTitle: 'شرط' },
-]
+const settingsMenu = computed(() => [
+  { title: t('settings.governorates'), icon: IconsGovernorates, path: localePath('/settings/governorates'), addTitle: t('settings.add_governorate') },
+  { title: t('settings.areas'), icon: IconsSettingsRegions, path: localePath('/settings/areas'), addTitle: t('settings.add_area') },
+  { title: t('settings.users'), icon: IconsSettingsUsers, path: localePath('/settings/users'), addTitle: t('settings.add_user') },
+  { title: t('settings.roles'), icon: IconsSettingsRoles, path: localePath('/settings/roles'), addTitle: t('settings.add_role') },
+  { title: t('settings.supplier_types'), icon: IconsSuppliers, path: localePath('/settings/supplier-types'), addTitle: t('settings.add_supplier_type') },
+  { title: t('settings.categories'), icon: IconsCategories, path: localePath('/settings/categories'), addTitle: t('settings.add_category') },
+  { title: t('settings.purchasing_units'), icon: IconsUnits, path: localePath('/settings/purchasing-units'), addTitle: t('settings.add_purchasing_unit') },
+  { title: t('settings.receipt_types'), icon: IconsReceiveType, path: localePath('/settings/receipt-types'), addTitle: t('settings.add_receipt_type') },
+  { title: t('settings.terms_and_conditions'), icon: IconsTerms, path: localePath('/settings/terms-and-conditions'), addTitle: t('settings.add_term'), hasSearch: false, hasActions: false  },
+])
+
+const activeHasSearch = computed(() => settingsMenu.value[activeIndex.value]?.hasSearch ?? true)
+const activeHasActions = computed(() => settingsMenu.value[activeIndex.value]?.hasActions ?? true)
 
 const activeIndex = computed(() => {
-  const index = settingsMenu.findIndex(item => item.path === route.path)
+  const index = settingsMenu.value.findIndex(item => item.path === route.path)
   return index !== -1 ? index : 0
 })
 
-const activeTabTitle = computed(() => settingsMenu[activeIndex.value]?.title || 'الإعدادات')
-const activeTabAddTitle = computed(() => settingsMenu[activeIndex.value]?.addTitle || 'عنصر')
+const activeTabTitle = computed(() => settingsMenu.value[activeIndex.value]?.title || t('settings.title'))
+const activeTabAddTitle = computed(() => settingsMenu.value[activeIndex.value]?.addTitle || '')
 
 const handleTabClick = (index) => {
-  const item = settingsMenu[index]
+  const item = settingsMenu.value[index]
   if (item) navigateTo(item.path)
 }
 
 onMounted(() => {
-  navigateTo('/settings/governorates')
+  if (route.path === localePath('/settings') || route.path === localePath('/settings/')) {
+    navigateTo(localePath('/settings/governorates'))
+  }
 })
 </script>
 

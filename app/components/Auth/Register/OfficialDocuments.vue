@@ -1,42 +1,42 @@
 <template>
   <div class="grid grid-3 gap-md">
     <!-- Section 1 -->
-    <h5 class="secondary-title full-width">بيان جمركي مختوم للشركات المستهدفة</h5>
-    <InputsFormInput v-model="s1_nameAr" label="الإسم باللغة العربية" placeholder="ادخل الإسم باللغة العربية" :error="errors.s1_nameAr"/>
-    <InputsFormInput v-model="s1_nameEn" label="الإسم باللغة الإنجليزية" placeholder="ادخل الإسم باللغة الإنجليزية" :error="errors.s1_nameEn"/>
-    <InputsFormInput v-model="s1_licenseNumber" label="رقم الرخصة" type="number" placeholder="ادخل رقم الرخصة" :error="errors.s1_licenseNumber"/>
-    <InputsDatePicker v-model="s1_startDate" label="تاريخ البداية" :error="errors.s1_startDate"/>
-    <InputsDatePicker v-model="s1_endDate" label="تاريخ النهاية" :error="errors.s1_endDate"/>
-    <InputsDatePicker v-model="s1_licenseExpiry" label="تاريخ انتهاء الرخصة" :error="errors.s1_licenseExpiry"/>
+    <h5 class="secondary-title full-width">{{ t('labels.stamped_customs_declaration') }}</h5>
+    <InputsFormInput v-model="s1_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s1_nameAr"/>
+    <InputsFormInput v-model="s1_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s1_nameEn"/>
+    <InputsFormInput v-model="s1_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s1_licenseNumber"/>
+    <InputsDatePicker v-model="s1_startDate" :label="t('labels.start_date')" :error="errors.s1_startDate"/>
+    <InputsDatePicker v-model="s1_endDate" :label="t('labels.end_date')" :error="errors.s1_endDate"/>
+    <InputsDatePicker v-model="s1_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s1_licenseExpiry"/>
     <div class="full-width">
       <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s1_files = $event" />
     </div>
 
     <!-- Section 2 -->
-    <h5 class="secondary-title full-width">رخصة الإستيراد</h5>
-    <InputsFormInput v-model="s2_nameAr" label="الإسم باللغة العربية" placeholder="ادخل الإسم باللغة العربية" :error="errors.s2_nameAr"/>
-    <InputsFormInput v-model="s2_nameEn" label="الإسم باللغة الإنجليزية" placeholder="ادخل الإسم باللغة الإنجليزية" :error="errors.s2_nameEn" />
-    <InputsFormInput v-model="s2_licenseNumber" label="رقم الرخصة" type="number" placeholder="ادخل رقم الرخصة" :error="errors.s2_licenseNumber"/>
-    <InputsDatePicker v-model="s2_startDate" label="تاريخ البداية" :error="errors.s2_startDate"/>
-    <InputsDatePicker v-model="s2_endDate" label="تاريخ النهاية" :error="errors.s2_endDate"/>
-    <InputsDatePicker v-model="s2_licenseExpiry" label="تاريخ انتهاء الرخصة" :error="errors.s2_licenseExpiry"/>
+    <h5 class="secondary-title full-width">{{ t('labels.import_license') }}</h5>
+    <InputsFormInput v-model="s2_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s2_nameAr"/>
+    <InputsFormInput v-model="s2_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s2_nameEn" />
+    <InputsFormInput v-model="s2_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s2_licenseNumber"/>
+    <InputsDatePicker v-model="s2_startDate" :label="t('labels.start_date')" :error="errors.s2_startDate"/>
+    <InputsDatePicker v-model="s2_endDate" :label="t('labels.end_date')" :error="errors.s2_endDate"/>
+    <InputsDatePicker v-model="s2_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s2_licenseExpiry"/>
     <div class="full-width">
       <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s2_files = $event" />
     </div>
 
     <!-- Section 3 -->
-    <h5 class="secondary-title full-width">قيد وكالة معتمد</h5>
-    <InputsFormInput v-model="s3_nameAr" label="الإسم باللغة العربية" placeholder="ادخل الإسم باللغة العربية" :error="errors.s3_nameAr"/>
-    <InputsFormInput v-model="s3_nameEn" label="الإسم باللغة الإنجليزية" placeholder="ادخل الإسم باللغة الإنجليزية" :error="errors.s3_nameEn"/>
-    <InputsFormInput v-model="s3_licenseNumber" label="رقم الرخصة" type="number" placeholder="ادخل رقم الرخصة" :error="errors.s3_licenseNumber"/>
-    <InputsDatePicker v-model="s3_startDate" label="تاريخ البداية" :error="errors.s3_startDate" />
-    <InputsDatePicker v-model="s3_endDate" label="تاريخ النهاية" :error="errors.s3_endDate" />
-    <InputsDatePicker v-model="s3_licenseExpiry" label="تاريخ انتهاء الرخصة" :error="errors.s3_licenseExpiry" />
+    <h5 class="secondary-title full-width">{{ t('labels.approved_agency_registration') }}</h5>
+    <InputsFormInput v-model="s3_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s3_nameAr"/>
+    <InputsFormInput v-model="s3_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s3_nameEn"/>
+    <InputsFormInput v-model="s3_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s3_licenseNumber"/>
+    <InputsDatePicker v-model="s3_startDate" :label="t('labels.start_date')" :error="errors.s3_startDate" />
+    <InputsDatePicker v-model="s3_endDate" :label="t('labels.end_date')" :error="errors.s3_endDate" />
+    <InputsDatePicker v-model="s3_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s3_licenseExpiry" />
     <div class="full-width">
       <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s3_files = $event" />
     </div>
 
-    <InputsApprove v-model="agreed" :label="'أوافق علي الشروط والأحكام'" :error="errors.agreed" />
+    <InputsApprove v-model="agreed" :label="t('labels.agree_to_terms')" :error="errors.agreed" />
   </div>
 </template>
 
@@ -44,34 +44,37 @@
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const s1_files = ref([])
 const s2_files = ref([])
 const s3_files = ref([])
 
 const schema = yup.object({
-  s1_nameAr: yup.string().required('الإسم بالعربي مطلوب'),
-  s1_nameEn: yup.string().required('الإسم بالإنجليزي مطلوب'),
-  s1_licenseNumber: yup.string().required('رقم الرخصة مطلوب'),
-  s1_startDate: yup.string().required('تاريخ البداية مطلوب'),
-  s1_endDate: yup.string().required('تاريخ النهاية مطلوب'),
-  s1_licenseExpiry: yup.string().required('تاريخ انتهاء الرخصة مطلوب'),
+  s1_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
+  s1_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
+  s1_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
+  s1_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
+  s1_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
+  s1_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
 
-  s2_nameAr: yup.string().required('الإسم بالعربي مطلوب'),
-  s2_nameEn: yup.string().required('الإسم بالإنجليزي مطلوب'),
-  s2_licenseNumber: yup.string().required('رقم الرخصة مطلوب'),
-  s2_startDate: yup.string().required('تاريخ البداية مطلوب'),
-  s2_endDate: yup.string().required('تاريخ النهاية مطلوب'),
-  s2_licenseExpiry: yup.string().required('تاريخ انتهاء الرخصة مطلوب'),
+  s2_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
+  s2_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
+  s2_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
+  s2_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
+  s2_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
+  s2_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
 
-  s3_nameAr: yup.string().required('الإسم بالعربي مطلوب'),
-  s3_nameEn: yup.string().required('الإسم بالإنجليزي مطلوب'),
-  s3_licenseNumber: yup.string().required('رقم الرخصة مطلوب'),
-  s3_startDate: yup.string().required('تاريخ البداية مطلوب'),
-  s3_endDate: yup.string().required('تاريخ النهاية مطلوب'),
-  s3_licenseExpiry: yup.string().required('تاريخ انتهاء الرخصة مطلوب'),
+  s3_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
+  s3_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
+  s3_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
+  s3_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
+  s3_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
+  s3_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
   
-  agreed: yup.boolean().oneOf([true], 'يجب الموافقة على الشروط والأحكام'),
+  agreed: yup.boolean().oneOf([true], t('validation.agree_to_terms_required')),
 })
 
 const { errors, validate } = useForm({

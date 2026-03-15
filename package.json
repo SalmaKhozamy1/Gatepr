@@ -15,6 +15,7 @@
     "@popperjs/core": "^2.11.8",
     "@primevue/nuxt-module": "^4.5.4",
     "@primevue/themes": "^4.5.4",
+    "@vueup/vue-quill": "^1.2.0",
     "bootstrap": "^5.3.8",
     "flatpickr": "^4.6.13",
     "nuxt": "^4.3.1",

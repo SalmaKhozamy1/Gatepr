@@ -1,14 +1,14 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
+      <!-- <div class="flex-start gap-sm w-100 flex-wrap"> -->
         <SearchBar
-          placeholder="بحث عن منطقة .."
+          :placeholder="t('pages.search')"
           :filters="searchFilters"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
+      <!-- </div> -->
     </Teleport>
 
     <TablesAppTable
@@ -18,26 +18,26 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && areas.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا توجد مناطق للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="area in areas" :key="area.id">
-          <th class="index-cell">{{ area.id }}</th>
-          <td>{{ area.name?.ar }}</td>
+        <tr v-for="(area, index) in areas" :key="area.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ area.name?.[locale] || area.name?.ar }}</td>
           <td>{{ area.governorate?.name || '—' }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(area.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(area.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(area)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(area)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(area)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(area)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -49,7 +49,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض منطقة"
+    :title="t('buttons.view') + ' ' + t('settings.add_area')"
     :data="selectedArea"
     :fields="areaViewFields"
     :icon="IconsSettingsRegions"
@@ -57,26 +57,32 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة منطقة"
+    :title="t('settings.add') + ' ' + t('settings.add_area')"
     :icon="IconsSettingsRegions"
     :fields="areaFormFields"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل منطقة"
+    :title="t('buttons.edit') + ' ' + t('settings.add_area')"
     :icon="IconsSettingsRegions"
     :fields="areaFormFields"
     :initial-data="selectedEditArea"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف المنطقة"
-    itemType="منطقة"
-    :itemName="selectedDeleteArea?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('settings.add_area')"
+    :itemType="t('settings.add_area')"
+    :itemName="selectedDeleteArea?.name?.[locale] || selectedDeleteArea?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
@@ -86,7 +92,9 @@ import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsSettingsRegions } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -110,28 +118,28 @@ const selectedEditArea = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteArea = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'اسم المنطقة', class: '' },
-  { label: 'اسم المحافظة', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('labels.area'), class: '' },
+  { label: t('labels.governorate'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const areaViewFields = [
-  { label: 'اسم المنطقة بالعربي', key: 'name.ar' },
-  { label: 'اسم المنطقة بالإنجليزي', key: 'name.en' },
-  { label: 'المحافظة', key: 'governorate.name' },
-]
+const areaViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+  { label: t('labels.governorate'), key: 'governorate.name' },
+])
 
 // ✅ computed عشان الـ options تتحدث تلقائي
 const areaFormFields = computed(() => [
-  { key: 'name.ar', label: 'اسم المنطقة بالعربي', placeholder: 'ادخل اسم المنطقة باللغة العربية' },
-  { key: 'name.en', label: 'اسم المنطقة بالإنجليزي', placeholder: 'ادخل اسم المنطقة باللغة الإنجليزية' },
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('labels.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('labels.name_en') },
   {
     key: 'governorate_id',
-    label: 'المحافظة',
+    label: t('labels.governorate'),
     type: 'select',
-    placeholder: 'اختر المحافظة',
+    placeholder: t('pages.select'),
     options: governorateOptions.value
   },
 ])
@@ -140,7 +148,7 @@ const areaFormFields = computed(() => [
 const searchFilters = computed(() => [
   {
     key: 'governorate_id',
-    placeholder: 'كل المحافظات',
+    placeholder: t('labels.governorate'),
     options: governorateOptions.value
   }
 ])
@@ -168,7 +176,7 @@ const fetchGovernorates = async () => {
   try {
     const res = await api('/v1/admin/governorates?per_page=100')
     governorateOptions.value = (res.data || []).map(item => ({
-      label: item.name?.ar,
+      label: item.name?.[locale.value] || item.name?.ar,
       value: item.id
     }))
   } catch (err) {

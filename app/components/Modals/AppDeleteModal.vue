@@ -3,6 +3,7 @@
     :has-header="false"
     :model-value="modelValue"
     :width="'max-content'"
+    :close-on-backdrop="false"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <div class="flex-column-center gap-sm text-center">
@@ -48,12 +49,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useAppToast } from '~/composables/useAppToast'
+
+const { success } = useAppToast()  // ✅
 
 const props = defineProps({
   modelValue: Boolean,
   title: String,
   itemType: String,
-  itemName: String,   
+  itemName: String,
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm'])
@@ -63,7 +67,10 @@ const loading = ref(false)
 const handleConfirm = () => {
   emit('confirm', {
     setLoading: (val) => { loading.value = val },
-    close: () => emit('update:modelValue', false) 
+    close: () => {
+      success(`تم حذف ${props.itemType} بنجاح`)  // ✅
+      emit('update:modelValue', false)
+    }
   })
 }
 </script>

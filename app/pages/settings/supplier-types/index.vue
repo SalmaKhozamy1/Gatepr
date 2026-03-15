@@ -1,13 +1,11 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن نوع مورد .."
+          :placeholder="t('pages.search')"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
     </Teleport>
 
     <TablesAppTable
@@ -17,26 +15,26 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && supplierTypes.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا توجد أنواع موردين للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="type in supplierTypes" :key="type.id">
-          <th class="index-cell">{{ type.id }}</th>
-          <td>{{ type.LocalizedName }}</td>
+        <tr v-for="(type, index) in supplierTypes" :key="type.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ type.name?.[locale] || type.name?.ar }}</td>
 
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(type.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(type.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(type)" :disabled="type.is_static">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(type)" :disabled="type.is_static">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(type)" :disabled="type.is_static">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(type)" :disabled="type.is_static">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -48,7 +46,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض نوع مورد"
+    :title="t('buttons.view') + ' ' + t('settings.add_supplier_type')"
     :data="selectedType"
     :fields="typeViewFields"
     :icon="IconsSuppliers"
@@ -56,36 +54,44 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة نوع مورد"
+    :title="t('settings.add') + ' ' + t('settings.add_supplier_type')"
     :icon="IconsSuppliers"
-    :fields="typeFormFields"
+    :fields="typeFormFields"    
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل نوع مورد"
+    :title="t('buttons.edit') + ' ' + t('settings.add_supplier_type')"
     :icon="IconsSuppliers"
     :fields="typeFormFields"
     :initial-data="selectedEditType"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف نوع المورد"
-    itemType="نوع مورد"
-    :itemName="selectedDeleteType?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('settings.add_supplier_type')"
+    :itemType="t('settings.add_supplier_type')"
+    :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsSuppliers } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -107,21 +113,21 @@ const selectedEditType = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteType = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'اسم الدور', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('settings.add_supplier_type'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const typeViewFields = [
-  { label: 'اسم المورد باللغة العربية', key: 'name.ar' },
-  { label: 'اسم المورد باللغة الإنجليزية', key: 'name.en' },
-]
+const typeViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+])
 
-const typeFormFields = [
-  { key: 'name.ar', label: 'اسم المورد باللغة العربية', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'اسم المورد باللغة الإنجليزية', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-]
+const typeFormFields = computed(() => [
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+])
 
 /* =============================
    HELPER

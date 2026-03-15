@@ -109,6 +109,9 @@ onUnmounted(() => {
   padding: 24px;
   padding-top: 0px;
 }
+.modal-footer>* {
+  margin: 0px;
+}
 .modal-title {
   font-size: 18px;
   color: var(--primary-color);

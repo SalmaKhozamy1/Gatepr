@@ -1,21 +1,21 @@
 <template>
   <div class="login-page flex-column-start">
-    <h2 class="auth-title w-100">تسجيل الدخول</h2>
+    <h2 class="auth-title w-100">{{ $t('auth.loginTitle') }}</h2>
     
     <form @submit="onSubmit" class="auth-form w-100 flex-column-start gap-sm">
       <InputsFormInput
         v-model="email"
-        label="البريد الإلكتروني"
+        :label="$t('labels.email')"
         type="email"
-        placeholder="ادخل البريد الإلكتروني"
+        :placeholder="$t('placeholders.email')"
         :error="errors.email"
       />
       
       <InputsFormInput
         v-model="password"
-        label="كلمة المرور"
+        :label="$t('labels.password')"
         :type="showPassword ? 'text' : 'password'"
-        placeholder="ادخل كلمة المرور"
+        :placeholder="$t('placeholders.password')"
         :error="errors.password"
       >
         <template #suffix>
@@ -27,17 +27,17 @@
       </InputsFormInput>
 
       <div class="form-options flex-between w-100 mb-2">
-        <InputsApprove label="تذكرني" />
-        <a href="#" class="forgot-link custom-anc">نسيت كلمة السر؟</a>
+        <InputsApprove :label="$t('labels.rememberMe')" />
+        <a href="#" class="forgot-link custom-anc">{{ $t('buttons.forgotYourPassword') }}</a>
       </div>
 
-      <button type="submit" class="custom-btn secondary-btn w-100">تسجيل الدخول</button>
+      <button type="submit" class="custom-btn secondary-btn w-100">{{ $t('buttons.login') }}</button>
 
     </form>
 
     <div class="auth-footer w-100 flex-center gap-xs">
-      <h5>ليس لدي حساب؟ </h5>
-      <nuxt-link to="/register" class="signup-link custom-anc secondary">إنشاء حساب</nuxt-link>
+      <h5>{{ $t('labels.dontHaveAccount') }}</h5>
+      <nuxt-link to="/register" class="signup-link custom-anc secondary">{{ $t('buttons.signUp') }}</nuxt-link>
     </div>
 
   </div>
@@ -48,6 +48,11 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useApi } from '~/composables/useApi'
 import { useAuthStore } from '~/stores/auth'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+const localePath = useLocalePath()
+
 definePageMeta({
   layout: 'auth'
 });
@@ -62,11 +67,11 @@ const authStore = useAuthStore()
 /* 1️⃣ Schema */
 const schema = yup.object({
   email: yup.string()
-  .required('البريد الإلكتروني مطلوب')
-  .email('البريد الإلكتروني غير صحيح'),
+  .required(t('validation.email_required'))
+  .email(t('validation.email_invalid')),
   password: yup.string()
-  .required('كلمة المرور مطلوبة')
-  .min(6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')
+  .required(t('validation.password_required'))
+  .min(6, t('validation.password_min'))
 })
 
 /* 2️⃣ useForm */
@@ -99,10 +104,9 @@ const onSubmit = handleSubmit(async (values) => {
 
     console.log("token.value:" , token.value);
     console.log('user:', authStore.user)
-    console.log(JSON.stringify(user.value))
     
     // 4️⃣ تحويل للصفحة الرئيسية
-    navigateTo('/admin/home')
+    navigateTo(localePath('/admin/home'))
   } catch (error) {
     console.error('Login Error:', error)
   }

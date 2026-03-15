@@ -1,14 +1,12 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
         <SearchBar
-          placeholder="بحث عن نوع استلام .."
+          :placeholder="t('pages.search')"
           :filters="searchFilters"
           @filter="handleFilter"
           @reset="resetFilters"
         />
-      </div>
     </Teleport>
 
     <TablesAppTable
@@ -18,16 +16,16 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && receiptTypes.length === 0">
-          <td :colspan="headers.length" class="text-center">
-            لا توجد أنواع استلام للعرض
+          <td :colspan="headers.length" class="text-center danger">
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="type in receiptTypes" :key="type.id">
-          <th class="index-cell">{{ type.id }}</th>
-          <td>{{ type.name?.ar }}</td>
+        <tr v-for="(type, index) in receiptTypes" :key="type.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ type.name?.[locale] || type.name?.ar }}</td>
           <td>
             <div class="toggle-switch-input">
               <InputsToggleSwitch
@@ -39,13 +37,13 @@
           </td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(type.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(type.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(type)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(type)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(type)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(type)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -57,7 +55,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض نوع استلام"
+    :title="t('buttons.view') + ' ' + t('settings.add_receive_type')"
     :data="selectedType"
     :fields="typeViewFields"
     :icon="IconsReceiveType"
@@ -65,36 +63,44 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة نوع استلام"
+    :title="t('settings.add') + ' ' + t('settings.add_receive_type')"
     :icon="IconsReceiveType"
-    :fields="typeFormFields"
+    :fields="typeFormFields"    
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    title="تعديل نوع استلام"
+    :title="t('buttons.edit') + ' ' + t('settings.add_receive_type')"
     :icon="IconsReceiveType"
     :fields="typeFormFields"
     :initial-data="selectedEditType"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleEditSubmit"
   />
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    title="حذف نوع الاستلام"
-    itemType="نوع استلام"
-    :itemName="selectedDeleteType?.name?.ar"
+    :title="t('buttons.delete') + ' ' + t('settings.add_receive_type')"
+    :itemType="t('settings.add_receive_type')"
+    :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @confirm="handleDeleteConfirm"
   />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsReceiveType } from '#components'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 
@@ -118,33 +124,33 @@ const selectedEditType = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteType = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'نوع الاستلام', class: '' },
-  { label: 'الحالة', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('settings.add_receive_type'), class: '' },
+  { label: t('labels.status'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const typeViewFields = [
-  { label: 'الاسم بالعربي', key: 'name.ar' },
-  { label: 'الاسم بالإنجليزي', key: 'name.en' },
-]
+const typeViewFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+])
 
-const typeFormFields = [
-  { key: 'name.ar', label: 'الاسم بالعربي', placeholder: 'ادخل الاسم باللغة العربية' },
-  { key: 'name.en', label: 'الاسم بالإنجليزي', placeholder: 'ادخل الاسم باللغة الإنجليزية' },
-]
+const typeFormFields = computed(() => [
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+])
 
-const searchFilters = [
+const searchFilters = computed(() => [
   {
     key: 'is_active',
-    placeholder: 'كل الحالات',
+    placeholder: t('labels.all_statuses'),
     options: [
-      { label: 'مفعّل', value: 1 },
-      { label: 'غير مفعّل', value: 0 },
+      { label: t('labels.active'), value: 1 },
+      { label: t('labels.inactive'), value: 0 },
     ]
   }
-]
+])
 
 /* =============================
    HELPER

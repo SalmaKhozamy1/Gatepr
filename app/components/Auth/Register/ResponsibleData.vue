@@ -2,39 +2,39 @@
   <div class="grid grid-3 gap-md">
       <InputsFormInput 
         v-model="phone" 
-        label="تليفون المورد" 
-        placeholder="ادخل تليفون المورد" 
+        :label="t('labels.supplier_phone')" 
+        :placeholder="t('placeholders.supplier_phone')" 
         :error="errors.phone"
       />
       <InputsFormInput 
         v-model="mobile" 
-        label="موبايل المورد" 
-        placeholder="ادخل موبايل المورد" 
+        :label="t('labels.supplier_mobile')" 
+        :placeholder="t('placeholders.supplier_mobile')" 
         :error="errors.mobile"
       />
       <InputsFormInput 
         v-model="fax" 
-        label="الفاكس" 
-        placeholder="ادخل الفاكس" 
+        :label="t('labels.fax')" 
+        :placeholder="t('placeholders.fax')" 
         :error="errors.fax"
       />
       
       <InputsFormInput 
         v-model="email" 
-        label="البريد الإلكتروني" 
-        placeholder="ادخل البريد الإلكتروني" 
+        :label="t('labels.email')" 
+        :placeholder="t('placeholders.email')" 
         :error="errors.email"
       />
       <InputsFormInput 
         v-model="address" 
-        label="العنوان تفصيلي" 
-        placeholder="ادخل العنوان التفصيلي" 
+        :label="t('labels.detailed_address')" 
+        :placeholder="t('placeholders.detailed_address')" 
         :error="errors.address"
       />
       <InputsFormInput 
         v-model="website" 
-        label="الموقع الإلكتروني" 
-        placeholder="ادخل URL الموقع" 
+        :label="t('labels.website')" 
+        :placeholder="t('placeholders.website_url')" 
         :error="errors.website"
       />
   </div>
@@ -43,14 +43,17 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const schema = yup.object({
-  phone: yup.string().required('تليفون المورد مطلوب'),
-  mobile: yup.string().required('موبايل المورد مطلوب'),
+  phone: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_phone') })),
+  mobile: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_mobile') })),
   fax: yup.string().optional(),
-  email: yup.string().required('البريد الإلكتروني مطلوب').email('بريد إلكتروني غير صحيح'),
-  address: yup.string().required('العنوان تفصيلي مطلوب'),
-  website: yup.string().url('رابط غير صحيح').optional(),
+  email: yup.string().required(t('validation.email_required')).email(t('validation.email_invalid')),
+  address: yup.string().required(t('errors.isRequired', { name: t('labels.detailed_address') })),
+  website: yup.string().url(t('errors.website')).optional(), // Using labels.website for generic error or can be specific
 })
 
 const { errors, validate } = useForm({

@@ -3,36 +3,30 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@pinia/nuxt',
-    ['@primevue/nuxt-module', {    // ✅ حط الـ options جوه الـ module مباشرة
+    ['@primevue/nuxt-module', {
       options: {
-        ripple: true
+        ripple: true,
+        components: {
+          include: ['Toast', 'MultiSelect', 'DatePicker']
+        }
       }
     }],
-    [
-      "@nuxtjs/i18n",
-      {
-        defaultLocale: "ar",
-        locales: [
-          {
-            name: "English",
-            code: "en",
-            language: "en-US",
-            file: "en.json",
-            dir: "ltr",
-          },
-          {
-            name: "عربي ",
-            code: "ar",
-            language: "ar-EG",
-            file: "ar.json",
-            dir: "rtl",
-          },
-        ],
-        lazy: true,
-        detectBrowserLanguage: false,
-      },
-    ]
+    "@nuxtjs/i18n"
   ],
+  i18n: {
+    defaultLocale: "ar",
+    strategy: 'prefix_except_default',
+    locales: [
+      { name: "English", code: "en", language: "en-US", file: "en.json", dir: "ltr" },
+      { name: "عربي", code: "ar", language: "ar-EG", file: "ar.json", dir: "rtl" },
+    ],
+    langDir: "locales",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'locale',
+      redirectOn: 'root',
+    },
+  },
   app: {
     head: {
       link: [

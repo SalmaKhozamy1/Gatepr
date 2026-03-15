@@ -4,7 +4,7 @@
       <div class="flex-start gap-sm w-100 flex-wrap">
         <InputsFormInput 
           v-model="searchQuery"
-          placeholder="بحث عن محافظة .." 
+          :placeholder="t('pages.search')" 
           class="flex-grow-1 min-w-40 col"
         />
         <div class="flex-start gap-sm">
@@ -49,6 +49,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n() 
 
 const searchQuery = ref('')
 

@@ -1,5 +1,5 @@
 <template>
-    <CardsCustomCard title="نظرة عامة">
+    <CardsCustomCard :title="t('home.overview')">
         <div class="grid grid-3">
             <CardsStatisticsCard :CardNo="dashboard?.branches?.count" IconBg="#64CBF4" :title="t('home.branches')">
                <template #icon>

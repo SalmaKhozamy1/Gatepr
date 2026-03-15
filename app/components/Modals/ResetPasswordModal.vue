@@ -3,6 +3,7 @@
     v-model="show"
     title="تعديل كلمة المرور"
     :icon="IconsLock"
+    :close-on-backdrop="false"
   >
     <div class="change-password-content">
       <InputsFormInput 

@@ -1,9 +1,9 @@
 <template>
-  <ModalsAppModal v-model="show" :hasHeader="false" width="480px">
+  <ModalsAppModal v-model="show" :hasHeader="false" width="480px" :close-on-backdrop="false">
     <div class="otp-container flex-column-center gap-md">
       <div class="header-text text-center">
-        <h4 class="mb-2">كود التفعيل</h4>
-        <p class="desc px-4">أدخل رمز التحقق المكون من 6 أرقام الذي أرسلناه  <div class="inline text">إلى johndoe@gmail.com</div></p>
+        <h4 class="mb-2">{{ t('auth.activation_code') }}</h4>
+        <p class="desc px-4">{{ t('auth.enter_otp') }}  <div class="inline text">{{ t('auth.sent_to') }} {{ email }}</div></p>
       </div>
 
       <!-- Simple PIN Input Mockup -->
@@ -25,18 +25,21 @@
       <div class="timer-section w-100 d-flex justify-content-between px-3">
         <span class="timer primary">0:{{ String(timeLeft).padStart(2, '0') }}</span>
         <button class="custom-anc secondary" @click.prevent="resendCode" :disabled="timeLeft === 0">
-        إعادة إرسال
+        {{ t('auth.resend') }}
         </button>
       </div>
 
-      <button class="custom-btn secondary-btn w-100" @click="submitOtp" :disabled="otpCode.length !== 6">استكمال</button>
+      <button class="custom-btn secondary-btn w-100" @click="submitOtp" :disabled="otpCode.length !== 6">{{ t('auth.continue') }}</button>
     </div>
   </ModalsAppModal>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const api = useApi()
 const show = defineModel('show')

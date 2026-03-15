@@ -42,15 +42,10 @@ const emit = defineEmits(['update:modelValue'])
   width: 100%;
   font-family: inherit !important;
   font-size: var(--size-sm) !important;
-  direction: rtl;
   border-radius: var(--radius-sm) !important;
-  border: 1px solid var(--border-color, #e0e0e0) !important;
+  border: 1px solid #e0e0e0 !important;
   box-shadow: none !important;
   min-height: 40px;
-}
-
-:deep(.p-multiselect:hover) {
-  border: 1px solid var(--border-color, #e0e0e0) !important;
 }
 
 :deep(.p-multiselect:focus) {

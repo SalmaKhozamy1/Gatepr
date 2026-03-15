@@ -1,13 +1,14 @@
 <template>
-  <div class="side-page-layout grid grid-2 gap-md">
+  <div :class="['gap-md', hasAside ? 'side-page-layout grid grid-2' : 'flex-column']">
       <PageLayoutAsideContent
+      v-if="hasAside"
       :title="asideTitle"
       :items="asideItems"
       :activeIndex="activeIndex"
       @item-click="$emit('item-click', $event)"
       />
       <div class="d-flex flex-column gap-md">
-        <CardsCustomCard title="فلتر البحث">
+        <CardsCustomCard v-if="hasSearch" :title="t('pages.search_filter')">
           <slot name="search"></slot>
         </CardsCustomCard>
 
@@ -23,7 +24,19 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n() 
+
 defineProps({
+   hasSearch: {
+    type: Boolean,
+    default: true   
+  },
+   hasAside: {
+    type: Boolean,
+    default: true  
+  },
   asideTitle: {
     type: String,
     default: ""

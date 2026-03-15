@@ -59,14 +59,16 @@ const token = useCookie('token')
 
 const authStore = useAuthStore()
 
+const { t } = useI18n()
+
 /* 1️⃣ Schema */
 const schema = yup.object({
   email: yup.string()
-  .required('البريد الإلكتروني مطلوب')
-  .email('البريد الإلكتروني غير صحيح'),
+  .required(t('validation.email_required'))
+  .email(t('validation.email_invalid')),
   password: yup.string()
-  .required('كلمة المرور مطلوبة')
-  .min(6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')
+  .required(t('validation.password_required'))
+  .min(6, t('validation.password_min'))
 })
 
 /* 2️⃣ useForm */
@@ -99,7 +101,7 @@ const onSubmit = handleSubmit(async (values) => {
     console.log("userdata");
     
     // 4️⃣ تحويل للصفحة الرئيسية
-    navigateTo('/admin/home')
+    navigateTo(localePath('/admin/home'))
     
   } catch (error) {
     console.error('Login Error:', error)

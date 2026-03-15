@@ -1,41 +1,41 @@
 <template>
   <div>
     <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
       <SearchBar
-        placeholder="بحث عن محافظة .."
+        :placeholder="t('inputs.search')"
+        :loading="loading"
         @filter="handleFilter"
         @reset="resetFilters"
       />
-      </div>
     </Teleport>
 
     <TablesAppTable 
       :headers="headers"
       :current-page="currentPage"
       :total-pages="totalPages"
+      :per-page="perPage"
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && governorates.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            لا توجد محافظات للعرض
+            {{ t('errors.somethingWentWrong') }}
           </td>
         </tr>
 
-        <tr v-for="gov in governorates" :key="gov.id">
-          <th class="index-cell">{{ gov.id }}</th>
-          <td>{{ gov.name.ar }}</td>
+        <tr v-for="(gov, i) in governorates" :key="gov.id">
+          <th class="index-cell">{{ getIndex(i) }}</th>
+          <td>{{ gov.name?.[locale] || gov.name?.ar }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" title="عرض" @click="handleView(gov.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(gov.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" title="تعديل" @click="handleEdit(gov)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(gov)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" title="حذف" @click="handleDelete(gov)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(gov)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -59,7 +59,9 @@
     v-model="showAddModal"
     title="إضافة محافظة"
     :icon="IconsGovernorates"
-    :fields="governorateAddFields"
+    :fields="governorateAddFields"    
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
     @submit="handleAddSubmit"
   />
 
@@ -70,15 +72,19 @@
   :icon="IconsGovernorates"
   :fields="governorateAddFields"
   :initial-data="selectedEditGovernorate"
+      data-bs-backdrop="static"
+    data-bs-keyboard="false"
   @submit="handleEditSubmit"
 />
 
 <!-- Delete Modal -->
 <ModalsAppDeleteModal
   v-model="showDeleteModal"
-  title="حذف المحافظة"
-  itemType="محافظة"
+  :title="t('settings.delete_governorate')"
+  :itemType="t('settings.governorate')"
   :itemName="selectedDeleteGovernorate?.name?.ar"
+      data-bs-backdrop="static"
+    data-bs-keyboard="false"
   @confirm="handleDeleteConfirm"
 />
 </template>
@@ -91,6 +97,9 @@ import { IconsGovernorates } from '#components'
 
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n() 
 
 /* =============================
    STATE
@@ -111,21 +120,21 @@ const selectedEditGovernorate = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteGovernorate = ref(null)
 
-const headers = [
-  { label: '#', class: 'index-cell' },
-  { label: 'اسم المحافظة', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
-]
+const headers = computed(() => [
+  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('labels.governorate'), class: '' },
+  { label: t('labels.actions'), class: 'actions-cell' }
+])
 
-const governorateFields = [
-  { label: 'اسم المحافظة باللغة العربية', key: 'name.ar' },
-  { label: 'اسم المحافظة باللغة الإنجليزية', key: 'name.en' },
-]
+const governorateFields = computed(() => [
+  { label: t('labels.name_ar'), key: 'name.ar' },
+  { label: t('labels.name_en'), key: 'name.en' },
+])
 
-const governorateAddFields = [
-  { key: 'name.ar', label: 'اسم المحافظة بالعربي', placeholder: 'ادخل اسم المحافظة باللغة العربية' },
-  { key: 'name.en', label: 'اسم المحافظة بالإنجليزي', placeholder: 'ادخل اسم المحافظة باللغة الإنجليزية' },
-]
+const governorateAddFields = computed(() => [
+  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
+  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+])
 
 /* =============================
    HELPER
@@ -264,8 +273,8 @@ const handlePageChange = (page) => {
 /* =============================
    SEARCH & FILTER
 ============================== */
-const handleFilter = (query) => {
-  searchQuery.value = query
+const handleFilter = ({ search } = {}) => {
+  searchQuery.value = search ?? ''
   currentPage.value = 1
   fetchGovernorates()
 }
@@ -275,7 +284,6 @@ const resetFilters = () => {
   currentPage.value = 1
   fetchGovernorates()
 }
-
 /* =============================
    PROVIDE/INJECT للـ Add Button
 ============================== */
