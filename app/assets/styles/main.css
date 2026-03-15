@@ -48,8 +48,8 @@
   --text-color: #101828;
   --light-primary-color: #F8F9FC;
   --light-secondary-color: rgba(240, 186, 62, 0.10);
-  --gray-color: #606060;
-  --light-gray: #FBFBFC;
+  --gray-color: #8F92A1;
+  --light-gray: #ededf0;
   --desc-color: #535862;
   --placeholder: #8F92A1;
   /*///////// Font Size /////////*/
@@ -428,6 +428,7 @@ html[dir="rtl"] [type="url"] {
 .full-width {
   grid-column: 1 / -1;
 }
+
 /* errors / in-valid */
 .error {
   color: var(--red) !important;
@@ -613,7 +614,9 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   border-bottom-left-radius: var(--radius-sm) !important;
   border-bottom-right-radius: var(--radius-sm) !important;
 }
-
+.nested-accordion .accordion-item .accordion-button::after {
+   background-color: #fafafc !important;
+}
 @media screen and (max-width: 991.98px) {
   .navbar-nav {
     width: 100% !important;

@@ -20,6 +20,8 @@
     "phone": "Phone",
     "branches": "Branches",
     "role": "Role",
+    "roles_name_ar": "Role Name in Arabic",
+    "roles_name_en": "Role Name in English",
     "name": "Name",
     "user": "User",
     "branches_count": "Branches Count",

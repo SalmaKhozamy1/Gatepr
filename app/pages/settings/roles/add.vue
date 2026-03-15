@@ -1,123 +1,141 @@
-
 <template>
-  <div class="roles-add-page px-3 pb-5">
-    <!-- 🟢 Role Name Section -->
-    <CardsCustomCard>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold mb-0 text-dark-blue">{{ t('settings.add') }} {{ t('labels.role') }}</h5>
-      </div>
-      
-      <div class="row g-4">
-        <div class="col-md-6">
-          <InputsFormInput
-            v-model="roleData.name.ar"
-            :label="t('labels.name_ar')"
-            :placeholder="t('placeholders.name_ar')"
-            required
-            :error="errors['name.ar']"
-          />
-        </div>
-        <div class="col-md-6">
-          <InputsFormInput
-            v-model="roleData.name.en"
-            :label="t('labels.name_en')"
-            :placeholder="t('placeholders.name_en')"
-            required
-            :error="errors['name.en']"
-          />
-        </div>
+  <div>
+    <!-- Role Name Section -->
+    <CardsCustomCard :title="t('settings.add') + ' ' + t('labels.role')">
+      <div class="grid grid-2 gap-sm">
+        <InputsFormInput
+          v-model="roleData.name.ar"
+          :label="t('labels.roles_name_ar')"
+          :placeholder="t('placeholders.name_ar')"
+          required
+          :error="errors['name.ar']"
+        />
+        <InputsFormInput
+          v-model="roleData.name.en"
+          :label="t('labels.roles_name_en')"
+          :placeholder="t('placeholders.name_en')"
+          required
+          :error="errors['name.en']"
+        />
       </div>
 
-      <div class="d-flex gap-3 justify-content-end mt-4 pt-2">
-        <button class="custom-btn text-btn min-btn-width" @click="handleCancel">
-          {{ t('buttons.cancel') }}
-        </button>
-        <button class="custom-btn secondary-btn min-btn-width shadow-sm" :disabled="loading" @click="handleSave">
-          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-          <span>{{ t('buttons.save') }}</span>
-        </button>
-      </div>
+    <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
     </CardsCustomCard>
 
-    <!-- 🟢 Permissions Selection -->
-    <div class="permissions-section mt-5">
-      <div v-for="(group, groupIndex) in permissionGroups" :key="groupIndex" class="accordion-item shadow-sm mb-3">
-        <!-- Accordion Header -->
-        <div 
-          class="accordion-header d-flex justify-content-between align-items-center" 
-          :class="{ 'active': group.expanded }"
-          @click="toggleGroup(groupIndex)"
-        >
-          <!-- Left/Start Side (Icon & Title) -->
-          <div class="d-flex align-items-center gap-3">
-             <div class="group-icon-box shadow-none">
-                <component :is="group.icon || IconsSettings" width="22" height="22" />
-              </div>
-              <h6 class="group-title mb-0">{{ group.title }}</h6>
-          </div>
-          
-          <!-- Right/End Side (Select All & Arrow) -->
-          <div class="d-flex align-items-center gap-4">
-            <div class="custom-checkbox-all d-flex align-items-center gap-2" @click.stop>
-              <span class="text-muted small">{{ t('labels.select_all') }}</span>
-              <input 
-                class="form-check-input custom-check" 
-                type="checkbox" 
-                :id="'check-all-' + groupIndex"
-                v-model="group.allSelected"
-                @change="toggleAllInGroup(group)"
-              >
-            </div>
-            <div class="arrow-indicator" :class="{ 'active': group.expanded }">
-              <IconsDownArrow width="14" height="14" />
-            </div>
-          </div>
+    <!-- Permissions Accordion -->
+    <div class="accordion d-flex flex-column gap-3 mt-3" id="permissionsAccordion">
+  
+    <!-- First Accordion -->
+    <AppAccordion
+      id="settings-group"
+      parentId="permissionsAccordion"
+      title="الإعدادات"
+      :icon="IconsSettings"
+      :show="true"
+    >
+    <!-- ✅ Nested accordion -->
+    <div class="nested-accordion grid grid-2 gap-sm" id="settingsInner">
+      <AppAccordion
+        id="governorate-group"
+        parentId="settingsInner"
+        :show="true"
+      >
+        <template #header>
+          <InputsApprove label="المدن" />
+        </template>
+        <div class="flex-between gap-sm flex-wrap">
+                <InputsApprove label="عرض" />
+                <InputsApprove label="إضافة" />
+                <InputsApprove label="تعديل" />
+                <InputsApprove label="حذف" />
         </div>
+      </AppAccordion>
 
-        <!-- Accordion Body -->
-        <Transition name="accordion-slide">
-          <div v-if="group.expanded" class="accordion-body bg-white">
-            <div class="permissions-grid d-flex flex-wrap gap-4">
-              <div v-for="permission in group.permissions" :key="permission.id" class="permission-item">
-                <div class="form-check d-flex align-items-center gap-2">
-                  <input 
-                    class="form-check-input custom-check" 
-                    type="checkbox" 
-                    :id="'perm-' + permission.id"
-                    v-model="selectedPermissions"
-                    :value="permission.id"
-                    @change="updateGroupAllSelected(group)"
-                  >
-                  <label class="form-check-label text-dark fs-14 fw-medium mb-0" :for="'perm-' + permission.id">
-                    {{ permission.label }}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Transition>
+      <AppAccordion
+        id="governorate-group"
+        parentId="settingsInner"
+        :show="true"
+      >
+        <template #header>
+          <InputsApprove label="مناطق" />
+        </template>
+        <div class="flex-between gap-sm flex-wrap">
+                <InputsApprove label="عرض" />
+                <InputsApprove label="إضافة" />
+                <InputsApprove label="تعديل" />
+                <InputsApprove label="حذف" />
+        </div>
+      </AppAccordion>
+
+       <AppAccordion
+        id="governorate-group"
+        parentId="settingsInner"
+        :show="true"
+      >
+        <template #header>
+          <InputsApprove label="مستخدمين" />
+        </template>
+        <div class="flex-between gap-sm flex-wrap">
+                <InputsApprove label="عرض" />
+                <InputsApprove label="إضافة" />
+                <InputsApprove label="تعديل" />
+                <InputsApprove label="حذف" />
+        </div>
+      </AppAccordion>
+
+       <AppAccordion
+        id="governorate-group"
+        parentId="settingsInner"
+        :show="true"
+      >
+        <template #header>
+          <InputsApprove label="الأدوار" />
+        </template>
+        <div class="flex-between gap-sm flex-wrap">
+                <InputsApprove label="عرض" />
+                <InputsApprove label="إضافة" />
+                <InputsApprove label="تعديل" />
+                <InputsApprove label="حذف" />
+        </div>
+      </AppAccordion>
+      <div class="full-width">
+        <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
       </div>
-    </div>
 
-    <!-- 🟢 Bottom Sticky Actions (Optional) -->
-    <div class="bottom-actions mt-5 d-flex gap-3 justify-content-end">
-        <button class="custom-btn text-btn min-btn-width" @click="handleCancel">
-          {{ t('buttons.cancel') }}
-        </button>
-        <button class="custom-btn secondary-btn min-btn-width shadow-sm" :disabled="loading" @click="handleSave">
-          <span v-if="loading" class="spinner-border spinner-border-sm me-2"></span>
-          <span>{{ t('buttons.save') }}</span>
-        </button>
     </div>
+  </AppAccordion>
+
+  <!-- Second Accordion -->
+  <AppAccordion
+    id="settings-group"
+    parentId="permissionsAccordion"
+    title="الفروع"
+    :icon="IconsSettings"
+    :show="true"
+  >
+  <div class="flex-between gap-sm flex-wrap w-75">
+      <InputsApprove label="عرض" />
+      <InputsApprove label="إضافة" />
+      <InputsApprove label="تعديل" />
+      <InputsApprove label="حذف" />
+  </div>
+  <div class="mt-3">
+    <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
+  </div>
+  </AppAccordion>
+
+</div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+definePageMeta({ fullPage: true })
+
+import { ref, reactive, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
-import { 
-  IconsSettings, 
+import {
+  IconsSettings,
   IconsDownArrow,
   IconsGovernorates,
   IconsSettingsRegions,
@@ -143,13 +161,9 @@ const errors = ref({})
 const selectedPermissions = ref([])
 
 const roleData = reactive({
-  name: {
-    ar: '',
-    en: ''
-  }
+  name: { ar: '', en: '' }
 })
 
-// Icon Map for Permissions Categories
 const iconMap = {
   'المدن': IconsGovernorates,
   'مناطق': IconsSettingsRegions,
@@ -166,7 +180,6 @@ const iconMap = {
   'سجلات النظام': IconsLogs,
   'الإشعارات': IconsNotification,
   'الإعدادات': IconsSettings,
-  // English version if needed by API
   'Settings': IconsSettings,
   'Branches': IconsBranches,
   'Suppliers': IconsSuppliers,
@@ -174,29 +187,34 @@ const iconMap = {
   'Notifications': IconsNotification,
 }
 
-const getGroupIcon = (title) => {
-  return iconMap[title] || IconsSettings
-}
+const getGroupIcon = (title) => iconMap[title] || IconsSettings
 
 const permissionGroups = ref([])
 
+/* =============================
+   TOGGLE GROUP
+============================== */
 const toggleGroup = (index) => {
   permissionGroups.value[index].expanded = !permissionGroups.value[index].expanded
 }
 
+/* =============================
+   FETCH PERMISSIONS
+============================== */
 const fetchPermissions = async () => {
   try {
     loading.value = true
     const res = await api('/v1/admin/permissions')
-    
+
     if (res && res.data) {
-      // Handle both grouped object or flat array
-      const apiData = Array.isArray(res.data) ? { [t('menu.settings')]: res.data } : res.data
-      
+      const apiData = Array.isArray(res.data)
+        ? { [t('menu.settings')]: res.data }
+        : res.data
+
       permissionGroups.value = Object.entries(apiData).map(([key, perms]) => ({
         title: key,
         icon: getGroupIcon(key),
-        expanded: false, // Start collapsed for cleaner look
+        expanded: false,
         permissions: perms.map(p => ({
           id: p.id,
           label: p.display_name || p.name_localized?.[locale.value] || p.name
@@ -211,6 +229,9 @@ const fetchPermissions = async () => {
   }
 }
 
+/* =============================
+   TOGGLE ALL IN GROUP
+============================== */
 const toggleAllInGroup = (group) => {
   if (group.allSelected) {
     group.permissions.forEach(p => {
@@ -221,26 +242,28 @@ const toggleAllInGroup = (group) => {
   } else {
     group.permissions.forEach(p => {
       const index = selectedPermissions.value.indexOf(p.id)
-      if (index !== -1) {
-        selectedPermissions.value.splice(index, 1)
-      }
+      if (index !== -1) selectedPermissions.value.splice(index, 1)
     })
   }
 }
 
 const updateGroupAllSelected = (group) => {
-  group.allSelected = group.permissions.length > 0 && group.permissions.every(p => selectedPermissions.value.includes(p.id))
+  group.allSelected = group.permissions.length > 0 &&
+    group.permissions.every(p => selectedPermissions.value.includes(p.id))
 }
 
+/* =============================
+   SAVE
+============================== */
 const handleSave = async () => {
   if (!roleData.name.ar || !roleData.name.en) {
-      toastError(t('errors.pleaseFillAllFields'))
-      return
+    toastError(t('errors.pleaseFillAllFields'))
+    return
   }
 
   errors.value = {}
   loading.value = true
-  
+
   try {
     await api('/v1/admin/roles', {
       method: 'POST',
@@ -249,26 +272,19 @@ const handleSave = async () => {
         permissions: selectedPermissions.value
       }
     })
-    
     success(t('buttons.save_changes'))
     setTimeout(() => navigateTo(localePath('/settings/roles')), 500)
   } catch (err) {
-    if (err?.data?.errors) {
-      errors.value = err.data.errors
-    }
+    if (err?.data?.errors) errors.value = err.data.errors
     toastError(err?.data?.message || t('errors.somethingWentWrong'))
   } finally {
     loading.value = false
   }
 }
 
-const handleCancel = () => {
-  navigateTo(localePath('/settings/roles'))
-}
+const handleCancel = () => navigateTo(localePath('/settings/roles'))
 
-onMounted(() => {
-  fetchPermissions()
-})
+onMounted(() => fetchPermissions())
 </script>
 
 <style scoped>
@@ -281,35 +297,22 @@ onMounted(() => {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Accordion Specific Styling */
 .accordion-item {
-  border: 1px solid #f0f1f3;
-  border-radius: 12px;
-  background: #fff;
+  background: white;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: all 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .accordion-header {
-  padding: 1.25rem 1.5rem;
-  background-color: #fff;
+  padding: 14px 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  background: white;
   user-select: none;
 }
 
-.accordion-header.active {
-  background-color: #fafbfc;
-}
-
 .accordion-header:hover {
-  background-color: #f8f9fa;
-}
-
-.group-title {
-  color: #333;
-  font-weight: 600;
-  font-size: 16px;
+  background: var(--light-primary-color, #f5f8ff);
 }
 
 .group-icon-box {
@@ -321,85 +324,82 @@ onMounted(() => {
   border-radius: 10px;
   color: var(--primary-color);
   background-color: #f1f4f9;
+  flex-shrink: 0;
+}
+
+.group-title {
+  color: #333;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .accordion-body {
-  padding: 1.5rem;
-  border-top: 1px solid #f1f3f5;
-  background-color: #fff;
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  background: white;
 }
 
 .permissions-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 16px;
 }
 
 .permission-item {
-  min-width: 140px;
+  min-width: 160px;
 }
 
-/* Icons & Indicators */
+.form-check-label {
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
 .arrow-indicator {
   transition: transform 0.3s ease;
   color: #adb5bd;
+  display: flex;
+  align-items: center;
 }
 
 .arrow-indicator.active {
   transform: rotate(180deg);
-  color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
-/* Custom Checkbox Senior Styles */
 .custom-check {
   width: 20px;
   height: 20px;
-  border-radius: 6px !important;
+  border-radius: 6px;
   border: 2px solid #ced4da;
-  box-shadow: none !important;
   cursor: pointer;
+  accent-color: var(--secondary-color);
+  flex-shrink: 0;
 }
 
-.custom-check:checked {
-  background-color: var(--secondary-color) !important;
-  border-color: var(--secondary-color) !important;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
-}
-
-/* General Layout helpers */
-.text-dark-blue {
-    color: #1a2b4b;
-}
-
-.fs-14 {
-    font-size: 14px;
-}
-
-.min-btn-width {
-    min-width: 120px;
-}
-
-.text-btn {
-    font-weight: 500;
-    color: #6c757d;
-}
-
-.text-btn:hover {
-    color: #343a40;
-}
-
-/* Transitions */
-.accordion-slide-enter-active, 
+/* Transition */
+.accordion-slide-enter-active,
 .accordion-slide-leave-active {
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 800px;
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.accordion-slide-enter-from, 
+.accordion-slide-enter-from,
 .accordion-slide-leave-to {
   max-height: 0;
   opacity: 0;
-  overflow: hidden;
+}
+
+.accordion-slide-enter-to,
+.accordion-slide-leave-from {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.nested-accordion .accordion-item {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--light-gray);
+  background: #FFF;
 }
 
 </style>

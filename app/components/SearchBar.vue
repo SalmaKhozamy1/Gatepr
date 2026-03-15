@@ -28,7 +28,7 @@
 
     <div class="flex-start gap-sm">
       <button
-        class="custom-btn primary-btn fltr_btn"
+        class="custom-btn primary-btn fltr_btn min-btn-wdth"
         @click="handleFilter"
         :disabled="loading"
       >
@@ -41,6 +41,7 @@
       <ButtonsResetButton
         :label="t('pages.reset')"
         @reset="handleReset"
+        class="min-btn-wdth"
         :disabled="loading"
       />
     </div>

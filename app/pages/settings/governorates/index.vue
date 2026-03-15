@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
       <SearchBar
-        :placeholder="t('inputs.search')"
+        :placeholder="t('pages.search')"
         :loading="loading"
         @filter="handleFilter"
         @reset="resetFilters"

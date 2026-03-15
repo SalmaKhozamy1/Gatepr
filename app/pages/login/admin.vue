@@ -60,6 +60,7 @@ const token = useCookie('token')
 const authStore = useAuthStore()
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 
 /* 1️⃣ Schema */
 const schema = yup.object({

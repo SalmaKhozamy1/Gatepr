@@ -20,6 +20,8 @@
     "phone": "الهاتف",
     "branches": "الفروع",
     "role": "الدور",
+    "roles_name_ar": "اسم الدور باللغة العربية",
+    "roles_name_en": "اسم الدور باللغة الإنجليزية",
     "name": "الاسم",
     "user": "المستخدم",
     "branches_count": "عدد الفروع",
@@ -77,7 +79,7 @@
     "total_items": "عدد الأصناف"
   },
   "pages": {
-    "search": "بحث ...",
+    "search": "بحث",
     "reset": "إعادة تعيين",
     "searching": "جاري البحث...",
     "search_filter": "فلتر البحث"

@@ -1,6 +1,12 @@
 <template>
   <div class="settings-wrapper">
+    <!-- if fullPage meta is true, render NuxtPage directly without the layout wrapper -->
+    <template v-if="route.meta.fullPage">
+      <NuxtPage />
+    </template>
+
     <PageLayout
+      v-else
       :asideTitle="t('settings.title')"
       :asideItems="settingsMenu"
       :activeIndex="activeIndex"
