@@ -119,7 +119,7 @@ const menuItems = computed(() => [
    { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
    { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
    { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
-   { title: t('menu.logs'), icon: IconsLogs, path: localePath('/logs') },
+   { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
 ].map(item => ({
    ...item,
    active: route.path.startsWith(item.path) || (item.path === localePath('/admin/home') && route.path === localePath('/admin'))

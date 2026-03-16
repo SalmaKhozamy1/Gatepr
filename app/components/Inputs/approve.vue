@@ -1,9 +1,10 @@
 <template>
-  <label class="approve-checkbox">
+  <label class="approve-checkbox" :for="id">
     <input
       type="checkbox"
-      :checked="modelValue"
-      @change="$emit('update:modelValue', $event.target.checked)"
+      :checked="isChecked"
+      :id="id"
+      @change="handleChange"
     />
     <span class="checkmark"></span>
     <span class="approve-label">{{ label }}</span>
@@ -12,10 +13,16 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   modelValue: {
-    type: Boolean,
+    type: [Boolean, Array],  // ✅ يدعم Boolean و Array
     default: false
+  },
+  value: {
+    type: [String, Number],  // ✅ الـ value اللي هتتضاف للـ array
+    default: null
   },
   label: {
     type: String,
@@ -24,10 +31,39 @@ defineProps({
   error: {
     type: String,
     default: ''
+  },
+  id: {
+    type: String,
+    default: ''
   }
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+// ✅ بيشوف هل الـ value موجودة في الـ array أو الـ Boolean صح
+const isChecked = computed(() => {
+  if (Array.isArray(props.modelValue)) {
+    return props.modelValue.includes(props.value)
+  }
+  return props.modelValue
+})
+
+const handleChange = (event) => {
+  if (Array.isArray(props.modelValue)) {
+    const newValue = [...props.modelValue]
+    if (event.target.checked) {
+      if (!newValue.includes(props.value)) {
+        newValue.push(props.value)
+      }
+    } else {
+      const index = newValue.indexOf(props.value)
+      if (index !== -1) newValue.splice(index, 1)
+    }
+    emit('update:modelValue', newValue)
+  } else {
+    emit('update:modelValue', event.target.checked)
+  }
+}
 </script>
 
 <style scoped>

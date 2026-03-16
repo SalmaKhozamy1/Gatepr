@@ -1,22 +1,28 @@
 <template>
   <div class="accordion-item">
     <h5 class="accordion-header">
-      <button
-        class="accordion-button flex-start gap-sm"
-        type="button"
-        data-bs-toggle="collapse"
-        :data-bs-target="'#' + id"
-        aria-expanded="true"
-        :aria-controls="id"
-      >
-        <span v-if="icon" class="accordion-icon"><component :is="icon" /></span>
+      <div class="flex-between">
+        <button
+          class="accordion-button flex-start gap-sm"
+          type="button"
+          data-bs-toggle="collapse"
+          :data-bs-target="'#' + id"
+          :aria-expanded="show"
+          :aria-controls="id"
+          :class="{ 'collapsed': !show }"
+        >
+          <span v-if="icon" class="accordion-icon"><component :is="icon" /></span>
+          <span v-if="title">{{ title }}</span>
+          <slot v-else name="header" />
+        </button>
 
-        <!-- ✅ لو في title يعرضه، لو لأ يعرض الـ slot -->
-        <span v-if="title">{{ title }}</span>
-        <slot v-else name="header" />
-
-      </button>
+        <!-- ✅ actions slot -->
+        <!-- <div class="pe-3" @click.stop>
+          <slot name="actions" />
+        </div> -->
+      </div>
     </h5>
+
     <div
       :id="id"
       class="accordion-collapse collapse"
@@ -45,6 +51,7 @@
     border-radius: var(--radius-md);
     border: 0px;
     box-shadow: none;
+    overflow: hidden;
   }
   .accordion-header {
     padding: 0px;

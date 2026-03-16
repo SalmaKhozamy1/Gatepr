@@ -18,125 +18,92 @@
           :error="errors['name.en']"
         />
       </div>
-
-    <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
+      <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
     </CardsCustomCard>
 
-    <!-- Permissions Accordion -->
     <div class="accordion d-flex flex-column gap-3 mt-3" id="permissionsAccordion">
-  
-    <!-- First Accordion -->
-    <AppAccordion
+    <!-- Settings permissions -->
+      <AppAccordion
       id="settings-group"
       parentId="permissionsAccordion"
       title="الإعدادات"
       :icon="IconsSettings"
       :show="true"
-    >
-    <!-- ✅ Nested accordion -->
-    <div class="nested-accordion grid grid-2 gap-sm" id="settingsInner">
-      <AppAccordion
-        id="governorate-group"
-        parentId="settingsInner"
-        :show="true"
       >
-        <template #header>
-          <InputsApprove label="المدن" />
-        </template>
-        <div class="flex-between gap-sm flex-wrap">
-                <InputsApprove label="عرض" />
-                <InputsApprove label="إضافة" />
-                <InputsApprove label="تعديل" />
-                <InputsApprove label="حذف" />
-        </div>
-      </AppAccordion>
+      <!-- ✅Nested accordion جوا accordion -->
+      <div class="nested-accordion grid grid-2 gap-sm" id="settingsInner">
 
-      <AppAccordion
-        id="governorate-group"
+        <AppAccordion
+        v-for="(group, index) in settingsPermissions"
+        :key="index"
+        :id="'settings-' + index"
         parentId="settingsInner"
         :show="true"
-      >
-        <template #header>
-          <InputsApprove label="مناطق" />
-        </template>
-        <div class="flex-between gap-sm flex-wrap">
-                <InputsApprove label="عرض" />
-                <InputsApprove label="إضافة" />
-                <InputsApprove label="تعديل" />
-                <InputsApprove label="حذف" />
-        </div>
-      </AppAccordion>
+        >
 
-       <AppAccordion
-        id="governorate-group"
-        parentId="settingsInner"
-        :show="true"
-      >
-        <template #header>
-          <InputsApprove label="مستخدمين" />
-        </template>
-        <div class="flex-between gap-sm flex-wrap">
-                <InputsApprove label="عرض" />
-                <InputsApprove label="إضافة" />
-                <InputsApprove label="تعديل" />
-                <InputsApprove label="حذف" />
-        </div>
-      </AppAccordion>
+          <template #header>
+          <InputsApprove 
+            :label="group.model"
+            :modelValue="isGroupAllSelected(group)"
+            @update:modelValue="(val) => toggleGroup(group, val)"
+          />
+          </template>
 
-       <AppAccordion
-        id="governorate-group"
-        parentId="settingsInner"
-        :show="true"
-      >
-        <template #header>
-          <InputsApprove label="الأدوار" />
-        </template>
         <div class="flex-between gap-sm flex-wrap">
-                <InputsApprove label="عرض" />
-                <InputsApprove label="إضافة" />
-                <InputsApprove label="تعديل" />
-                <InputsApprove label="حذف" />
+
+          <InputsApprove
+            v-for="permission in group.permissions"
+            :key="permission.id"
+            :label="permission.action"
+            :id="'perm-' + permission.id"
+            v-model="selectedPermissions"
+            :value="permission.id"
+          />
+
         </div>
-      </AppAccordion>
-      <div class="full-width">
-        <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
+
+        </AppAccordion>
+
       </div>
+      </AppAccordion>
 
+
+    <!-- Permissions Accordion -->
+      <AppAccordion
+       v-for="(group, groupIndex) in permissionGroups.filter(g => !settingsModels.includes(g.model))"
+        :key="groupIndex"
+        :id="'group-' + groupIndex"
+        parentId="permissionsAccordion"
+        :title="group.model"
+        :icon="getGroupIcon(group.model)"
+        :show="groupIndex === 0"
+      >
+
+        <!-- ✅ Nested permissions -->
+        <div class="permissions-grid">
+          <div
+            v-for="permission in group.permissions"
+            :key="permission.id"
+            class="permission-item flex-start gap-sm"
+          >
+            <InputsApprove :label="permission.action"  :id="'perm-' + permission.id"  v-model="selectedPermissions" :value="permission.id"/>
+          </div>
+        </div>
+      </AppAccordion>
     </div>
-  </AppAccordion>
 
-  <!-- Second Accordion -->
-  <AppAccordion
-    id="settings-group"
-    parentId="permissionsAccordion"
-    title="الفروع"
-    :icon="IconsSettings"
-    :show="true"
-  >
-  <div class="flex-between gap-sm flex-wrap w-75">
-      <InputsApprove label="عرض" />
-      <InputsApprove label="إضافة" />
-      <InputsApprove label="تعديل" />
-      <InputsApprove label="حذف" />
-  </div>
-  <div class="mt-3">
-    <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" />
-  </div>
-  </AppAccordion>
-
-</div>
+    <ButtonsFormActions :loading="loading" @cancel="handleCancel" @save="handleSave" class="mt-3" />
   </div>
 </template>
 
 <script setup>
 definePageMeta({ fullPage: true })
 
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
 import {
   IconsSettings,
-  IconsDownArrow,
   IconsGovernorates,
   IconsSettingsRegions,
   IconsSettingsUsers,
@@ -159,44 +126,49 @@ const localePath = useLocalePath()
 const loading = ref(false)
 const errors = ref({})
 const selectedPermissions = ref([])
+const permissionGroups = ref([])
 
 const roleData = reactive({
   name: { ar: '', en: '' }
 })
 
-const iconMap = {
-  'المدن': IconsGovernorates,
-  'مناطق': IconsSettingsRegions,
-  'مستخدمين': IconsSettingsUsers,
-  'الأدوار': IconsSettingsRoles,
-  'وحدات الشراء': IconsUnits,
-  'التصنيفات الفرعية': IconsCategories,
-  'إدارة التصنيفات': IconsCategories,
-  'أنواع الموردين': IconsSuppliers,
-  'الموردين': IconsSuppliers,
-  'الشروط والأحكام': IconsTerms,
-  'أنواع الإستلام': IconsReceiveType,
-  'الفروع': IconsBranches,
-  'سجلات النظام': IconsLogs,
-  'الإشعارات': IconsNotification,
-  'الإعدادات': IconsSettings,
-  'Settings': IconsSettings,
-  'Branches': IconsBranches,
-  'Suppliers': IconsSuppliers,
-  'Logs': IconsLogs,
-  'Notifications': IconsNotification,
-}
-
-const getGroupIcon = (title) => iconMap[title] || IconsSettings
-
-const permissionGroups = ref([])
-
+const settingsModels = [
+  'Activity Log',
+  'Area',
+  'Branch',
+  'Category'
+]
+const settingsPermissions = computed(() => {
+  return permissionGroups.value.filter(group =>
+    settingsModels.includes(group.model)
+  )
+})
 /* =============================
-   TOGGLE GROUP
+   ICON MAP
 ============================== */
-const toggleGroup = (index) => {
-  permissionGroups.value[index].expanded = !permissionGroups.value[index].expanded
+const iconMap = {
+  'Activity Log': IconsLogs,
+  'Area': IconsSettingsRegions,
+  'Branch': IconsBranches,
+  'Category': IconsCategories,
+  'Governorate': IconsGovernorates,
+  'Item': IconsCategories,
+  'Item Action': IconsCategories,
+  'Item Actions': IconsCategories,
+  'Notification': IconsNotification,
+  'Purchasing Unit': IconsUnits,
+  'Receipt Type': IconsReceiveType,
+  'Role': IconsSettingsRoles,
+  'Static Page': IconsTerms,
+  'Supplier': IconsSuppliers,
+  'Supplier Profile': IconsSuppliers,
+  'Supplier Profile Update Request': IconsSuppliers,
+  'Supplier Type': IconsSuppliers,
+  'User': IconsSettingsUsers,
+  'permissions.permission': IconsSettings,
 }
+
+const getGroupIcon = (model) => iconMap[model] || IconsSettings
 
 /* =============================
    FETCH PERMISSIONS
@@ -206,22 +178,10 @@ const fetchPermissions = async () => {
     loading.value = true
     const res = await api('/v1/admin/permissions')
 
-    if (res && res.data) {
-      const apiData = Array.isArray(res.data)
-        ? { [t('menu.settings')]: res.data }
-        : res.data
-
-      permissionGroups.value = Object.entries(apiData).map(([key, perms]) => ({
-        title: key,
-        icon: getGroupIcon(key),
-        expanded: false,
-        permissions: perms.map(p => ({
-          id: p.id,
-          label: p.display_name || p.name_localized?.[locale.value] || p.name
-        })),
-        allSelected: false
-      }))
+    if (res?.data) {
+      permissionGroups.value = res.data
     }
+
   } catch (err) {
     console.error('Error fetching permissions:', err)
   } finally {
@@ -230,26 +190,13 @@ const fetchPermissions = async () => {
 }
 
 /* =============================
-   TOGGLE ALL IN GROUP
+   SELECT ALL
 ============================== */
-const toggleAllInGroup = (group) => {
-  if (group.allSelected) {
-    group.permissions.forEach(p => {
-      if (!selectedPermissions.value.includes(p.id)) {
-        selectedPermissions.value.push(p.id)
-      }
-    })
-  } else {
-    group.permissions.forEach(p => {
-      const index = selectedPermissions.value.indexOf(p.id)
-      if (index !== -1) selectedPermissions.value.splice(index, 1)
-    })
-  }
-}
-
-const updateGroupAllSelected = (group) => {
-  group.allSelected = group.permissions.length > 0 &&
-    group.permissions.every(p => selectedPermissions.value.includes(p.id))
+const isGroupAllSelected = (group) => {
+  if (!group.permissions.length) return false
+  return group.permissions.every(p => 
+    selectedPermissions.value.includes(p.id)
+  )
 }
 
 /* =============================
@@ -281,125 +228,48 @@ const handleSave = async () => {
     loading.value = false
   }
 }
-
+const toggleGroup = (group, checked) => {
+  const ids = group.permissions.map(p => p.id)
+  if (checked) {
+    selectedPermissions.value = [...new Set([...selectedPermissions.value, ...ids])]
+  } else {
+    selectedPermissions.value = selectedPermissions.value.filter(id => !ids.includes(id))
+  }
+}
 const handleCancel = () => navigateTo(localePath('/settings/roles'))
 
 onMounted(() => fetchPermissions())
 </script>
 
 <style scoped>
-.roles-add-page {
-  animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.accordion-item {
-  background: white;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-.accordion-header {
-  padding: 14px 16px;
-  cursor: pointer;
-  background: white;
-  user-select: none;
-}
-
-.accordion-header:hover {
-  background: var(--light-primary-color, #f5f8ff);
-}
-
-.group-icon-box {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  color: var(--primary-color);
-  background-color: #f1f4f9;
-  flex-shrink: 0;
-}
-
-.group-title {
-  color: #333;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.accordion-body {
-  padding: 16px;
-  border-top: 1px solid #f0f0f0;
-  background: white;
-}
-
 .permissions-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  padding: 8px 0;
 }
 
 .permission-item {
-  min-width: 160px;
+  min-width: 150px;
 }
 
-.form-check-label {
+.perm-label {
   font-size: 14px;
   color: #333;
   cursor: pointer;
 }
 
-.arrow-indicator {
-  transition: transform 0.3s ease;
-  color: #adb5bd;
-  display: flex;
-  align-items: center;
-}
-
-.arrow-indicator.active {
-  transform: rotate(180deg);
-  color: var(--primary-color);
-}
-
 .custom-check {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
   border: 2px solid #ced4da;
   cursor: pointer;
   accent-color: var(--secondary-color);
   flex-shrink: 0;
 }
 
-/* Transition */
-.accordion-slide-enter-active,
-.accordion-slide-leave-active {
-  transition: all 0.3s ease;
-  overflow: hidden;
+:deep(.nested-accordion .accordion-item) {
+  border: 1px solid #F4F5F6 !important;
 }
-
-.accordion-slide-enter-from,
-.accordion-slide-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
-
-.accordion-slide-enter-to,
-.accordion-slide-leave-from {
-  max-height: 1000px;
-  opacity: 1;
-}
-
-.nested-accordion .accordion-item {
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--light-gray);
-  background: #FFF;
-}
-
 </style>

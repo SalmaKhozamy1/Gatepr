@@ -39,10 +39,10 @@
               <button class="action-btn view" :title="t('buttons.view')" @click="handleView(role.id)">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(role.id)">
+              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(role)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(role.id)">
+              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(role)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -51,6 +51,36 @@
       </template>
     </TablesAppTable>
   </div>
+
+  <ModalsAppViewModal
+    v-model="showViewModal"
+    :title="t('buttons.view') + ' ' + t('settings.add_category')"
+    :data="selectedCategory"
+    :fields="categoryViewFields"
+    :icon="IconsCategories"
+  />
+
+  <ModalsAppEditModal
+    v-model="showEditModal"
+    :title="t('buttons.edit') + ' ' + t('settings.add_category')"
+    :icon="IconsCategories"
+    :fields="categoryFormFields"
+    :initial-data="selectedEditCategory"
+        data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    @submit="handleEditSubmit"
+  />
+
+  <ModalsAppDeleteModal
+    v-model="showDeleteModal"
+    :title="t('buttons.delete') + ' ' + t('settings.add_category')"
+    :itemType="t('settings.role')"
+    :itemName="selectedDeleteRole?.name?.[locale] || selectedDeleteRole?.name?.ar"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    @confirm="handleDeleteConfirm"
+  />
+
 </template>
 
 <script setup>
