@@ -3,7 +3,7 @@
     <Teleport to="#search-teleport-target">
       <!-- <div class="flex-start gap-sm w-100 flex-wrap"> -->
         <SearchBar
-          :placeholder="t('pages.search')"
+          :placeholder="t('common.search')"
           :filters="searchFilters"
           @filter="handleFilter"
           @reset="resetFilters"
@@ -21,7 +21,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && areas.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -31,13 +31,13 @@
           <td>{{ area.governorate?.name || '—' }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(area.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(area.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(area)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(area)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(area)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(area)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -49,7 +49,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('settings.add_area')"
+    :title="t('common.view') + ' ' + t('settings.add_area')"
     :data="selectedArea"
     :fields="areaViewFields"
     :icon="IconsSettingsRegions"
@@ -57,7 +57,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_area')"
+    :title="t('common.add') + ' ' + t('settings.add_area')"
     :icon="IconsSettingsRegions"
     :fields="areaFormFields"
     data-bs-backdrop="static"
@@ -67,7 +67,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('settings.add_area')"
+    :title="t('common.edit') + ' ' + t('settings.add_area')"
     :icon="IconsSettingsRegions"
     :fields="areaFormFields"
     :initial-data="selectedEditArea"
@@ -78,7 +78,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_area')"
+    :title="t('common.delete') + ' ' + t('settings.add_area')"
     :itemType="t('settings.add_area')"
     :itemName="selectedDeleteArea?.name?.[locale] || selectedDeleteArea?.name?.ar"
     data-bs-backdrop="static"
@@ -119,10 +119,10 @@ const showDeleteModal = ref(false)
 const selectedDeleteArea = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('labels.area'), class: '' },
   { label: t('labels.governorate'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const areaViewFields = computed(() => [
@@ -139,7 +139,7 @@ const areaFormFields = computed(() => [
     key: 'governorate_id',
     label: t('labels.governorate'),
     type: 'select',
-    placeholder: t('pages.select'),
+    placeholder: t('placeholders.select'),
     options: governorateOptions.value
   },
 ])

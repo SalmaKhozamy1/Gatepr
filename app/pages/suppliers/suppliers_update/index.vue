@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
       <SearchBar
-        placeholder="بحث عن مورد .."
+        :placeholder="t('common.search')"
         :filters="searchFilters"
         :dateFilters="dateFilters"
         @filter="handleFilter"
@@ -17,22 +17,22 @@
       :loading="loading"
       @update:current-page="handlePageChange"
     >
-      <template #body>
+      <template #body="{ getIndex }">
         <tr v-if="!loading && requests.length === 0">
-          <td :colspan="headers.length" class="text-center danger">
-            لا توجد طلبات تعديل للعرض
+          <td :colspan="headers.length" class="text-center py-5 no-data">
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
-        <tr v-for="request in requests" :key="request.id">
-          <th class="index-cell">{{ request.id }}</th>
-          <td>{{ request.supplier?.name?.ar || request.supplier?.LocalizedName || '—' }}</td>
-          <td>{{ request.supplier?.supplierTypeLocalized?.name || '—' }}</td>
-          <td>{{ request.supplier?.phone || '—' }}</td>
+        <tr v-for="(request, index) in requests" :key="request.id">
+          <th class="index-cell">{{ getIndex(index) }}</th>
+          <td>{{ request.supplier?.name?.[locale] || request.supplier?.name?.ar || request.supplier?.LocalizedName }}</td>
+          <td>{{ request.supplier?.supplierType?.LocalizedName || '—' }}</td>
+          <td class="nowrap">{{ request.supplier?.phone || '—' }}</td>
           <td>{{ request.supplier?.email || '—' }}</td>
-          <td>{{ formatDate(request.created_at) }}</td>
+          <td class="nowrap">{{ formatDate(request.created_at) }}</td>
           <td class="actions-cell">
-            <button class="action-btn view" title="عرض" @click="handleView(request)">
+            <button class="action-btn view" :title="t('common.view')" @click="handleView(request)">
               <IconsEye width="18" height="18" />
             </button>
           </td>
@@ -40,7 +40,7 @@
             <div>
               <button
                 class="action-btn accept"
-                title="قبول"
+                :title="t('buttons.accept')"
                 @click="handleAccept(request)"
                 :disabled="acceptingId === request.id"
               >
@@ -48,7 +48,7 @@
               </button>
               <button
                 class="action-btn reject"
-                title="رفض"
+                :title="t('buttons.reject')"
                 @click="handleReject(request)"
               >
                 <IconsCross width="18" height="18" />
@@ -63,18 +63,23 @@
   <!-- Reject Modal -->
   <ModalsAppRejectModal
     v-model="showRejectModal"
-    :supplierId="selectedRequest?.id"
+    :supplierId="selectedRequest?.supplier?.id"
     @confirm="handleRejectConfirm"
   />
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'auth' })
+usePageMeta('menu.suppliers')
+
 import { ref, computed, onMounted, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const api = useApi()
-const { success, error, warn } = useAppToast()
+const { success: toastSuccess, error: toastError, warn: toastWarn } = useAppToast()
 
 /* =============================
    STATE
@@ -93,16 +98,16 @@ const acceptingId = ref(null)
 const showRejectModal = ref(false)
 const selectedRequest = ref(null)
 
-const headers = [
+const headers = computed(() => [
   { label: '#', class: 'index-cell' },
-  { label: 'اسم المورد', class: '' },
-  { label: 'نوع المورد', class: '' },
-  { label: 'الهاتف', class: '' },
-  { label: 'البريد الإلكتروني', class: '' },
-  { label: 'تاريخ الطلب', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' },
-  { label: 'قبول / رفض', class: 'actions-cell' }
-]
+  { label: t('suppliers.supplier_name'), class: '' },
+  { label: t('suppliers.supplier_type'), class: '' },
+  { label: t('labels.phone'), class: '' },
+  { label: t('labels.email'), class: '' },
+  { label: t('suppliers.registration_request_date'), class: '' }, // Reusing key for request date
+  { label: t('common.actions'), class: 'actions-cell' },
+  { label: t('items.accept_reject'), class: 'actions-cell' }
+])
 
 /* =============================
    FILTERS
@@ -110,13 +115,13 @@ const headers = [
 const searchFilters = computed(() => [
   {
     key: 'supplier_type_id',
-    placeholder: 'نوع المورد',
+    placeholder: t('suppliers.supplier_type'),
     options: supplierTypeOptions.value
   }
 ])
 
 const dateFilters = [
-  { key: 'date', label: 'تاريخ الطلب' },
+  { key: 'date', label: t('suppliers.registration_request_date') },
 ]
 
 /* =============================
@@ -136,10 +141,7 @@ const parseMeta = (meta = {}) => {
 const formatDate = (dateStr) => {
   if (!dateStr) return '—'
   const date = new Date(dateStr)
-  const day = date.getDate()
-  const month = date.getMonth() + 1
-  const year = date.getFullYear()
-  return `${day}-${month}-${year}`
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
 }
 
 /* =============================
@@ -149,7 +151,7 @@ const fetchSupplierTypes = async () => {
   try {
     const res = await api('/v1/admin/supplier-types?per_page=100')
     supplierTypeOptions.value = (res.data || []).map(item => ({
-      label: item.name?.ar || item.LocalizedName,
+      label: item.name?.[locale.value] || item.name?.ar || item.LocalizedName,
       value: item.id
     }))
   } catch (err) {
@@ -170,15 +172,17 @@ const fetchRequests = async () => {
       sort_by: 'created_at',
       sort_direction: 'desc',
     })
-    if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim())
-    if (supplierTypeFilter.value) params.append('supplier_type_id', supplierTypeFilter.value)
-    if (dateFilter.value) params.append('date', dateFilter.value)
+    
+    if (searchQuery.value.trim())         params.append('search', searchQuery.value.trim())
+    if (supplierTypeFilter.value)       params.append('supplier_type_id', supplierTypeFilter.value)
+    if (dateFilter.value)                params.append('date', dateFilter.value)
 
     const res = await api(`/v1/admin/profile-update-requests?${params}`)
     requests.value = res.data || []
+    
     const meta = parseMeta(res.meta)
     totalPages.value = meta.lastPage
-    if (currentPage.value > meta.lastPage) currentPage.value = 1
+    currentPage.value = meta.currentPage
   } catch (err) {
     console.error('Error fetching requests:', err)
     requests.value = []
@@ -192,24 +196,27 @@ const fetchRequests = async () => {
    ACTIONS
 ============================== */
 const handleView = (request) => {
-  console.log('view:', request)
+  console.log('viewing update request:', request)
 }
 
 const handleAccept = async (request) => {
   try {
     acceptingId.value = request.id
-    await api('/v1/admin/change-supplier-status', {
+    // Note: status change for updates might use a different endpoint or the same one
+    // Assuming same one for now or placeholders if not documented
+    const res = await api('/v1/admin/change-supplier-status', {
       method: 'POST',
       body: {
         supplier_id: request.supplier?.id || request.id,
-        status: 'approved'
+        status: 'approved',
+        request_id: request.id // Often needed for specific requests
       }
     })
-    success(`تم قبول طلب التعديل بنجاح`)
+    toastSuccess(res.message || t('messages.updated_successfully'))
     requests.value = requests.value.filter(r => r.id !== request.id)
   } catch (err) {
     console.error('Error accepting request:', err)
-    error('حدث خطأ أثناء القبول، حاول مرة أخرى')
+    toastError(err.message || t('common.somethingWentWrong'))
   } finally {
     acceptingId.value = null
   }
@@ -223,19 +230,21 @@ const handleReject = (request) => {
 const handleRejectConfirm = async ({ reason, setLoading, close }) => {
   try {
     setLoading(true)
-    await api('/v1/admin/change-supplier-status', {
+    const res = await api('/v1/admin/change-supplier-status', {
       method: 'POST',
       body: {
         supplier_id: selectedRequest.value.supplier?.id || selectedRequest.value.id,
-        status: 'rejected'
+        status: 'rejected',
+        reason: reason,
+        request_id: selectedRequest.value.id
       }
     })
-    warn('تم رفض طلب التعديل بنجاح')
+    toastWarn(res.message || t('messages.updated_successfully'))
     requests.value = requests.value.filter(r => r.id !== selectedRequest.value.id)
     close()
   } catch (err) {
     console.error('Error rejecting request:', err)
-    error('حدث خطأ أثناء الرفض، حاول مرة أخرى')
+    toastError(err.message || t('common.somethingWentWrong'))
   } finally {
     setLoading(false)
   }
@@ -245,9 +254,7 @@ const handleRejectConfirm = async ({ reason, setLoading, close }) => {
    PAGINATION
 ============================== */
 const handlePageChange = (page) => {
-  const safePage = Math.max(1, Math.min(page, totalPages.value))
-  if (safePage === currentPage.value) return
-  currentPage.value = safePage
+  currentPage.value = page
 }
 
 /* =============================
@@ -279,3 +286,10 @@ onMounted(() => {
   fetchSupplierTypes()
 })
 </script>
+
+<style scoped>
+.actions-cell > div {
+  display: flex;
+  gap: var(--gap-xs);
+}
+</style>

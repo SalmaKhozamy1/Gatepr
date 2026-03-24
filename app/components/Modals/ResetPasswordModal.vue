@@ -1,7 +1,7 @@
 <template>
   <ModalsAppModal
     v-model="show"
-    title="تعديل كلمة المرور"
+    :title="t('profile.change_password')"
     :icon="IconsLock"
     :close-on-backdrop="false"
   >
@@ -9,16 +9,16 @@
       <InputsFormInput 
         v-model="password"
         type="password"
-        label="كلمة المرور الجديدة" 
-        placeholder="ادخل كلمة المرور الجديدة" 
+        :label="t('labels.password')" 
+        :placeholder="t('placeholders.password')" 
         class="required"
         required
       />
       <InputsFormInput 
         v-model="confirmPassword"
         type="password"
-        label="تاكيد كلمة المرور الجديدة" 
-        placeholder="ادخل تاكيد كلمة المرور الجديدة" 
+        :label="t('labels.password')" 
+        :placeholder="t('placeholders.password')" 
         class="required"
         required
       />
@@ -26,8 +26,8 @@
 
     <template #footer>
       <div class="flex-end gap-2 w-100">
-        <button class="custom-btn text-btn min-btn-width" @click="show = false">إلغاء</button>
-        <button class="custom-btn secondary-btn min-btn-width" @click="resetPassword">حفظ</button>
+        <button class="custom-btn text-btn min-btn-width" @click="show = false">{{ t('common.cancel') }}</button>
+        <button class="custom-btn secondary-btn min-btn-width" @click="resetPassword">{{ t('common.save') }}</button>
       </div>
     </template>
   </ModalsAppModal>
@@ -36,6 +36,11 @@
 <script setup>
 import { IconsLock } from '#components'
 import { useApi } from '~/composables/useApi'
+import { useI18n } from 'vue-i18n'
+import { useAppToast } from '~/composables/useAppToast'
+
+const { t } = useI18n()
+const { success, error: toastError } = useAppToast()
 
 const api = useApi()
 const show = defineModel('show')
@@ -51,7 +56,7 @@ const confirmPassword = ref('')
 const resetPassword = async () => {
 
   if(password.value !== confirmPassword.value){
-    alert('كلمة المرور غير متطابقة')
+    toastError(t('modals.password_mismatch'))
     return
   }
 
@@ -67,13 +72,13 @@ const resetPassword = async () => {
       }
     })
 
-    alert('تم تغيير كلمة المرور بنجاح')
+    success(t('modals.reset_password_success'))
 
     show.value = false
 
   }catch(err){
 
-    console.error(err)
+    toastError(err.data?.message || t('errors.somethingWentWrong'))
 
   }
 

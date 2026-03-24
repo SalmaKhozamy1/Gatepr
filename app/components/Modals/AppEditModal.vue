@@ -21,7 +21,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `اختر ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select')} ${field.label}`"
         />
 
         <!-- Multi Select -->
@@ -30,7 +30,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `اختر ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select')} ${field.label}`"
         />
 
         <!-- Input -->
@@ -38,7 +38,7 @@
           v-else
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
-          :placeholder="field.placeholder || `أدخل ${field.label}`"
+          :placeholder="field.placeholder || `${locale === 'ar' ? 'أدخل' : 'Enter'} ${field.label}`"
           :type="field.type || 'text'"
         />
 
@@ -50,10 +50,10 @@
 
     <template #footer>
       <div class="flex-end gap-sm">
-        <button class="custom-btn text-btn min-btn-width" @click="emit('update:modelValue', false)" :disabled="loading">إلغاء</button>
+        <button class="custom-btn text-btn min-btn-width" @click="emit('update:modelValue', false)" :disabled="loading">{{ t('common.cancel') }}</button>
         <button class="custom-btn secondary-btn min-btn-width" @click="handleSubmit" :disabled="loading">
-          <span v-if="loading">جاري الحفظ...</span>
-          <span v-else>حفظ التعديلات</span>
+          <span v-if="loading">{{ t('common.saving') }}</span>
+          <span v-else>{{ t('buttons.save_changes') }}</span>
         </button>
       </div>
     </template>
@@ -63,7 +63,9 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useAppToast } from '~/composables/useAppToast'
+import { useI18n } from 'vue-i18n'
 
+const { t, locale } = useI18n()
 const { success } = useAppToast()  // ✅
 
 const props = defineProps({
@@ -158,7 +160,7 @@ const handleSubmit = async () => {
       setErrors: (errs) => { errors.value = errs },
       setLoading: (val) => { loading.value = val },
       close: () => {
-        success('تم التعديل بنجاح')  // ✅
+        success(t('messages.updated_successfully'))  // ✅
         emit('update:modelValue', false)
       }
     })

@@ -10,13 +10,6 @@
       <!-- Left Branding Side -->
       <div class="branding-container h-100 py-2">
         <div class="branding-card h-100 d-flex flex-column position-relative">
-          <div class="top-actions position-absolute">
-            <button class="lang-btn" @click="toggleLocale">
-              <IconsLang />
-            </button>
-            <span class="lang-title flex-center">{{ currentLocale === 'ar' ? 'ع' : 'E' }}</span>
-          </div>
-          
           <div class="logo-area flex-grow-1 flex-center">
             <div class="logo-wrapper d-flex align-items-center gap-3">
               <img src="~/assets/images/login_logo.svg" alt="logo" class="w-100">
@@ -24,6 +17,12 @@
           </div>
         </div>
       </div>
+        <div class="top-actions position-absolute">
+            <button class="lang-btn" @click="toggleLocale">
+              <IconsLang />
+            </button>
+            <span class="lang-title flex-center">{{ currentLocale === 'ar' ? 'ع' : 'E' }}</span>
+        </div>
     </div>
   </div>
 </template>
@@ -53,12 +52,13 @@
   border-radius: var(--radius-lg);
 }
 .top-actions {
-  top: clamp(10px,2%,2%);
-  inset-inline-end: clamp(20px,4%,4%);
+  top: clamp(30px,2.5vw,35px);
+  inset-inline-end: clamp(30px,3vw,40px);
 }
 .lang-btn {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
   border-radius: 8px;
   padding: 8px;
   cursor: pointer;
@@ -88,14 +88,17 @@
 }
 
 @media screen and (max-width: 576px) {
-  .branding-container {
-    order: -1;
-  }
-  .form-container {
-    padding-block: 40px;
-  }
   .form-container  {
-    padding-inline: clamp(20px, 3vw, 300px);
+    padding: 40px clamp(20px, 3vw, 300px);
+  }
+}
+@media screen and (max-width: 768px) {
+  .branding-container {
+    display: none;
+  }
+  .lang-btn {
+    background-color: var(--light-primary-color);
+    color: var(--primary-color);
   }
 }
 </style>

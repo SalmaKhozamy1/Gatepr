@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
       <SearchBar
-        :placeholder="t('pages.search')"
+        :placeholder="t('common.search')"
         :loading="loading"
         @filter="handleFilter"
         @reset="resetFilters"
@@ -20,7 +20,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && governorates.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -29,13 +29,13 @@
           <td>{{ gov.name?.[locale] || gov.name?.ar }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(gov.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(gov.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(gov)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(gov)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(gov)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(gov)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -48,7 +48,7 @@
   <!-- View Modal -->
   <ModalsAppViewModal
     v-model="showViewModal"
-    title="عرض محافظة"
+    :title="`${t('common.view')} ${t('settings.add_governorate')}`"
     :data="selectedGovernorate"
     :fields="governorateFields"
     :icon="IconsGovernorates"
@@ -57,7 +57,7 @@
   <!-- Add Modal -->
   <ModalsAppAddModal
     v-model="showAddModal"
-    title="إضافة محافظة"
+    :title="`${t('common.add')} ${t('settings.add_governorate')}`"
     :icon="IconsGovernorates"
     :fields="governorateAddFields"    
     data-bs-backdrop="static"
@@ -68,7 +68,7 @@
   <!-- Edit Modal -->
 <ModalsAppEditModal
   v-model="showEditModal"
-  title="تعديل محافظة"
+  :title="`${t('common.edit')} ${t('settings.add_governorate')}`"
   :icon="IconsGovernorates"
   :fields="governorateAddFields"
   :initial-data="selectedEditGovernorate"
@@ -121,9 +121,9 @@ const showDeleteModal = ref(false)
 const selectedDeleteGovernorate = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('labels.governorate'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const governorateFields = computed(() => [

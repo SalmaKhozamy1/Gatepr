@@ -19,16 +19,25 @@ import { IconsCheck, IconsCross } from '#components'
 
 <style>
 .p-toast {
-  bottom: 20px !important;
+  bottom: 15px !important;
   top: unset !important;
-  inset-inline-end: 10% !important;
   z-index: 99999 !important;
+  width: max-content;
+  transform: none !important;
+  left: unset !important;
+  right: unset !important;
 }
-
+[dir="rtl"] .p-toast {
+  left: 2% !important;
+}
+[dir="ltr"] .p-toast {
+  right: 2% !important;
+}
 .p-toast-message {
   border-radius: var(--radius-sm) !important;
   padding: 16px;
-  margin-bottom: 0px !important;
+  margin-bottom: 5px !important;
+  border: none !important;
 }
 
 .p-toast-message-content {
@@ -38,22 +47,21 @@ import { IconsCheck, IconsCross } from '#components'
 .p-toast-message-success {
   background-color: var(--success-color) !important;
   color: #fff !important;
-  border: none !important;
 }
 
 .p-toast-message-error {
-  background-color: color-mix(in srgb, var(--danger-color, #ef4444) 10%, white) !important;
-  border-color: var(--danger-color, #ef4444) !important;
+  background-color: var(--red) !important;
+  color: #fff !important;
 }
 
 .p-toast-message-warn {
-  background-color: color-mix(in srgb, var(--warning-color, #f59e0b) 10%, white) !important;
-  border-color: var(--warning-color, #f59e0b) !important;
+  background-color: var(--warning) !important;
+  color: #fff !important;
 }
 
 .p-toast-message-info {
-  background-color: color-mix(in srgb, var(--primary-color) 10%, white) !important;
-  border-color: var(--primary-color) !important;
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
 }
 
 .p-toast-close-button {

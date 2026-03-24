@@ -16,6 +16,7 @@
           type="text"
           maxlength="1"
           class="otp-input"
+          :class="{ 'filled': otp[index] }"
           @input="handleInput(index)"
           @keydown="handleKeydown($event,index)"
           @paste="handlePaste"
@@ -24,18 +25,25 @@
 
       <div class="timer-section w-100 d-flex justify-content-between px-3">
         <span class="timer primary">0:{{ String(timeLeft).padStart(2, '0') }}</span>
-        <button class="custom-anc secondary" @click.prevent="resendCode" :disabled="timeLeft === 0">
+        <button class="custom-anc secondary" @click.prevent="resendCode" :disabled="timeLeft > 0">
         {{ t('auth.resend') }}
         </button>
       </div>
 
-      <button class="custom-btn secondary-btn w-100" @click="submitOtp" :disabled="otpCode.length !== 6">{{ t('auth.continue') }}</button>
+      <button 
+        class="custom-btn secondary-btn w-100" 
+        @click="submitOtp" 
+        :disabled="otpCode.length !== 6"
+        :class="{ 'btn-disabled': otpCode.length !== 6 }"
+      >
+        {{ t('auth.continue') }}
+      </button>
     </div>
   </ModalsAppModal>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useI18n } from 'vue-i18n'
 
@@ -124,8 +132,17 @@ const startTimer = () => {
   }, 1000)
 }
 
+watch(() => show.value, (val) => {
+  if (val) {
+    otp.value = ['', '', '', '', '', '']
+    startTimer()
+  } else {
+    clearInterval(timerInterval)
+  }
+})
+
 onMounted(() => {
-  startTimer()
+  if (show.value) startTimer()
 })
 
 onBeforeUnmount(() => {
@@ -152,7 +169,8 @@ onBeforeUnmount(() => {
   transition: all 0.2s;
 }
 
-.otp-input:focus {
+.otp-input:focus,
+.otp-input.filled {
   border-color: var(--secondary-color);
   background-color: var(--light-secondary-color);
 }
@@ -166,5 +184,6 @@ onBeforeUnmount(() => {
 }
 .custom-anc.secondary:disabled {
   cursor: not-allowed;
+  opacity: 0.8;
 }
 </style>

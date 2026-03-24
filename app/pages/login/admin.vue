@@ -35,11 +35,6 @@
 
     </form>
 
-    <div class="auth-footer w-100 flex-center gap-xs">
-      <h5>{{ $t('labels.dontHaveAccount') }}</h5>
-      <nuxt-link to="/register" class="signup-link custom-anc secondary">{{ $t('buttons.signUp') }}</nuxt-link>
-    </div>
-
   </div>
 </template>
 
@@ -49,8 +44,9 @@ import * as yup from 'yup'
 import { useAuthStore } from '~/stores/auth'
 definePageMeta({
   layout: 'auth',
-  middleware: 'guest'
+  middleware: 'guest',
 });
+usePageMeta('menu.login')
 
 const showPassword = ref(false);
 /* API */
@@ -139,4 +135,5 @@ const onSubmit = handleSubmit(async (values) => {
  font-size: var(--size-sm);
  font-weight: 400;
 }
+
 </style>

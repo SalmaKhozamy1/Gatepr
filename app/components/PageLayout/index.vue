@@ -60,7 +60,7 @@ defineEmits(['item-click'])
 
 <style scoped>
 .side-page-layout {
-  grid-template-columns: .25fr 1fr;
+  grid-template-columns: 0.25fr minmax(0, 1fr);
 }
 
 /* Responsive handling */

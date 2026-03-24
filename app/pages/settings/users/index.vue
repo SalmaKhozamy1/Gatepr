@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('pages.search')"
+          :placeholder="t('common.search')"
           :filters="searchFilters"
           :loading="loading"
           @filter="handleFilter"
@@ -20,7 +20,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && users.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -29,17 +29,23 @@
           <td>{{ user.name?.[locale] || user.name?.ar }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone }}</td>
-          <td>{{ user.branches?.length ? user.branches.map(b => b.name?.[locale] || b.name).join('، ') : '—' }}</td>
+          <td>
+            <ul class="branches-list" v-if="user.branches?.length">
+              <li v-for="branch in user.branches" :key="branch.id">
+                {{ branch.name?.[locale] || branch.name }}
+              </li>
+            </ul>
+          </td>
           <td>{{ user.role?.name || '—' }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(user.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(user.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(user)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(user)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(user)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(user)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -51,7 +57,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('labels.user')"
+    :title="t('common.view') + ' ' + t('labels.user')"
     :data="selectedUser"
     :fields="userViewFields"
     :icon="IconsSettingsUsers"
@@ -59,7 +65,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('labels.user')"
+    :title="t('common.add') + ' ' + t('labels.user')"
     :icon="IconsSettingsUsers"
     :fields="userFormFields"
     data-bs-backdrop="static"
@@ -69,7 +75,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('labels.user')"
+    :title="t('common.edit') + ' ' + t('labels.user')"
     :icon="IconsSettingsUsers"
     :fields="userEditFields"
     :initial-data="selectedEditUser"
@@ -80,7 +86,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('labels.user')"
+    :title="t('common.delete') + ' ' + t('labels.user')"
     :itemType="t('labels.user')"
     :itemName="selectedDeleteUser?.name?.[locale] || selectedDeleteUser?.name?.ar"
         data-bs-backdrop="static"
@@ -122,13 +128,13 @@ const showDeleteModal = ref(false)
 const selectedDeleteUser = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('labels.name'), class: '' },
   { label: t('labels.email'), class: '' },
   { label: t('labels.phone'), class: '' },
   { label: t('labels.branches'), class: '' },
   { label: t('labels.role'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const userViewFields = computed(() => [
@@ -404,3 +410,13 @@ onBeforeUnmount(() => {
   unregisterAddModal?.()
 })
 </script>
+
+<style>
+.branches-list {
+  padding-left: 1rem;
+}
+
+.branches-list li {
+  margin-bottom: 0.5rem !important;
+}
+</style>

@@ -1,17 +1,17 @@
 <template>
   <ModalsAppModal
     :model-value="modelValue"
-    :title="title || 'رفض الطلب'"
+    :title="title || t('modals.reject_request')"
     :icon="icon"
     :close-on-backdrop="false"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <div class="form-group w-100">
-      <label class="form-label">سبب الرفض</label>
+      <label class="form-label">{{ t('modals.reject_reason') }}</label>
       <textarea
         v-model="reason"
-        class="form-textarea"
-        placeholder="اكتب سبب الرفض هنا..."
+        class="custom-textarea"
+        :placeholder="t('modals.reject_reason')"
         rows="4"
       />
       <span v-if="error" class="text-danger small mt-1">{{ error }}</span>
@@ -24,15 +24,15 @@
           @click="handleClose"
           :disabled="loading"
         >
-          إلغاء
+          {{ t('common.cancel') }}
         </button>
         <button
           class="custom-btn danger-btn min-btn-width"
           @click="handleSubmit"
           :disabled="loading"
         >
-          <span v-if="loading">جاري الحفظ...</span>
-          <span v-else>رفض</span>
+          <span v-if="loading">{{ t('common.saving') }}</span>
+          <span v-else>{{ t('buttons.reject') }}</span>
         </button>
       </div>
     </template>
@@ -41,6 +41,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   modelValue: Boolean,
@@ -71,7 +74,7 @@ const handleSubmit = () => {
   error.value = ''
 
   if (!reason.value.trim()) {
-    error.value = 'سبب الرفض مطلوب'
+    error.value = t('errors.reject_reason_required')
     return
   }
 
@@ -82,34 +85,3 @@ const handleSubmit = () => {
   })
 }
 </script>
-
-<style scoped>
-.form-textarea {
-  width: 100%;
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-family: inherit;
-  font-size: var(--size-sm);
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.2s;
-  color: var(--text-color, #374151);
-  background: white;
-}
-
-.form-textarea:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 15%, transparent);
-}
-
-.danger-btn {
-  background-color: var(--danger-color, #ef4444);
-  color: white;
-  border: none;
-}
-
-.danger-btn:hover:not(:disabled) {
-  opacity: 0.9;
-}
-</style>

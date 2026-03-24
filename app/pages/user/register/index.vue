@@ -1,7 +1,7 @@
 <template>
   <div class="register-page">
     <PageLayout
-    :formTitle="t('settings.add') + ' ' + activeStepTitle"
+    :formTitle="t('common.add') + ' ' + activeStepTitle"
     :asideItems="steps"
     :activeIndex="activeIndex"
     @item-click="changeStep">
@@ -15,7 +15,7 @@
  
           <div class="flex-end mt-4 gap-sm">
               <button class="custom-btn text-btn min-btn-width" @click="prevStep" v-if="activeIndex > 0">{{ t('buttons.previous') }}</button>
-              <button class="custom-btn text-btn min-btn-width" v-else>{{ t('buttons.cancel') }}</button>
+              <button class="custom-btn text-btn min-btn-width" v-else>{{ t('common.cancel') }}</button>
               
               <button class="custom-btn secondary-btn min-btn-width" @click="nextStep" v-if="activeIndex < steps.length - 1">{{ t('buttons.next') }}</button>
               <button class="custom-btn secondary-btn min-btn-width" @click="submit" v-else>{{ t('buttons.send') }}</button>

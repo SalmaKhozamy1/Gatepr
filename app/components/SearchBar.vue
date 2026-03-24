@@ -10,11 +10,15 @@
     />
 
     <div v-for="dateFilter in dateFilters" :key="dateFilter.key" class="date-input-wrapper col">
-      <input
-        type="date"
-        v-model="dateValues[dateFilter.key]"
-        class="form-input"
-      />
+      <div class="position-relative">
+        <FlatPickr
+          v-model="dateValues[dateFilter.key]"
+          :placeholder="dateFilter.label"
+          class="form-input flatpickr-input"
+          :config="flatpickrConfig"
+        />
+        <IconsCalander class="calendar-icon" width="18" height="18" />
+      </div>
     </div>
 
     <InputsFormSelect
@@ -23,23 +27,23 @@
       v-model="filterValues[filter.key]"
       :options="filter.options || []"
       class="col"
-      :placeholder="filter.placeholder || t('pages.select')"
+      :placeholder="filter.placeholder || t('placeholders.select')"
     />
 
     <div class="flex-start gap-sm">
       <button
-        class="custom-btn primary-btn fltr_btn min-btn-wdth"
+        class="custom-btn primary-btn fltr_btn min-btn-width"
         @click="handleFilter"
         :disabled="loading"
       >
         <span v-if="loading" class="btn-spinner"></span>
         <template v-else>
           <IconsSearch />
-          <span>{{ t('pages.search') }}</span>
+          <span>{{ t('common.search') }}</span>
         </template>
       </button>
       <ButtonsResetButton
-        :label="t('pages.reset')"
+        :label="t('common.reset')"
         @reset="handleReset"
         class="min-btn-wdth"
         :disabled="loading"
@@ -49,10 +53,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, watchEffect } from 'vue'
+import { ref, reactive, watchEffect, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import FlatPickr from 'vue-flatpickr-component'
+import { Arabic } from 'flatpickr/dist/l10n/ar.js'
 
-const { t } = useI18n() 
+const { t, locale } = useI18n() 
 
 const props = defineProps({
   placeholder: { type: String, default: '' },
@@ -66,6 +72,13 @@ const emit = defineEmits(['filter', 'reset'])
 const searchQuery = ref('')
 const filterValues = reactive({})
 const dateValues = reactive({})
+
+const flatpickrConfig = computed(() => ({
+  dateFormat: 'Y-m-d',
+  locale: locale.value === 'ar' ? Arabic : 'default',
+  allowInput: true,
+  disableMobile: "true"
+}))
 
 watchEffect(() => {
   props.filters.forEach(f => {
@@ -97,13 +110,16 @@ const handleReset = () => {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 160px;
 }
 
 .form-input {
+  width: 100%;
   height: 40px;
-  border: 1px solid var(--border-color, #e0e0e0);
+  border: 1px solid var(--border-color, #d5d7da);
   border-radius: var(--radius-sm);
   padding: 0 10px;
+  padding-inline-end: 35px; 
   font-family: inherit;
   font-size: var(--size-sm);
   background: white;
@@ -112,7 +128,16 @@ const handleReset = () => {
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--secondary-color);
+}
+
+.calendar-icon {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 10px;
+  transform: translateY(-50%);
+  color: #98A2B3;
+  pointer-events: none;
 }
 
 .btn-spinner {

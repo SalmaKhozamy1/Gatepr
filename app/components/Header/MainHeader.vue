@@ -5,9 +5,7 @@
          <div class="flex-between gap-lg position-relative top-header">
             <img class="main_logo" src="@/assets/images/login_logo.svg" alt="Gatepro_logo">
             <div class="header-actions flex-start gap-sm">
-               <HeaderItem>
-                  <IconsSearch />
-               </HeaderItem>
+               <HeaderSearch />
                <HeaderItem class="lang" :badge="locale === 'ar' ? 'ع' : 'E'" @click="toggleLocale">
                   <IconsLang />
                </HeaderItem>
@@ -113,17 +111,19 @@ const currentDate = computed(() => new Intl.DateTimeFormat(
 /* =============================
    MENU
 ============================== */
-const menuItems = computed(() => [
-   { title: t('menu.home'), icon: IconsHome, path: localePath('/admin/home') },
-   { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
-   { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
-   { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
-   { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
-   { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
-].map(item => ({
-   ...item,
-   active: route.path.startsWith(item.path) || (item.path === localePath('/admin/home') && route.path === localePath('/admin'))
-})))
+const menuItems = computed(() => {
+   return [
+      { title: t('menu.home'), icon: IconsHome, path: localePath('/admin/home') },
+      { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
+      { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
+      { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
+      { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
+      { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
+   ].map(item => ({
+      ...item,
+      active: route.path.startsWith(item.path) || (item.path === localePath('/admin/home') && route.path === localePath('/admin'))
+   }))
+})
 
 
 /* =============================
@@ -170,6 +170,6 @@ const openOtp = (email) => {
 }
 
 .top-header {
-   z-index: 2;
+   z-index: 10;
 }
 </style>

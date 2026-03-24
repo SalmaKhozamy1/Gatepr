@@ -1,7 +1,13 @@
 <template>
   <div class="flex-column gap-sm">
 
-    <h5>{{ t('labels.content_ar') }}</h5>
+    <!-- Loading State -->
+    <div v-if="fetching" class="flex-center" style="min-height: 300px;">
+      <span>{{ t('common.loading') }}</span>
+    </div>
+
+    <template v-else>
+      <h5>{{ t('labels.content_ar') }}</h5>
       <div class="editor-wrapper" dir="rtl">
         <ClientOnly>
           <QuillEditor
@@ -13,7 +19,7 @@
         </ClientOnly>
       </div>
 
-     <h5>{{ t('labels.content_en') }}</h5>
+      <h5>{{ t('labels.content_en') }}</h5>
       <div class="editor-wrapper" dir="ltr">
         <ClientOnly>
           <QuillEditor
@@ -25,62 +31,70 @@
         </ClientOnly>
       </div>
 
-    <div class="flex-end gap-sm">
-      <button
-        class="custom-btn text-btn min-btn-width"
-        @click="handleCancel"
-        :disabled="saving"
-      >
-        {{ t('buttons.cancel') }}
-      </button>
-      <button
-        class="custom-btn secondary-btn min-btn-width"
-        @click="handleSave"
-        :disabled="saving"
-      >
-        <span v-if="saving">{{ t('buttons.saving') }}</span>
-        <span v-else>{{ t('buttons.save') }}</span>
-      </button>
-    </div>
+      <div class="flex-end gap-sm">
+        <button
+          class="custom-btn text-btn min-btn-width"
+          @click="handleCancel"
+          :disabled="saving"
+        >
+          {{ t('common.cancel') }}
+        </button>
+        <button
+          class="custom-btn secondary-btn min-btn-width"
+          @click="handleSave"
+          :disabled="saving"
+        >
+          <span v-if="saving">{{ t('common.saving') }}</span>
+          <span v-else>{{ t('common.save') }}</span>
+        </button>
+      </div>
+    </template>
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useApi } from '~/composables/useApi'
+import { useAppToast } from '~/composables/useAppToast'
 
 const { t } = useI18n()
+const api = useApi()
+const { success, error: toastError } = useAppToast()
+
+const SLUG = 'terms-and-conditions'
 
 /* =============================
    STATE
 ============================== */
-const termsAr = ref(`<p>كما ذكرنا سابقًا فإن الشروط والأحكام تعد قانونًا منظما للعلاقات بين الأطراف المتعاقدة، وخرق هذه الشروط أو عدم الالتزام بها بالشكل المنصوص يعد خرقًا لمبدأ الاتفاق من الأساس ويلغيه. في بعض العقود يعاقب الطرف الغير ملزم بجانبه من الاتفاق بدفع مقابل مادي، أو منح الطرف الآخر بعض الامتيازات. فالشروط والأحكام تلزم الطرفيين على الوفاء بجانبهم من الاتفاق، وتعاقب الخارق له على الفور. لكن ليس هنا تنحصر أهميتها، فهي لها العديد من المميزات الأخرى التي سنذكرها كالآتي:</p>
-<ol>
-  <li>تنظيم العمل: تساعدك الشروط والأحكام على تنظيم جانبك من الحقوق والواجبات، وجانب المستخدم أيضًا لمنصتك. فعن طريقها يمكنك أن تحدد بشكل قاطع حدود ما يسمح للمستخدم الاستفادة منه، وحدود انتفاعك أنت أيضًا بالمعلومات التي يشاركها معك.</li>
-  <li>منع الانتهاكات: تساعد الشروط والأحكام على وضع حل رادع للانتهاكات الإلكترونية، سواء كانت:
-    <ul>
-      <li>نشر محتوى غير قانوني يستهدف الترويج لممارسات غير مشروعة ينطوي عليها مسؤولية مدنية</li>
-      <li>نشر الأخبار والأكاذيب التي تتعلق بتشوية الصورة العامة لأحد الأشخاص</li>
-      <li>نشر محتوى يستهدف ابتزاز أحد الأفراد أو يضم مواد إباحية فاضحة</li>
-      <li>انتحال المستخدم لهوية أحد الأفراد</li>
-      <li>استخدام الموقع لتحميل برامج ضارة أو نشر فيروسات أو أي شيفرات حاسوبية مؤذية</li>
-      <li>استخدام الموقع في الترويج لمنافس أو نشر محتوى لا علاقة له بالخدمات المقدمة</li>
-      <li>تمثيل أحد المؤسسات أو الهيئات بدون أن يكون المستخدم مخولًا بادعاء هذا التمثيل</li>
-      <li>نشر مواد تضر بالملكية الفكرية لأصحابها وتدخل في إطار سرقتها</li>
-      <li>السيطرة على الموقع والتغير من تصميمه أو التعديل فيه</li>
-      <li>التعدي على حقوق المستخدمين الأخريين وسرقة حساباتهم الشخصية</li>
-    </ul>
-    <p>كل هذه انتهاكات يتم نشرها بوضوح في القسم الخاص بالشروط والأحكام، ويتم إضافة لها بعض المحاذير الأخرى بناءً على طبيعة الخدمة المقدمة.</p>
-  </li>
-  <li>حقوق الملكية: تساعدك الشروط والأحكام الموضوعة في منصتك الإلكترونية على توثيق حقك الفكري والقانوني في كل ما يتعلق بهذه المنصة، فلا يجوز للمستخدم سرقتها أو سوء استغلالها، أو يعمد إلى نسبها إليه.</li>
-</ol>`)
-
-const termsEn = ref(`<p>As previously mentioned, terms and conditions constitute a legal framework governing the relationship between contracting parties. Breaching or failing to adhere to these terms as stipulated constitutes a breach of the agreement itself and renders it void. In some contracts, the party not fulfilling their obligations is penalized by paying a financial penalty or granting the other party certain privileges.</p>`)
-
-const originalAr = ref(termsAr.value)
-const originalEn = ref(termsEn.value)
+const termsAr = ref('')
+const termsEn = ref('')
+const originalAr = ref('')
+const originalEn = ref('')
 const saving = ref(false)
+const fetching = ref(false)
+
+/* =============================
+   FETCH
+============================== */
+const fetchTerms = async () => {
+  try {
+    fetching.value = true
+    const res = await api(`/v1/admin/static-pages/${SLUG}`)
+    if (res?.data) {
+      termsAr.value = res.data.content?.ar || ''
+      termsEn.value = res.data.content?.en || ''
+      // احتفظ بالأصل عشان الـ cancel يرجعهم
+      originalAr.value = termsAr.value
+      originalEn.value = termsEn.value
+    }
+  } catch (err) {
+    toastError(t('errors.somethingWentWrong'))
+  } finally {
+    fetching.value = false
+  }
+}
 
 /* =============================
    EDITOR OPTIONS
@@ -89,9 +103,9 @@ const editorOptions = computed(() => ({
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'header': [1, 2, 3, false] }],
-      [{ 'align': [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ header: [1, 2, 3, false] }],
+      [{ align: [] }],
       ['clean']
     ]
   },
@@ -102,9 +116,9 @@ const editorOptionsEn = computed(() => ({
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'header': [1, 2, 3, false] }],
-      [{ 'align': [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ header: [1, 2, 3, false] }],
+      [{ align: [] }],
       ['clean']
     ]
   },
@@ -117,12 +131,23 @@ const editorOptionsEn = computed(() => ({
 const handleSave = async () => {
   try {
     saving.value = true
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await api(`/v1/admin/static-pages/${SLUG}`, {
+      method: 'PUT',
+      body: {
+        content: {
+          ar: termsAr.value,
+          en: termsEn.value,
+        }
+      }
+    })
+    // حدّث الأصل بعد الحفظ
     originalAr.value = termsAr.value
     originalEn.value = termsEn.value
-    console.log('saved:', { ar: termsAr.value, en: termsEn.value })
+
+    success(t('messages.updated_successfully', { item: t('settings.terms_and_conditions') }))
+
   } catch (err) {
-    console.error('Error saving terms:', err)
+    toastError(err?.data?.message || t('errors.somethingWentWrong'))
   } finally {
     saving.value = false
   }
@@ -132,6 +157,13 @@ const handleCancel = () => {
   termsAr.value = originalAr.value
   termsEn.value = originalEn.value
 }
+
+/* =============================
+   INIT
+============================== */
+onMounted(() => {
+  fetchTerms()
+})
 </script>
 
 <style scoped>

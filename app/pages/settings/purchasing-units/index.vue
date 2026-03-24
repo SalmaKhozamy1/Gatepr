@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('pages.search')"
+          :placeholder="t('common.search')"
           @filter="handleFilter"
           @reset="resetFilters"
         />
@@ -18,7 +18,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && purchasingUnits.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -28,13 +28,13 @@
           <td>{{ unit.code }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(unit.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(unit.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(unit)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(unit)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(unit)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(unit)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -46,7 +46,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('settings.add_purchasing_unit')"
+    :title="t('common.view') + ' ' + t('settings.add_purchasing_unit')"
     :data="selectedUnit"
     :fields="unitViewFields"
     :icon="IconsUnits"
@@ -54,7 +54,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_purchasing_unit')"
+    :title="t('common.add') + ' ' + t('settings.add_purchasing_unit')"
     :icon="IconsUnits"
     :fields="unitFormFields"    
     data-bs-backdrop="static"
@@ -64,7 +64,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('settings.add_purchasing_unit')"
+    :title="t('common.edit') + ' ' + t('settings.add_purchasing_unit')"
     :icon="IconsUnits"
     :fields="unitFormFields"
     :initial-data="selectedEditUnit"
@@ -75,7 +75,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_purchasing_unit')"
+    :title="t('common.delete') + ' ' + t('settings.add_purchasing_unit')"
     :itemType="t('settings.add_purchasing_unit')"
     :itemName="selectedDeleteUnit?.name?.[locale] || selectedDeleteUnit?.name?.ar"
     data-bs-backdrop="static"
@@ -114,10 +114,10 @@ const showDeleteModal = ref(false)
 const selectedDeleteUnit = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('settings.add_purchasing_unit'), class: '' },
   { label: t('labels.code'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const unitViewFields = computed(() => [

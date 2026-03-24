@@ -12,13 +12,34 @@
       </template>
 
       <template #header-actions>
-        <button 
-          class="custom-btn primary-btn min-btn-width fltr_btn py-2"
-          @click="handleAddClick"
-        >
-          <span style="font-size: 20px">+</span>
-          <span class="ms-1">{{ t('settings.add') }} {{ activeTabAddTitle }}</span>
-        </button>
+        <!-- Tab 0 & 1: Pending & Accredited Requests -->
+        <div v-if="activeIndex === 0 || activeIndex === 1" class="flex-start gap-sm">
+          <button 
+            class="custom-btn danger-btn min-btn-width fltr_btn"
+            @click="handlePageAction('rejectAll')"
+          >
+            <IconsCross width="18" height="18" />
+            <span>{{ t('buttons.reject_all') }}</span>
+          </button>
+          <button 
+            class="custom-btn success-btn min-btn-width fltr_btn"
+            @click="handlePageAction('acceptAll')"
+          >
+            <IconsCheck width="18" height="18" />
+            <span>{{ t('buttons.accept_all') }}</span>
+          </button>
+        </div>
+
+        <!-- Tab 2: Approved Categories -->
+        <div v-else-if="activeIndex === 2" class="flex-start gap-sm">
+          <button 
+            class="custom-btn gray-btn  fltr_btn"
+            @click="handlePageAction('download')"
+          >
+            <IconsDownload width="18" height="18" />
+            <span>{{ t('buttons.download') }}</span>
+          </button>
+        </div>
       </template>
 
       <template #main>
@@ -32,7 +53,10 @@
 import { 
   IconsDependance,
   IconsApprovalCategory,
-  IconsTerms
+  IconsTerms,
+  IconsCheck,
+  IconsCross,
+  IconsExport
 } from '#components'
 
 import { provide, ref, computed, onMounted} from 'vue'
@@ -42,8 +66,9 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
 
-// ✅ provide للـ register والـ unregister
+// provide logic for dynamic actions
 const addModalOpener = ref(null)
+const pageActions = ref({})
 
 provide('registerAddModal', (fn) => {
   addModalOpener.value = fn
@@ -53,8 +78,20 @@ provide('unregisterAddModal', () => {
   addModalOpener.value = null
 })
 
+provide('registerPageAction', (actionName, fn) => {
+  pageActions.value[actionName] = fn
+})
+
+provide('unregisterPageAction', (actionName) => {
+  delete pageActions.value[actionName]
+})
+
 const handleAddClick = () => {
   addModalOpener.value?.()
+}
+
+const handlePageAction = (name) => {
+  pageActions.value[name]?.()
 }
 
 const settingsMenuItems = [

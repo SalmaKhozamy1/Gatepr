@@ -19,9 +19,9 @@
       <h4>{{ title }}</h4>
 
       <p class="desc">
-        هل أنت متأكد من انك تريد حذف {{ itemType }} "{{ itemName }}" ؟
+        {{ t('modals.are_you_sure_delete', { type: itemType, name: itemName }) }}
         <br />
-        لايمكنك استعادة البيانات
+        {{ t('modals.cannot_restore') }}
       </p>
     </div>
 
@@ -32,15 +32,15 @@
           @click="emit('update:modelValue', false)"
           :disabled="loading"
         >
-          إلغاء
+          {{ t('common.cancel') }}
         </button>
         <button
           class="custom-btn danger-btn min-btn-width"
           @click="handleConfirm"
           :disabled="loading"
         >
-          <span v-if="loading">جاري الحذف...</span>
-          <span v-else>تأكيد الحذف</span>
+          <span v-if="loading">{{ t('common.deleting') }}</span>
+          <span v-else>{{ t('common.delete') }}</span>
         </button>
       </div>
     </template>
@@ -50,7 +50,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useAppToast } from '~/composables/useAppToast'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { success } = useAppToast()  // ✅
 
 const props = defineProps({
@@ -68,7 +70,7 @@ const handleConfirm = () => {
   emit('confirm', {
     setLoading: (val) => { loading.value = val },
     close: () => {
-      success(`تم حذف ${props.itemType} بنجاح`)  // ✅
+      success(t('messages.deleted_successfully', { item: props.itemType }))  // ✅
       emit('update:modelValue', false)
     }
   })

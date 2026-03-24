@@ -2,12 +2,12 @@
   <label class="approve-checkbox" :for="id">
     <input
       type="checkbox"
-      :checked="isChecked"
       :id="id"
+      :checked="isChecked"
       @change="handleChange"
     />
-    <span class="checkmark"></span>
-    <span class="approve-label">{{ label }}</span>
+    <span class="checkmark position-relative"></span>
+    <span v-if="label" class="approve-label">{{ label }}</span>
     <span v-if="error" class="error d-block" style="margin-inline-start: 10px">{{ error }}</span>
   </label>
 </template>
@@ -17,16 +17,16 @@ import { computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
-    type: [Boolean, Array],  // ✅ يدعم Boolean و Array
+    type: [Boolean, Array],
     default: false
   },
   value: {
-    type: [String, Number],  // ✅ الـ value اللي هتتضاف للـ array
+    type: [String, Number, Object],
     default: null
   },
   label: {
     type: String,
-    default: 'أوافق علي الشروط والأحكام'
+    default: ''
   },
   error: {
     type: String,
@@ -40,7 +40,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-// ✅ بيشوف هل الـ value موجودة في الـ array أو الـ Boolean صح
 const isChecked = computed(() => {
   if (Array.isArray(props.modelValue)) {
     return props.modelValue.includes(props.value)
@@ -49,19 +48,20 @@ const isChecked = computed(() => {
 })
 
 const handleChange = (event) => {
+  const checked = event.target.checked
+  
   if (Array.isArray(props.modelValue)) {
-    const newValue = [...props.modelValue]
-    if (event.target.checked) {
+    let newValue = [...props.modelValue]
+    if (checked) {
       if (!newValue.includes(props.value)) {
         newValue.push(props.value)
       }
     } else {
-      const index = newValue.indexOf(props.value)
-      if (index !== -1) newValue.splice(index, 1)
+      newValue = newValue.filter(item => item !== props.value)
     }
     emit('update:modelValue', newValue)
   } else {
-    emit('update:modelValue', event.target.checked)
+    emit('update:modelValue', checked)
   }
 }
 </script>
@@ -110,7 +110,7 @@ const handleChange = (event) => {
   height: 10px;
   border: solid var(--secondary-color);
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg) translate(-1px, -1px);
+  transform: rotate(45deg) translate(-1.5px, -1.5px);
 }
 
 .approve-checkbox input[type="checkbox"]:checked + .checkmark::after {

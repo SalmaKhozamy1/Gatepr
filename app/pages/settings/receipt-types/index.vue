@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('pages.search')"
+          :placeholder="t('common.search')"
           :filters="searchFilters"
           @filter="handleFilter"
           @reset="resetFilters"
@@ -19,7 +19,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && receiptTypes.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -37,13 +37,13 @@
           </td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(type.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(type.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(type)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(type)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(type)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(type)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -55,7 +55,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.view') + ' ' + t('settings.add_receive_type')"
     :data="selectedType"
     :fields="typeViewFields"
     :icon="IconsReceiveType"
@@ -63,7 +63,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.add') + ' ' + t('settings.add_receive_type')"
     :icon="IconsReceiveType"
     :fields="typeFormFields"    
     data-bs-backdrop="static"
@@ -73,7 +73,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.edit') + ' ' + t('settings.add_receive_type')"
     :icon="IconsReceiveType"
     :fields="typeFormFields"
     :initial-data="selectedEditType"
@@ -84,7 +84,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.delete') + ' ' + t('settings.add_receive_type')"
     :itemType="t('settings.add_receive_type')"
     :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
     data-bs-backdrop="static"
@@ -125,10 +125,10 @@ const showDeleteModal = ref(false)
 const selectedDeleteType = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('settings.add_receive_type'), class: '' },
-  { label: t('labels.status'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.status'), class: '' },
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const typeViewFields = computed(() => [
@@ -146,8 +146,8 @@ const searchFilters = computed(() => [
     key: 'is_active',
     placeholder: t('labels.all_statuses'),
     options: [
-      { label: t('labels.active'), value: 1 },
-      { label: t('labels.inactive'), value: 0 },
+      { label: t('common.active'), value: 1 },
+      { label: t('common.inactive'), value: 0 },
     ]
   }
 ])

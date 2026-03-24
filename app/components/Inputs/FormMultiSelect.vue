@@ -40,7 +40,6 @@ const emit = defineEmits(['update:modelValue'])
 /* Root */
 :deep(.p-multiselect) {
   width: 100%;
-  font-family: inherit !important;
   font-size: var(--size-sm) !important;
   border-radius: var(--radius-sm) !important;
   border: 1px solid #e0e0e0 !important;

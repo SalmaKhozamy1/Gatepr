@@ -5,7 +5,7 @@
   >
     <template #search>
       <SearchBar
-        :placeholder="t('pages.search')"
+        :placeholder="t('common.search')"
         :filters="searchFilters"
         :loading="loading"
         @filter="handleFilter"
@@ -19,7 +19,7 @@
         @click="showAddModal = true"
       >
         <span style="font-size: 20px">+</span>
-        <span class="ms-1">{{ t('settings.add') }} {{ t('settings.add_branch') }}</span>
+        <span class="ms-1">{{ t('common.add') }} {{ t('settings.add_branch') }}</span>
       </button>
     </template>
 
@@ -28,6 +28,7 @@
         :headers="headers"
         :current-page="currentPage"
         :total-pages="totalPages"
+        :per-page="perPage"
         :loading="loading"
         @update:current-page="handlePageChange"
       >
@@ -40,9 +41,9 @@
 
           <tr v-for="(branch, index) in branches" :key="branch.id">
             <th class="index-cell">{{ getIndex(index) }}</th>
-            <td>{{ branch.name?.[locale] || branch.name?.ar }}</td>
+            <td>{{ branch.name?.[locale] || branch.name?.ar || branch.LocalizedName || '—' }}</td>
             <td>{{ branch.email || '—' }}</td>
-            <td>{{ branch.governorate?.name?.[locale] || branch.governorate?.name?.ar || '—' }}</td>
+            <td>{{ branch.governorate?.name?.[locale] || branch.governorate?.name?.ar || branch.governorate?.name || '—' }}</td>
             <td>{{ branch.phone || '—' }}</td>
             <td class="actions-cell">
               <div>
@@ -104,6 +105,9 @@
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'auth' })
+usePageMeta('menu.branches')
+
 import { ref, computed, onMounted, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
@@ -139,12 +143,12 @@ const selectedDeleteBranch = ref(null)
    COMPUTED
 ============================== */
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: '#', class: 'index-cell' },
   { label: t('labels.branches'), class: '' },
   { label: t('labels.email'), class: '' },
   { label: t('labels.governorate'), class: '' },
   { label: t('labels.phone'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const branchViewFields = computed(() => [

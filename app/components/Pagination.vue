@@ -6,7 +6,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M4.16663 9.99984H15.8333M15.8333 9.99984L9.99996 4.1665M15.8333 9.99984L9.99996 15.8332" stroke="#717680" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span class="prev-txt">السابق</span>
+                <span class="prev-txt">{{t('buttons.previous')}}</span>
             </a>
         </li>
         <div class="pagination_ul flex-center w-100 desktop-pagination">
@@ -18,12 +18,12 @@
         </div>
         
         <div class="mobile-pagination flex-center w-100">
-            <span class="desc">صفحة {{ currentPage }} من {{ totalPages }}</span>
+            <span class="desc">{{ t('labels.page') }} {{ currentPage }} {{ t('labels.of') }} {{ totalPages }}</span>
         </div>
 
         <li class="page-item next" :class="{ disabled: currentPage === totalPages }">
             <a href="#" @click.prevent="changePage(currentPage + 1)" class="page-link custom-anc w-100 h-100 flex-center gap-xs">
-                <span class="next-txt">التالي</span>
+                <span class="next-txt">{{ t('buttons.next') }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M15.8333 9.99984H4.16658M4.16658 9.99984L9.99992 4.1665M4.16658 9.99984L9.99992 15.8332" stroke="#717680" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -35,6 +35,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   currentPage: {

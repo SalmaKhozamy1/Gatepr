@@ -1,10 +1,10 @@
 <template>
-  <div class="table-container w-100">
-
-    <!-- ❌ شيل ده -->
-    <!-- <div v-if="loading" class="table-loading">
-      <div class="spinner"></div>
-    </div> -->
+  <div class="table-container w-100 position-relative">
+    
+    <!-- ✅ Loading Overlay -->
+    <div v-if="loading" class="table-loading-overlay">
+      <span class="premium-spinner"></span>
+    </div>
 
     <div class="table-responsive w-100">
       <table class="custom-table w-100">
@@ -69,9 +69,6 @@ const getIndex = (i) => (props.currentPage - 1) * props.perPage + i + 1
 </script>
 
 <style scoped>
-.table-responsive {
-  overflow: auto;
-}
 
 .custom-table {
   width: 100%;
@@ -125,5 +122,4 @@ html[dir="rtl"] .custom-table :deep(thead th:last-child) {
   border-start-end-radius: var(--radius-md);
   border-end-end-radius: var(--radius-md);
 }
-
 </style>

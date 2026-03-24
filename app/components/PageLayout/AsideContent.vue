@@ -2,22 +2,23 @@
 <template>
   <aside>
     <CardsCustomCard :title="title">
-     <div>
-      <PageLayoutSideNavItem
-       v-for="(item, index) in items"  
-        :key="index"
-        :title="item.title"
-        :icon="item.icon"
-        :active="activeIndex === index"
-        @on-click="$emit('item-click', index)">
+      <div>
+       <PageLayoutSideNavItem
+        v-for="(item, index) in items"  
+         :key="index"
+         :title="item.title"
+         :icon="item.icon"
+         :active="activeIndex === index"
+         @on-click="$emit('item-click', index)">
 
-      </PageLayoutSideNavItem>
-     </div>
+       </PageLayoutSideNavItem>
+      </div>
     </CardsCustomCard>
   </aside>
 </template>
 
 <script setup>
+const { locale } = useI18n()
 
 defineProps({
   title: {
@@ -36,4 +37,5 @@ defineProps({
 
 defineEmits(['item-click'])
 </script>
+
 

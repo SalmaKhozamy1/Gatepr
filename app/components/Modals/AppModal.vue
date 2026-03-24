@@ -10,19 +10,20 @@
         
         <!-- Modal Header -->
         <div v-if="hasHeader" class="modal-header flex-between">
-          <button type="button" class="btn-close m-0 shadow-none border-0" @click="closeModal" aria-label="Close"></button>
-          
           <div class="d-flex align-items-center gap-xs">
             <div v-if="icon" class="title-icon d-flex align-items-center justify-content-center">
               <component :is="icon" width="22" height="22" />
             </div>
             <h5 class="modal-title fw-semibold">{{ title }}</h5>
           </div>
+          
+          <button type="button" class="btn-close m-0 shadow-none border-0" @click="closeModal" aria-label="Close"></button>
+          
         </div>
 
         <!-- Headerless Close Button -->
         <div v-if="closeBtn" class="position-relative" style="min-height: 40px;">
-           <button type="button" class="btn-close position-absolute top-10 start-10 m-0 shadow-none border-0" @click="closeModal" aria-label="Close"></button>
+           <button type="button" class="btn-close " @click="closeModal" aria-label="Close"></button>
         </div>
 
         <!-- Modal Body -->
@@ -94,6 +95,7 @@ onUnmounted(() => {
 <style scoped>
 .modal-content {
   border-radius: var(--radius-md);
+  max-height: 90vh;
   background: linear-gradient(181deg, #FFF8EA 0.83%, #FFF 31.44%);
   box-shadow: 0 20px 24px -4px rgba(16, 24, 40, 0.10), 0 8px 8px -4px rgba(16, 24, 40, 0.04);
 }
@@ -104,10 +106,11 @@ onUnmounted(() => {
 .modal-body {
   padding-inline: 24px;
   padding-top: 24px;
+  overflow-y: auto;
 }
 .modal-footer {
   padding: 24px;
-  padding-top: 0px;
+  padding-top: 10px;
 }
 .modal-footer>* {
   margin: 0px;
@@ -133,14 +136,4 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-.start-10 {
-    inset-inline-start: 16px;
-}
-.top-10 {
-    top: 16px;
-}
-
-[dir="rtl"] .modal-header {
-  flex-direction: row-reverse;
-}
 </style>

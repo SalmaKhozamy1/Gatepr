@@ -39,8 +39,7 @@
 definePageMeta({
   middleware: 'auth'
 });
-
-import { useAuthStore } from '@/stores/auth'
+usePageMeta('menu.home')
 
 const { t } = useI18n()
 const api = useApi()

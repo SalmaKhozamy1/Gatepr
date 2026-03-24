@@ -6,7 +6,7 @@
     :close-on-backdrop="false"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <div class="flex-column-start">
+    <div class="flex-column-start modal-data">
       <div class="flex-between gap-md w-100 item_details"
         v-for="field in fields"
         :key="field.key"
@@ -15,6 +15,9 @@
         <h5>{{ getValue(field.key) }}</h5>
       </div>
     </div>
+    <template #footer>
+      <slot name="footer" />
+    </template>
   </ModalsAppModal>
 </template>
 

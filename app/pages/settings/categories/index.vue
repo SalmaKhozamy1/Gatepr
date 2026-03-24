@@ -2,7 +2,7 @@
   <div>
     <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('pages.search')"
+          :placeholder="t('common.search')"
           @filter="handleFilter"
           @reset="resetFilters"
         />
@@ -18,7 +18,7 @@
       <template #body="{ getIndex }">
         <tr v-if="!loading && categories.length === 0">
           <td :colspan="headers.length" class="text-center danger">
-            {{ t('errors.somethingWentWrong') }}
+            {{ t('common.no_results_found') }}
           </td>
         </tr>
 
@@ -28,13 +28,13 @@
           <td>{{ category.code }}</td>
           <td class="actions-cell">
             <div>
-              <button class="action-btn view" :title="t('buttons.view')" @click="handleView(category.id)" :disabled="viewLoading">
+              <button class="action-btn view" :title="t('common.view')" @click="handleView(category.id)" :disabled="viewLoading">
                 <IconsEye width="18" height="18" />
               </button>
-              <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(category)">
+              <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(category)">
                 <IconsEdit width="18" height="18" />
               </button>
-              <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(category)">
+              <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(category)">
                 <IconsDelete width="18" height="18" />
               </button>
             </div>
@@ -46,7 +46,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('settings.add_category')"
+    :title="t('common.view') + ' ' + t('settings.add_category')"
     :data="selectedCategory"
     :fields="categoryViewFields"
     :icon="IconsCategories"
@@ -54,7 +54,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_category')"
+    :title="t('common.add') + ' ' + t('settings.add_category')"
     :icon="IconsCategories"
     :fields="categoryFormFields"
         data-bs-backdrop="static"
@@ -64,7 +64,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('settings.add_category')"
+    :title="t('common.edit') + ' ' + t('settings.add_category')"
     :icon="IconsCategories"
     :fields="categoryFormFields"
     :initial-data="selectedEditCategory"
@@ -75,7 +75,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_category')"
+    :title="t('common.delete') + ' ' + t('settings.add_category')"
     :itemType="t('settings.add_category')"
     :itemName="selectedDeleteCategory?.name?.[locale] || selectedDeleteCategory?.name?.ar"
     data-bs-backdrop="static"
@@ -114,10 +114,10 @@ const showDeleteModal = ref(false)
 const selectedDeleteCategory = ref(null)
 
 const headers = computed(() => [
-  { label: t('labels.id'), class: 'index-cell' },
+  { label: t('common.id'), class: 'index-cell' },
   { label: t('settings.add_category'), class: '' },
   { label: t('labels.code'), class: '' },
-  { label: t('labels.actions'), class: 'actions-cell' }
+  { label: t('common.actions'), class: 'actions-cell' }
 ])
 
 const categoryViewFields = computed(() => [

@@ -25,7 +25,7 @@
           @click="handleAddClick"
         >
           <span style="font-size: 20px">+</span>
-          <span class="ms-1">{{ t('settings.add') }} {{ activeTabAddTitle }}</span>
+          <span class="ms-1">{{ t('common.add') }} {{ activeTabAddTitle }}</span>
         </button>
       </template>
 
@@ -37,6 +37,8 @@
 </template>
 
 <script setup>
+usePageMeta('menu.settings')
+
 import { 
   IconsGovernorates,
   IconsSettingsRegions,

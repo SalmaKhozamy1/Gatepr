@@ -29,23 +29,33 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      titleTemplate: '%s | GetPro',
+      title: 'GetPro',
       link: [
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap' }
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ],
-      script: [
-        { src: '/bootstrap.bundle.min.js' }
-      ]
     }
   },
-  css: [
-    'bootstrap/dist/css/bootstrap.min.css',
-    'flatpickr/dist/flatpickr.css',
-    '~/assets/styles/main.css'
+  // css: [
+  //   '~/assets/styles/main.css'
+  // ],
+  plugins: [
+    { src: '~/plugins/bootstrap.client.ts', mode: 'client' },
+    { src: '~/plugins/styles.client.ts', mode: 'client' },
   ],
   runtimeConfig: {
     public: {
-      apiBase: 'https://gate.roqay.dev/api',
+      apiBase: 'https://backend.gate.roqay.dev/public/api',
       defaultLocale: 'ar'
     }
-  }
+  },
+  routeRules: {
+    '/api/**': {
+      proxy: 'https://backend.gate.roqay.dev/api/**'
+    }
+  },
+  // devServer: {
+  //   port: 5045, // هنا حددنا البورت
+  //   host: '0.0.0.0' // لو عايزة السيرفر يكون accessible من شبكة محلية
+  // }
 })
