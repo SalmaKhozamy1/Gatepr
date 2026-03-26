@@ -55,7 +55,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.view') + ' ' + t('settings.receipt_type')"
     :data="selectedType"
     :fields="typeViewFields"
     :icon="IconsReceiveType"
@@ -63,7 +63,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('common.add') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.add') + ' ' + t('settings.receipt_type')"
     :icon="IconsReceiveType"
     :fields="typeFormFields"    
     data-bs-backdrop="static"
@@ -73,7 +73,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('settings.add_receive_type')"
+    :title="t('common.edit') + ' ' + t('settings.receipt_type')"
     :icon="IconsReceiveType"
     :fields="typeFormFields"
     :initial-data="selectedEditType"
@@ -84,8 +84,8 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('common.delete') + ' ' + t('settings.add_receive_type')"
-    :itemType="t('settings.add_receive_type')"
+    :title="t('common.delete') + ' ' + t('settings.receipt_type')"
+    :itemType="t('settings.receipt_type')"
     :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
@@ -126,7 +126,7 @@ const selectedDeleteType = ref(null)
 
 const headers = computed(() => [
   { label: t('common.id'), class: 'index-cell' },
-  { label: t('settings.add_receive_type'), class: '' },
+  { label: t('settings.receipt_type'), class: '' },
   { label: t('common.status'), class: '' },
   { label: t('common.actions'), class: 'actions-cell' }
 ])

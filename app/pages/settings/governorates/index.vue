@@ -80,7 +80,7 @@
 <!-- Delete Modal -->
 <ModalsAppDeleteModal
   v-model="showDeleteModal"
-  :title="t('settings.delete_governorate')"
+  :title="t('common.delete') + ' ' + t('labels.governorate')"
   :itemType="t('settings.governorate')"
   :itemName="selectedDeleteGovernorate?.name?.ar"
       data-bs-backdrop="static"

@@ -47,13 +47,13 @@
             <td>{{ branch.phone || '—' }}</td>
             <td class="actions-cell">
               <div>
-                <button class="action-btn view" :title="t('buttons.view')" @click="handleView(branch.id)" :disabled="viewLoading">
+                <button class="action-btn view" :title="t('common.view')" @click="handleView(branch.id)" :disabled="viewLoading">
                   <IconsEye width="18" height="18" />
                 </button>
-                <button class="action-btn edit" :title="t('buttons.edit')" @click="handleEdit(branch)">
+                <button class="action-btn edit" :title="t('common.edit')" @click="handleEdit(branch)">
                   <IconsEdit width="18" height="18" />
                 </button>
-                <button class="action-btn delete" :title="t('buttons.delete')" @click="handleDelete(branch)">
+                <button class="action-btn delete" :title="t('common.delete')" @click="handleDelete(branch)">
                   <IconsDelete width="18" height="18" />
                 </button>
               </div>
@@ -66,7 +66,7 @@
 
   <ModalsAppViewModal
     v-model="showViewModal"
-    :title="t('buttons.view') + ' ' + t('settings.add_branch')"
+    :title="t('common.view') + ' ' + t('settings.add_branch')"
     :data="selectedBranch"
     :fields="branchViewFields"
     :icon="IconsBranches"
@@ -74,7 +74,7 @@
 
   <ModalsAppAddModal
     v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_branch')"
+    :title="t('common.add') + ' ' + t('settings.add_branch')"
     :icon="IconsBranches"
     :fields="branchFormFields"
     data-bs-backdrop="static"
@@ -84,7 +84,7 @@
 
   <ModalsAppEditModal
     v-model="showEditModal"
-    :title="t('buttons.edit') + ' ' + t('settings.add_branch')"
+    :title="t('common.edit') + ' ' + t('settings.add_branch')"
     :icon="IconsBranches"
     :fields="branchFormFields"
     :initial-data="selectedEditBranch"
@@ -95,7 +95,7 @@
 
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_branch')"
+    :title="t('common.delete') + ' ' + t('settings.add_branch')"
     :itemType="t('settings.add_branch')"
     :itemName="selectedDeleteBranch?.name?.[locale] || selectedDeleteBranch?.name?.ar"
     data-bs-backdrop="static"

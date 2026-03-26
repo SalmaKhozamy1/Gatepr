@@ -51,6 +51,7 @@
   --gray-color: #8F92A1;
   --light-gray: #ededf0;
   --desc-color: #535862;
+  --dark-gray: #535862;
   --placeholder: #8F92A1;
   /*///////// Font Size /////////*/
   --size-xs:12px;
@@ -416,6 +417,9 @@ html[dir="rtl"] [type="url"] {
 .light-gray {
   color: var(--light-gray);
 }
+.dark-gray {
+  color: var(--dark-gray);
+}
 .danger {
   color: var(--red) !important;
 }
@@ -541,6 +545,12 @@ html[dir="rtl"] [type="url"] {
 .position-relative input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+[dir="rtl"] input[type="tel"] {
+     direction: rtl;
+}
+[dir="ltr"] input[type="tel"] {
+     direction: ltr;
 }
 .form-control[readonly],
 .readonly_select ,
@@ -712,7 +722,8 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .flatpickr-day:hover {
    background-color: #f8f8f8;
 }
-.action-badge {
+.action-badge,
+.status {
   border-radius: var(--radius-lg);
   padding: 8px 12px;
   min-width: 85px;
@@ -721,17 +732,20 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   font-weight: 500;
   display: inline-block;
 }
-.badge-add {
+.badge-add,
+.success-status {
   background-color: color-mix(in srgb, var(--success-color), transparent 94%);
   color: var(--success-color);
   border: 1px solid color-mix(in srgb, var(--success-color), transparent 75%);
 }
-.badge-update {
+.badge-update,
+.status-pending {
   background-color: color-mix(in srgb, var(--warning), transparent 94%);
   color: var(--warning);
   border: 1px solid color-mix(in srgb, var(--warning), transparent 75%);
 }
-.badge-delete {
+.badge-delete,
+.status-danger {
   background-color: color-mix(in srgb, var(--red), transparent 94%);
   color: var(--red);
   border: 1px solid color-mix(in srgb, var(--red), transparent 75%);

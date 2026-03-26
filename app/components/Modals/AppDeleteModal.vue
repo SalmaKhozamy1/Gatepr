@@ -18,7 +18,7 @@
 
       <h4>{{ title }}</h4>
 
-      <p class="desc">
+      <p class=" dark-gray px-3">
         {{ t('modals.are_you_sure_delete', { type: itemType, name: itemName }) }}
         <br />
         {{ t('modals.cannot_restore') }}

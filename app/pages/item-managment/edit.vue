@@ -1,5 +1,5 @@
 <template>
-  <PageLayout :hasAside="false" :hasSearch="false" :formTitle="t('items.add_form.title')">
+  <PageLayout :hasAside="false" :hasSearch="false" :formTitle="t('items.edit_form.title')">
     <template #main>
       <form @submit.prevent="onSubmit" class="grid grid-3 gap-sm">
         <!-- Row 1: Item Details -->
@@ -325,6 +325,10 @@ usePageMeta('menu.item-managment')
 const localePath = useLocalePath()
 const { t, locale } = useI18n()
 const api = useApi()
+const route = useRoute()
+
+// Item ID from route params
+const itemId = route.params.id
 
 /* =============================
    VALIDATION SCHEMA
@@ -335,31 +339,31 @@ const schema = yup.object({
     ar: yup.string().required('الاسم باللغة العربية مطلوب').min(2).max(255).matches(/^[\u0600-\u06FF\s]+$/, 'لازم يكون عربي فقط'),
     en: yup.string().required('الاسم باللغة الانجليزية مطلوب').min(2).max(255).matches(/^[A-Za-z\s]+$/, 'لازم يكون إنجليزي فقط'),
   }),
-  profit_margin: yup.number().typeError('لازم يكون رقم').required('هامش الربح مطلوب').min(0).max(100),
-  supplier_price: yup.number().typeError('لازم يكون رقم').required('سعر المورد مطلوب').min(0),
-  category_id: yup.number().typeError('التصنيف مطلوب').required('التصنيف مطلوب').nullable(),
+  profit_margin: yup.number().typeError('يجب أن يكون رقم').required('هامش الربح مطلوب').min(0).max(100),
+  supplier_price: yup.number().typeError('يجب أن يكون رقم').required('سعر المورد مطلوب').min(0),
+  category_id: yup.number().typeError('يجب أن يكون رقم').required('التصنيف مطلوب').nullable(),
   weight: yup.string().required('الوزن مطلوب').max(50),
   size_volume: yup.string().required('الحجم مطلوب').max(50),
-  purchasing_unit_id: yup.number().typeError('وحدة الشراء مطلوبة').required('وحدة الشراء مطلوبة').nullable(),
-  association_discount: yup.number().typeError('لازم يكون رقم').required('خصم الجمعية مطلوب').min(0),
-  consumer_discount: yup.number().typeError('لازم يكون رقم').required('خصم المستهلك مطلوب').min(0),
-  supply_intensity: yup.number().typeError('لازم يكون رقم').required('كثافة التوريد مطلوبة').min(0).integer(),
-  packet_intensity: yup.number().typeError('لازم يكون رقم').required('كثافة الطرد مطلوبة').min(0).integer(),
-  carton_intensity: yup.number().typeError('لازم يكون رقم').required('كثافة الكرتون مطلوبة').min(0).integer(),
-  unit_price: yup.number().typeError('لازم يكون رقم').required('سعر الوحدة مطلوب').min(0),
-  packet_price: yup.number().typeError('لازم يكون رقم').required('سعر الطرد مطلوب').min(0),
-  carton_price: yup.number().typeError('لازم يكون رقم').required('سعر الكرتون مطلوب').min(0),
-  unit_barcode: yup.number().typeError('لازم يكون رقم').required('باركود الوحدة مطلوب').min(0),
-  packet_barcode: yup.number().typeError('لازم يكون رقم').required('باركود الطرد مطلوب').min(0),
-  carton_barcode: yup.number().typeError('لازم يكون رقم').required('باركود الكرتون مطلوب').min(0),
-  branch_id: yup.number().typeError('الفرع مطلوب').required('الفرع مطلوب').nullable(),
-  receipt_type_id: yup.number().typeError('نوع الاستلام مطلوب').required('نوع الاستلام مطلوب').nullable(),
+  purchasing_unit_id: yup.number().typeError('يجب أن يكون رقم').required('وحدة الشراء مطلوبة').nullable(),
+  association_discount: yup.number().typeError('يجب أن يكون رقم').required('خصم الجمعية مطلوب').min(0),
+  consumer_discount: yup.number().typeError('يجب أن يكون رقم').required('خصم المستهلك مطلوب').min(0),
+  supply_intensity: yup.number().typeError('يجب أن يكون رقم').required('كثافة التوريد مطلوبة').min(0).integer(),
+  packet_intensity: yup.number().typeError('يجب أن يكون رقم').required('كثافة الطرد مطلوبة').min(0).integer(),
+  carton_intensity: yup.number().typeError('يجب أن يكون رقم').required('كثافة الكرتون مطلوبة').min(0).integer(),
+  unit_price: yup.number().typeError('يجب أن يكون رقم').required('سعر الوحدة مطلوب').min(0),
+  packet_price: yup.number().typeError('يجب أن يكون رقم').required('سعر الطرد مطلوب').min(0),
+  carton_price: yup.number().typeError('يجب أن يكون رقم').required('سعر الكرتون مطلوب').min(0),
+  unit_barcode: yup.number().typeError('يجب أن يكون رقم').required('باركود الوحدة مطلوب').min(0),
+  packet_barcode: yup.number().typeError('يجب أن يكون رقم').required('باركود الطرد مطلوب').min(0),
+  carton_barcode: yup.number().typeError('يجب أن يكون رقم').required('باركود الكرتون مطلوب').min(0),
+  branch_id: yup.number().typeError('يجب أن يكون رقم').required('الفرع مطلوب').nullable(),
+  receipt_type_id: yup.number().typeError('يجب أن يكون رقم').required('نوع الاستلام مطلوب').nullable(),
 })
 
 /* =============================
    useForm
 ============================== */
-const { handleSubmit, errors, setErrors } = useForm({
+const { handleSubmit, errors, setErrors, setValues } = useForm({
   validationSchema: schema,
 })
 
@@ -398,6 +402,46 @@ const categoryOptions = ref([])
 const unitOptions = ref([])
 const branchOptions = ref([])
 const receiptTypeOptions = ref([])
+
+/* =============================
+   FETCH ITEM DATA
+============================== */
+const fetchItemData = async () => {
+  try {
+    const res = await api(`/items/${itemId}`)
+    const item = res.data
+
+    setValues({
+      code: item.code,
+      name: {
+        ar: item.name?.ar || '',
+        en: item.name?.en || '',
+      },
+      supplier_code: item.supplier_code || '',
+      profit_margin: Number(item.profit_margin),
+      supplier_price: Number(item.supplier_price),
+      category_id: item.category_id || null,
+      weight: item.weight,
+      size_volume: item.size_volume,
+      purchasing_unit_id: item.purchasing_unit_id || null,
+      association_discount: Number(item.association_discount),
+      consumer_discount: Number(item.consumer_discount),
+      supply_intensity: Number(item.supply_intensity),
+      packet_intensity: Number(item.packet_intensity),
+      carton_intensity: Number(item.carton_intensity),
+      unit_price: Number(item.unit_price),
+      packet_price: Number(item.packet_price),
+      carton_price: Number(item.carton_price),
+      unit_barcode: Number(item.unit_barcode),
+      packet_barcode: Number(item.packet_barcode),
+      carton_barcode: Number(item.carton_barcode),
+      branch_id: item.branch_id || null,
+      receipt_type_id: item.receipt_type_id || null,
+    })
+  } catch (err) {
+    console.error('Error fetching item data:', err)
+  }
+}
 
 /* =============================
    FETCH OPTIONS
@@ -481,10 +525,13 @@ const onSubmit = handleSubmit(async (values) => {
       receipt_type_id: values.receipt_type_id,
     }
 
-    await api('/items', { method: 'POST', body: payload })
+    await api(`/items/${itemId}`, { method: 'PUT', body: payload })
     navigateTo(localePath('/item-managment'))
   } catch (err) {
-    console.error('Error creating item:', err)
+    if (err?.data?.errors) {
+      setErrors(err.data.errors)
+    }
+    console.error('Error updating item:', err)
   } finally {
     loading.value = false
   }
@@ -500,11 +547,15 @@ const handleCancel = () => {
 /* =============================
    LIFECYCLE
 ============================== */
-onMounted(() => {
-  fetchCategories().catch(console.error)
-  fetchUnits().catch(console.error)
-  fetchBranches().catch(console.error)
-  fetchReceiptTypes().catch(console.error)
+onMounted(async () => {
+  await Promise.all([
+    fetchCategories(),
+    fetchUnits(),
+    fetchBranches(),
+    fetchReceiptTypes(),
+  ])
+  // نجيب داتا الـ item بعد ما الـ options اتحملت عشان الـ select يتعرف على القيمة صح
+  await fetchItemData()
 })
 </script>
 

@@ -140,8 +140,8 @@ const menuItems = computed(() => {
    if (role.value === 'supplier') {
       items = [
          { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
-         { title: 'إدارة الأصناف', icon: IconsCategories, path: localePath('/item-managment') },
-         { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
+         { title: t('menu.items-management'), icon: IconsCategories, path: localePath('/item-managment') },
+         { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/terms-and-condition') },
       ]
    } else {
       items = [

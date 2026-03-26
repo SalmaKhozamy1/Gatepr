@@ -107,12 +107,15 @@
     "categories": "Categories",
     "suppliers": "Suppliers",
     "logs": "System Logs",
+    "items-management": "Item Management",
+    "terms_and_conditions": "Terms & Conditions",
     "login": "Login",
     "category_requests": "Category Requests",
     "accreditation": "Accreditation",
     "approved_categories": "Approved Categories",
     "supplier_registration_requests": "Supplier Registration Requests",
-    "data_edit_requests": "Data Edit Requests"
+    "data_edit_requests": "Data Edit Requests",
+    "item-managment": "Items Logs"
   },
   "auth": {
     "loginTitle": "Login",
@@ -226,6 +229,7 @@
     "categories": "Categories",
     "purchasing_units": "Purchasing Units",
     "receipt_types": "Receipt Types",
+    "receipt_type": "Receipt Type",
     "terms_and_conditions": "Terms & Conditions",
     "add_governorate": "Governorate",
     "add_area": "Area",
@@ -298,12 +302,20 @@
     "unit_barcode": "Unit Barcode",
     "packet_barcode": "Packet Barcode",
     "carton_barcode": "Carton Barcode",
-    "status": "Status",
+    "status_label": "Status",
     "created_at": "Creation Date",
     "create": "Add",
     "add": "Add",
     "update": "Update",
     "delete": "Delete",
+    "delete_item": "Delete Item",
+    "import": "Import",
+    "create_request": "Create Item Request",
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
     "messages": {
       "fetch_error": "Error fetching data",
       "accept_success": "Item accepted successfully",
@@ -318,6 +330,7 @@
     },
     "add_form": {
       "title": "Item Registration Form",
+      "title_list": "Items Logs",
       "item_details": "Item Details",
       "supplier_info": "Supplier Info",
       "financial_info": "Financial Info",
@@ -375,6 +388,9 @@
         "choose_branch": "Select branch",
         "choose_type": "Select type"
       }
+    },
+    "edit_form": {
+      "title": "Edit Item Details"
     }
   },
   "activity_logs": {

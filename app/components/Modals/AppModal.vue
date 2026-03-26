@@ -104,12 +104,10 @@ onUnmounted(() => {
   border-bottom: 1px solid #E2E5E9;
 }
 .modal-body {
-  padding-inline: 20px;
-  padding-top: 20px;
-  overflow-y: auto;
+  padding: 20px;
 }
 .modal-footer {
-  padding: 24px;
+  padding: 20px;
   padding-top: 10px;
 }
 .modal-footer>* {
@@ -147,5 +145,16 @@ onUnmounted(() => {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+:deep(.modal-data) {
+  overflow-y: auto;
+  max-height: 450px;
+  padding-inline-end: 10px;
+}
+:deep(.modal-data::-webkit-scrollbar) {
+  background-color: transparent;
+}
+:deep(.modal-data::-webkit-scrollbar-thumb) {
+  background-color: #D9D9D9;
 }
 </style>

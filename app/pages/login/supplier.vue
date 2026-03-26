@@ -58,6 +58,12 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: 'auth',
+  middleware: 'guest',
+});
+usePageMeta('menu.login')
+
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '~/stores/auth'
@@ -78,11 +84,6 @@ const resetContact = ref('')
 const contactType = ref('email')
 const resetCode = ref('')
 const resetToken = ref('')
-
-definePageMeta({
-  layout: 'auth',
-  middleware: 'guest'
-});
 
 const showPassword = ref(false);
 const rememberMe = ref(false);
