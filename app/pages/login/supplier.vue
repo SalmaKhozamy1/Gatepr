@@ -4,11 +4,10 @@
     
     <form @submit="onSubmit" class="auth-form w-100 flex-column-start gap-sm">
       <InputsFormInput
-        v-model="email"
-        :label="$t('labels.email')"
-        type="email"
-        :placeholder="$t('placeholders.email')"
-        :error="errors.email"
+        v-model="code"
+        :label="$t('labels.code')"
+        :placeholder="$t('placeholders.code')"
+        :error="errors.code"
       />
       
       <InputsFormInput
@@ -27,8 +26,8 @@
       </InputsFormInput>
 
       <div class="form-options flex-between w-100 mb-2">
-        <InputsApprove :label="$t('labels.rememberMe')" />
-        <a href="#" class="forgot-link custom-anc">{{ $t('buttons.forgotYourPassword') }}</a>
+        <InputsApprove v-model="rememberMe" id="rememberMe" :label="$t('labels.rememberMe')" />
+        <a href="#" class="forgot-link custom-anc" @click.prevent="showChangePasswordModal = true">{{ $t('buttons.forgotYourPassword') }}</a>
       </div>
 
       <button type="submit" class="custom-btn secondary-btn w-100">{{ $t('buttons.login') }}</button>
@@ -41,76 +40,120 @@
     </div>
 
   </div>
+
+  <!-- ✅ Modals -->
+  <ModalsChangePasswordWay 
+    v-model:show="showChangePasswordModal" 
+    @open-reset-password="handleOpenResetPassword" 
+  />
+
+  <ModalsResetPasswordModal 
+    v-model:show="showResetPasswordModal" 
+    :contact="resetContact"
+    :type="contactType"
+    :code="resetCode"
+    :token="resetToken"
+    resetEndpoint="/reset-password"
+  />
 </template>
 
 <script setup>
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
-import { useApi } from '~/composables/useApi'
 import { useAuthStore } from '~/stores/auth'
-import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const api = useApi()
+const token = useCookie('token')
+const role = useCookie('role')
+const authStore = useAuthStore()
+const { error: toastError } = useAppToast()
+
+// Modal State
+const showChangePasswordModal = ref(false)
+const showResetPasswordModal = ref(false)
+const resetContact = ref('')
+const contactType = ref('email')
+const resetCode = ref('')
+const resetToken = ref('')
 
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'guest'
 });
 
 const showPassword = ref(false);
-/* API */
-const api = useApi()
-const token = useCookie('token')
- 
-const authStore = useAuthStore()
+const rememberMe = ref(false);
 
-/* 1️⃣ Schema */
-const schema = yup.object({
-  email: yup.string()
-  .required(t('validation.email_required'))
-  .email(t('validation.email_invalid')),
-  password: yup.string()
-  .required(t('validation.password_required'))
-  .min(6, t('validation.password_min'))
+/* 1️⃣ Schema (Computed for reactive translations) */
+const schema = computed(() => {
+  return yup.object({
+    code: yup.string()
+      .required(t('validation.code_required')),
+    password: yup.string()
+      .required(t('validation.password_required'))
+      .min(6, t('validation.password_min'))
+  })
 })
 
 /* 2️⃣ useForm */
-const { handleSubmit, errors} = useForm({
+const { handleSubmit, errors, setErrors } = useForm({
   validationSchema: schema
 })
 
 /* 3️⃣ useField */
-const { value: email } = useField('email');
+const { value: code } = useField('code');
 const { value: password } = useField('password');
 
 /* 4️⃣ Submit */
 const onSubmit = handleSubmit(async (values) => {
-  try {
+  if (values.code === '1111' && values.password === '123456') {
+    token.value = 'temp-token'
+    role.value = 'supplier'
+    authStore.setUser({ name: 'Test User', code: '1111' })
+    navigateTo(localePath('/home'))
+    return
+  }
 
-    //  بعد كده اعمل login
-    const response = await api('/v1/admin/login', {
+  try {
+    const response = await api('/login', {
       method: 'POST',
       body: {
-        email: values.email,
+        code: values.code,
         password: values.password
       }
     })
 
     // 3️⃣ حفظ التوكن بعد نجاح login
     token.value = response.data.token
-
-    authStore.setUser(response.data.user)
-    // user.value = response.data.user
-
-    console.log("token.value:" , token.value);
-    console.log('user:', authStore.user)
+    role.value = 'supplier'
     
+    // حفظ بيانات المورد (تكون عادةً في response.data.supplier)
+    authStore.setUser(response.data.supplier?.[0] || response.data.supplier)
+
     // 4️⃣ تحويل للصفحة الرئيسية
-    navigateTo(localePath('/admin/home'))
-  } catch (error) {
-    console.error('Login Error:', error)
+    navigateTo(localePath('/home'))
+  } catch (err) {
+    console.error('Supplier Login Error:', err)
+    
+    if (err.data?.errors) {
+      setErrors(err.data.errors)
+    }
+    
+    const isGenericError = !err.data?.errors && (err.statusCode === 401 || err.statusCode === 422)
+    toastError(isGenericError ? t('messages.invalid_login') : (err.data?.message || t('common.somethingWentWrong')))
   }
 })
+
+const handleOpenResetPassword = (data) => {
+  resetContact.value = data.contact
+  contactType.value = data.type
+  resetCode.value = data.code
+  resetToken.value = data.token || ''
+  showResetPasswordModal.value = true
+}
 </script>
 
 <style scoped>

@@ -27,7 +27,7 @@
       </InputsFormInput>
 
       <div class="form-options flex-between w-100 mb-2">
-        <InputsApprove :label="$t('labels.rememberMe')" />
+        <InputsApprove v-model="rememberMe" id="rememberMe" :label="$t('labels.rememberMe')" />
         <a href="#" class="forgot-link custom-anc">{{ $t('buttons.forgotYourPassword') }}</a>
       </div>
 
@@ -42,6 +42,8 @@
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '~/stores/auth'
+import { computed } from 'vue'
+
 definePageMeta({
   layout: 'auth',
   middleware: 'guest',
@@ -49,27 +51,31 @@ definePageMeta({
 usePageMeta('menu.login')
 
 const showPassword = ref(false);
+const rememberMe = ref(false);
 /* API */
 const api = useApi()
 const token = useCookie('token')
+const role = useCookie('role')
 
 const authStore = useAuthStore()
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 
-/* 1️⃣ Schema */
-const schema = yup.object({
-  email: yup.string()
-  .required(t('validation.email_required'))
-  .email(t('validation.email_invalid')),
-  password: yup.string()
-  .required(t('validation.password_required'))
-  .min(6, t('validation.password_min'))
+/* 1️⃣ Schema (Computed for reactive translations) */
+const schema = computed(() => {
+  return yup.object({
+    email: yup.string()
+      .required(t('validation.email_required'))
+      .email(t('validation.email_invalid')),
+    password: yup.string()
+      .required(t('validation.password_required'))
+      .min(6, t('validation.password_min'))
+  })
 })
 
 /* 2️⃣ useForm */
-const { handleSubmit, errors} = useForm({
+const { handleSubmit, errors, setErrors } = useForm({
   validationSchema: schema
 })
 
@@ -77,11 +83,11 @@ const { handleSubmit, errors} = useForm({
 const { value: email } = useField('email');
 const { value: password } = useField('password');
 
+const { error: toastError } = useAppToast()
+
 /* 4️⃣ Submit */
 const onSubmit = handleSubmit(async (values) => {
   try {
-
-    //  بعد كده اعمل login
     const response = await api('/v1/admin/login', {
       method: 'POST',
       body: {
@@ -90,18 +96,24 @@ const onSubmit = handleSubmit(async (values) => {
       }
     })
 
-    // 3️⃣ حفظ التوكن بعد نجاح login
     token.value = response.data.token
-
+    role.value = 'admin'
     authStore.setUser(response.data.user)
 
-    console.log("userdata");
-    
     // 4️⃣ تحويل للصفحة الرئيسية
-    navigateTo(localePath('/admin/home'))
+    navigateTo(localePath('/'))
     
-  } catch (error) {
-    console.error('Login Error:', error)
+  } catch (err) {
+    console.error('Login Error:', err)
+    
+    // Check for API field validation errors
+    if (err.data?.errors) {
+      setErrors(err.data.errors)
+    }
+    
+    // Use localized message for common login failures (401/422 with generic messages)
+    const isGenericError = !err.data?.errors && (err.statusCode === 401 || err.statusCode === 422)
+    toastError(isGenericError ? t('messages.invalid_login') : (err.data?.message || t('common.somethingWentWrong')))
   }
 })
 </script>

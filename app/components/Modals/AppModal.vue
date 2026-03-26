@@ -104,8 +104,8 @@ onUnmounted(() => {
   border-bottom: 1px solid #E2E5E9;
 }
 .modal-body {
-  padding-inline: 24px;
-  padding-top: 24px;
+  padding-inline: 20px;
+  padding-top: 20px;
   overflow-y: auto;
 }
 .modal-footer {
@@ -124,7 +124,7 @@ onUnmounted(() => {
   color: var(--secondary-color);
 }
 .title-icon :deep(path) {
-    fill: var(--secondary-color) !important;
+  fill: var(--secondary-color) !important;
 }
 /* Custom button styles */
 .btn-close {
@@ -135,5 +135,17 @@ onUnmounted(() => {
 .btn-close:hover {
   opacity: 1;
 }
+:deep(.btn-spinner) {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>

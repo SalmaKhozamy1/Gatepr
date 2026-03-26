@@ -80,7 +80,8 @@
     "start_date": "تاريخ البدء",
     "end_date": "تاريخ الانتهاء",
     "license_expiry": "تاريخ انتهاء الرخصة",
-    "agree_to_terms": "أوافق على الشروط والأحكام"
+    "agree_to_terms": "أوافق على الشروط والأحكام",
+    "choose_verification_method": "أختر وسيلة التحقق"
   },
   "profile": {
     "change_password": "تغيير كلمة المرور",
@@ -131,7 +132,8 @@
     "email_invalid": "البريد الإلكتروني غير صحيح",
     "password_required": "كلمة المرور مطلوبة",
     "password_min": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
-    "agree_to_terms_required": "يجب الموافقة على الشروط والأحكام"
+    "agree_to_terms_required": "يجب الموافقة على الشروط والأحكام",
+    "code_required": "كود المورد مطلوب"
   },
   "placeholders": {
     "email": "أدخل البريد الإلكتروني",
@@ -258,7 +260,8 @@
   "messages": {
     "deleted_successfully": "تم حذف {item} بنجاح",
     "updated_successfully": "تم تحديث {item} بنجاح",
-    "added_successfully": "تم إضافة {item} بنجاح"
+    "added_successfully": "تم إضافة {item} بنجاح",
+    "invalid_login": "البيانات المدخلة غير صحيحة"
   },
   "items": {
     "id": "#",
@@ -312,6 +315,66 @@
       "accept_all_error": "حدث خطأ أثناء القبول الجماعي",
       "export_error": "حدث خطأ أثناء تدوير البيانات",
       "download_error": "حدث خطأ أثناء تحميل الملف"
+    },
+    "add_form": {
+      "title": "نموذج تسجيل بيانات الأصناف",
+      "item_details": "تفاصيل الصنف",
+      "supplier_info": "معلومات المورد",
+      "financial_info": "معلومات مالية",
+      "categories": "التصنيفات",
+      "physical_specs": "المواصفات الفيزيائية",
+      "measuring_units": "وحدات القياس",
+      "discounts": "الخصومات",
+      "packaging_info": "معلومات التعبئة",
+      "prices": "الأسعار",
+      "barcodes": "الباركود",
+      "branch_info": "معلومات الفرع",
+      "delivery_info": "معلومات التوصيل",
+      "labels": {
+        "item_number": "رقم الصنف",
+        "name_ar": "اسم الصنف باللغة العربية",
+        "name_en": "اسم الصنف باللغة الإنجليزية",
+        "supplier_code": "كود المورد",
+        "profit_margin": "نسبة الربح",
+        "supplier_price": "سعر المورد",
+        "sub_category": "التصنيف الفرعي",
+        "weight": "الوزن",
+        "volume": "الحجم",
+        "purchasing_unit": "وحدة الشراء",
+        "association_discount": "خصم الجمعية",
+        "consumer_discount": "خصم المستهلك",
+        "supply_intensity": "شدة التوريد",
+        "packet_intensity": "شدة الباكيت",
+        "carton_intensity": "شدة الكرتون",
+        "unit_price": "سعر الحبة",
+        "packet_price": "سعر الباكيت",
+        "carton_price": "سعر الكرتون",
+        "unit_barcode": "باركود الحبة",
+        "packet_barcode": "باركود الباكيت",
+        "carton_barcode": "باركود الكرتون",
+        "branch": "الفرع",
+        "receipt_type": "نوع الإستلام"
+      },
+      "placeholders": {
+        "item_number": "ادخل رقم الصنف",
+        "name_ar": "ادخل اسم الصنف بالعربي",
+        "name_en": "ادخل اسم الصنف بالإنجليزي",
+        "supplier_code": "ادخل رقم المورد",
+        "profit_margin": "ادخل نسبة الربح",
+        "supplier_price": "ادخل سعر المورد",
+        "choose_category": "اختر التصنيف",
+        "weight": "ادخل الوزن",
+        "volume": "ادخل الحجم",
+        "choose_unit": "اختر الوحدة",
+        "discount": "ادخل الخصم",
+        "supply_intensity": "ادخل شدة التوريد",
+        "packet_intensity": "ادخل شدة الباكيت",
+        "carton_intensity": "ادخل شدة الكرتون",
+        "price": "ادخل السعر",
+        "barcode": "ادخل الباركود",
+        "choose_branch": "اختر الفرع",
+        "choose_type": "اختر النوع"
+      }
     }
   },
   "activity_logs": {

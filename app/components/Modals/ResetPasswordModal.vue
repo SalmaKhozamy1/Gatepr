@@ -46,8 +46,17 @@ const api = useApi()
 const show = defineModel('show')
 
 const props = defineProps({
-  email: String,
-  code: String
+  contact: String,
+  type: {
+    type: String,
+    default: 'email'
+  },
+  code: String,
+  token: String,
+  resetEndpoint: {
+    type: String,
+    default: '/v1/admin/reset-password'
+  }
 })
 
 const password = ref('')
@@ -62,11 +71,13 @@ const resetPassword = async () => {
 
   try{
 
-    await api('/admin/reset-password',{
+    await api(props.resetEndpoint, {
       method:'POST',
       body:{
-        email: props.email,
+        email: props.type === 'email' ? props.contact : '',
+        phone: props.type === 'phone' ? props.contact : '',
         code: props.code,
+        token: props.token,
         password: password.value,
         password_confirmation: confirmPassword.value
       }

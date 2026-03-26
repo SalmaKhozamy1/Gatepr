@@ -55,8 +55,27 @@
       </div>
 
       <!-- Modals -->
-      <ModalsChangePasswordModal v-model:show="showChangePassword" @open-otp="openOtp"/>
-      <ModalsOtpModal v-model:show="showOtpModal" :email="resetEmail" />
+       <ModalsChangePasswordModal
+         v-model:show="showChangePassword"
+         endpoint="/v1/admin/forgot-password"
+         @open-otp="openOtp"
+      />
+      <ModalsOtpModal 
+         v-model:show="showOtpModal" 
+         :contact="resetContact" 
+         :type="contactType" 
+         verifyEndpoint="/v1/admin/verify-code"
+         resendEndpoint="/v1/admin/resend-code"
+         @open-reset-password="openResetPassword"
+      />
+      <ModalsResetPasswordModal 
+         v-model:show="showResetPasswordModal" 
+         :contact="resetContact"
+         :type="contactType"
+         :code="resetCode"
+         :token="resetToken"
+         resetEndpoint="/v1/admin/reset-password"
+      />
    </div>
 </template>
 
@@ -76,8 +95,13 @@ const { changeLocale } = useLocale()
 const isMenuOpen = ref(false)
 const showChangePassword = ref(false)
 const showOtpModal = ref(false)
-const resetEmail = ref('')
+const showResetPasswordModal = ref(false)
+const resetContact = ref('')
+const contactType = ref('email')
+const resetCode = ref('')
+const resetToken = ref('')
 const route = useRoute()
+const role = useCookie('role')
 
 /* =============================
    USER INFO
@@ -112,16 +136,27 @@ const currentDate = computed(() => new Intl.DateTimeFormat(
    MENU
 ============================== */
 const menuItems = computed(() => {
-   return [
-      { title: t('menu.home'), icon: IconsHome, path: localePath('/admin/home') },
-      { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
-      { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
-      { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
-      { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
-      { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
-   ].map(item => ({
+   let items = []
+   if (role.value === 'supplier') {
+      items = [
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
+         { title: 'إدارة الأصناف', icon: IconsCategories, path: localePath('/item-managment') },
+         { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
+      ]
+   } else {
+      items = [
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/') },
+         { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
+         { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
+         { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
+         { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
+         { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
+      ]
+   }
+   
+   return items.map(item => ({
       ...item,
-      active: route.path.startsWith(item.path) || (item.path === localePath('/admin/home') && route.path === localePath('/admin'))
+      active: route.path === item.path || route.path.startsWith(item.path + '/')
    }))
 })
 
@@ -129,9 +164,18 @@ const menuItems = computed(() => {
 /* =============================
    MODALS
 ============================== */
-const openOtp = (email) => {
-   resetEmail.value = email
+const openOtp = (data) => {
+   resetContact.value = data?.value || data  // fallback code
+   contactType.value = data?.type || 'email'
    showOtpModal.value = true
+}
+
+const openResetPassword = (data) => {
+   resetContact.value = data.contact
+   contactType.value = data.type
+   resetCode.value = data.code
+   resetToken.value = data.token || ''
+   showResetPasswordModal.value = true
 }
 </script>
 

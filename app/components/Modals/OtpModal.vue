@@ -3,7 +3,7 @@
     <div class="otp-container flex-column-center gap-md">
       <div class="header-text text-center">
         <h4 class="mb-2">{{ t('auth.activation_code') }}</h4>
-        <p class="desc px-4">{{ t('auth.enter_otp') }}  <div class="inline text">{{ t('auth.sent_to') }} {{ email }}</div></p>
+        <p class="desc px-4">{{ t('auth.enter_otp') }}  <div class="inline text">{{ t('auth.sent_to') }} {{ contact }}</div></p>
       </div>
 
       <!-- Simple PIN Input Mockup -->
@@ -51,7 +51,26 @@ const { t } = useI18n()
 
 const api = useApi()
 const show = defineModel('show')
-const email = defineModel('email')
+
+const props = defineProps({
+  contact: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String,
+    default: 'email'
+  },
+  verifyEndpoint: {
+    type: String,
+    default: '/v1/admin/verify-code'
+  },
+  resendEndpoint: {
+    type: String,
+    default: '/v1/admin/resend-code'
+  }
+})
+
 const emit = defineEmits(['open-reset-password'])
 const otp = ref(['', '', '', '', '', ''])
 const otpInputs = ref([])  
@@ -91,17 +110,20 @@ const handlePaste = (event) => {
 ====================== */
 const submitOtp = async () => {
   try {
-    await api('/admin/verify-code', {
+    const response = await api(props.verifyEndpoint, {
       method: 'POST',
       body: {
-        email: email.value,
+        email: props.type === 'email' ? props.contact : '',
+        phone: props.type === 'phone' ? props.contact : '',
         code: otpCode.value
       }
     })
     show.value = false
     emit('open-reset-password', {
-      email: email.value,
-      code: otpCode.value
+      contact: props.contact,
+      type: props.type,
+      code: otpCode.value,
+      token: response.data
     })
   } catch (err) {
     console.error('Invalid code')
@@ -110,9 +132,12 @@ const submitOtp = async () => {
 
 const resendCode = async () => {
   try {
-    await api('/admin/resend-code', {
+    await api(props.resendEndpoint, {
       method: 'POST',
-      body: { email: email.value }
+      body: { 
+        email: props.type === 'email' ? props.contact : '',
+        phone: props.type === 'phone' ? props.contact : ''
+      }
     })
     startTimer()
   } catch (err) {

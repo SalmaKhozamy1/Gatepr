@@ -144,9 +144,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.col-span-2 {
-  grid-column: span 2;
-}
 .multi-select-wrapper {
   display: flex;
   flex-wrap: wrap;

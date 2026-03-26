@@ -60,6 +60,7 @@ const localePath = useLocalePath()
 // Global State
 const searchQuery = useState('searchQuery', () => '')
 const searchHistory = useState('searchHistory', () => [])
+const role = useCookie('role')
 
 const isSearchOpen = ref(false)
 const searchInput = ref(null)
@@ -78,26 +79,39 @@ const toggleSearch = () => {
 }
 
 const allSearchableItems = computed(() => {
-   const baseLinks = [
-      { title: t('menu.home'), icon: IconsHome, path: localePath('/admin/home') },
-      { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
-      { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
-      { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
-      { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
-      { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
-   ]
+   let baseLinks = []
+   let subSettings = []
 
-   const subSettings = [
-      { title: t('settings.governorates'), icon: IconsSettings, path: localePath('/settings/governorates') },
-      { title: t('settings.areas'), icon: IconsSettings, path: localePath('/settings/areas') },
-      { title: t('settings.users'), icon: IconsSettings, path: localePath('/settings/users') },
-      { title: t('settings.roles'), icon: IconsSettings, path: localePath('/settings/roles') },
-      { title: t('settings.supplier_types'), icon: IconsSettings, path: localePath('/settings/supplier-types') },
-      { title: t('settings.categories'), icon: IconsSettings, path: localePath('/settings/categories') },
-      { title: t('settings.purchasing_units'), icon: IconsSettings, path: localePath('/settings/purchasing-units') },
-      { title: t('settings.receipt_types'), icon: IconsSettings, path: localePath('/settings/receipt-types') },
-      { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
-   ]  
+   if (role.value === 'supplier') {
+      baseLinks = [
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
+         { title: 'إدارة الأصناف', icon: IconsCategories, path: localePath('/item-managment') },
+      ]
+      subSettings = [
+         { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
+      ]
+   } else {
+      baseLinks = [
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/') },
+         { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
+         { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
+         { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
+         { title: t('menu.suppliers'), icon: IconsSuppliers, path: localePath('/suppliers') },
+         { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
+      ]
+
+      subSettings = [
+         { title: t('settings.governorates'), icon: IconsSettings, path: localePath('/settings/governorates') },
+         { title: t('settings.areas'), icon: IconsSettings, path: localePath('/settings/areas') },
+         { title: t('settings.users'), icon: IconsSettings, path: localePath('/settings/users') },
+         { title: t('settings.roles'), icon: IconsSettings, path: localePath('/settings/roles') },
+         { title: t('settings.supplier_types'), icon: IconsSettings, path: localePath('/settings/supplier-types') },
+         { title: t('settings.categories'), icon: IconsSettings, path: localePath('/settings/categories') },
+         { title: t('settings.purchasing_units'), icon: IconsSettings, path: localePath('/settings/purchasing-units') },
+         { title: t('settings.receipt_types'), icon: IconsSettings, path: localePath('/settings/receipt-types') },
+         { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
+      ]  
+   }
 
    return [...baseLinks, ...subSettings]
 })

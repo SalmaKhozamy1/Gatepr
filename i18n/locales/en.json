@@ -80,7 +80,8 @@
     "start_date": "Start Date",
     "end_date": "End Date",
     "license_expiry": "License Expiry Date",
-    "agree_to_terms": "I agree to the Terms and Conditions"
+    "agree_to_terms": "I agree to the Terms and Conditions",
+    "choose_verification_method": "Choose Verification Method"
   },
   "profile": {
     "change_password": "Change Password",
@@ -131,7 +132,8 @@
     "email_invalid": "Email is invalid",
     "password_required": "Password is required",
     "password_min": "Password must be at least 6 characters",
-    "agree_to_terms_required": "You must agree to the Terms and Conditions"
+    "agree_to_terms_required": "You must agree to the Terms and Conditions",
+    "code_required": "Supplier code is required"
   },
   "placeholders": {
     "email": "Enter email address",
@@ -258,7 +260,8 @@
   "messages": {
     "deleted_successfully": "{item} deleted successfully",
     "updated_successfully": "{item} updated successfully",
-    "added_successfully": "{item} added successfully"
+    "added_successfully": "{item} added successfully",
+    "invalid_login": "The credentials provided are invalid"
   },
   "items": {
     "id": "#",
@@ -312,6 +315,66 @@
       "accept_all_error": "Error during bulk acceptance",
       "export_error": "Error exporting data",
       "download_error": "Error downloading file"
+    },
+    "add_form": {
+      "title": "Item Registration Form",
+      "item_details": "Item Details",
+      "supplier_info": "Supplier Info",
+      "financial_info": "Financial Info",
+      "categories": "Categories",
+      "physical_specs": "Physical Specifications",
+      "measuring_units": "Measuring Units",
+      "discounts": "Discounts",
+      "packaging_info": "Packaging Info",
+      "prices": "Prices",
+      "barcodes": "Barcodes",
+      "branch_info": "Branch Info",
+      "delivery_info": "Delivery Info",
+      "labels": {
+        "item_number": "Item Number",
+        "name_ar": "Item Name in Arabic",
+        "name_en": "Item Name in English",
+        "supplier_code": "Supplier Code",
+        "profit_margin": "Profit Margin",
+        "supplier_price": "Supplier Price",
+        "sub_category": "Sub Category",
+        "weight": "Weight",
+        "volume": "Volume",
+        "purchasing_unit": "Purchasing Unit",
+        "association_discount": "Association Discount",
+        "consumer_discount": "Consumer Discount",
+        "supply_intensity": "Supply Intensity",
+        "packet_intensity": "Packet Intensity",
+        "carton_intensity": "Carton Intensity",
+        "unit_price": "Unit Price",
+        "packet_price": "Packet Price",
+        "carton_price": "Carton Price",
+        "unit_barcode": "Unit Barcode",
+        "packet_barcode": "Packet Barcode",
+        "carton_barcode": "Carton Barcode",
+        "branch": "Branch",
+        "receipt_type": "Receipt Type"
+      },
+      "placeholders": {
+        "item_number": "Enter item number",
+        "name_ar": "Enter Arabic name",
+        "name_en": "Enter English name",
+        "supplier_code": "Enter supplier code",
+        "profit_margin": "Enter profit margin",
+        "supplier_price": "Enter supplier price",
+        "choose_category": "Select Category",
+        "weight": "Enter weight",
+        "volume": "Enter volume",
+        "choose_unit": "Select Unit",
+        "discount": "Enter discount",
+        "supply_intensity": "Enter supply intensity",
+        "packet_intensity": "Enter packet intensity",
+        "carton_intensity": "Enter carton intensity",
+        "price": "Enter price",
+        "barcode": "Enter barcode",
+        "choose_branch": "Select branch",
+        "choose_type": "Select type"
+      }
     }
   },
   "activity_logs": {
