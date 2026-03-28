@@ -10,9 +10,9 @@
       :placeholder="placeholder"
       :class="['w-100', { 'is-invalid': error }]"
       :filter="options.length > 5"
-      filter-placeholder="بحث..."
-      empty-message="لا توجد خيارات"
-      empty-filter-message="لا توجد نتائج"
+      :filter-placeholder="t('common.search')"
+      :empty-message="t('common.no_options')"
+      :empty-filter-message="t('common.no_results_found')"
       append-to="body"
     />
     <span v-if="error" class="error d-block">{{ error }}</span>
@@ -22,18 +22,24 @@
 <script setup>
 import { computed } from 'vue'
 import Select from 'primevue/select'
+import { useI18n } from 'vue-i18n'
+
+const { t, locale } = useI18n()
 
 const props = defineProps({
   label: { type: String, default: '' },
   modelValue: { type: [String, Number, Object], default: '' },
   options: { type: Array, default: () => [] },
-  placeholder: { type: String, default: 'اختر' },
+  placeholder: { type: String, default: '' },
   error: { type: String, default: '' }
 })
 
 const emit = defineEmits(['update:modelValue'])
 
-// Normalize options so that an array of plain strings is mapped to { label, value } correctly
+const placeholder = computed(() =>
+  props.placeholder || t('placeholders.select')
+)
+
 const normalizedOptions = computed(() => {
   return props.options.map(opt => {
     if (typeof opt === 'object' && opt !== null) {
@@ -56,6 +62,7 @@ const normalizedOptions = computed(() => {
   border: 1px solid #e0e0e0 !important;
   box-shadow: none !important;
   min-height: 40px;
+  min-width: 100px;
 }
 
 :deep(.p-select:focus) {
@@ -71,7 +78,6 @@ const normalizedOptions = computed(() => {
 
 /* dropdown icon */
 :deep(.p-select-dropdown) {
-  width: 2.5rem;
   color: var(--placeholder, #9ca3af);
 }
 

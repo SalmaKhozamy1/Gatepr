@@ -2,36 +2,35 @@
   <div class="supplier-home-page d-flex flex-column gap-4">
     
     <!-- Quick Actions -->
-    <CardsCustomCard title="إجراءات سريعة">
+    <CardsCustomCard :title="t('home.quick_actions')">
       <div class="d-flex w-100">
-        <button class="custom-btn text-btn min-btn-width gap-2" style="border: 1px solid #D0D5DD; color: #344054;">
-          <span style="font-size: 18px; font-weight: 500">+</span> إنشاء طلب أصناف
+        <button class="custom-btn gray-btn min-btn-width" 
+        @click="$router.push(localePath('/item-managment/add'))">
+          <span style="font-size: 18px;">+</span> {{ t('home.create_item_request') }}
         </button>
       </div>
     </CardsCustomCard>
 
     <!-- Overview -->
-    <CardsCustomCard title="نظرة عامة">
-      <template #action>
-        <select class="custom-select filter-select" v-model="filterPeriod">
-          <option value="month">الشهر</option>
-          <option value="week">الاسبوع</option>
-          <option value="year">السنة</option>
-        </select>
+    <CardsCustomCard :title="t('home.overview')">
+      <template #actions>
+        <InputsFormSelect 
+        v-model="filterPeriod"
+        :options="periodOptions"></InputsFormSelect>
       </template>
 
       <div class="grid grid-3">
-        <CardsStatisticsCard :CardNo="dashboard?.pending_items?.count || 30" IconBg="#F0BA3E" title="عدد طلبات الأصناف قيد الإنتظار">
+        <CardsStatisticsCard :CardNo="dashboard?.pending_items?.count || 30" IconBg="#F0BA3E" :title="t('home.Number_of_pending_items')">
             <template #icon>
                 <IconsRegistrationPending />
             </template>
         </CardsStatisticsCard>
-        <CardsStatisticsCard :CardNo="dashboard?.accepted_items?.count || 54336" IconBg="#02C697" title="عدد الطلبات المقبولة">
+        <CardsStatisticsCard :CardNo="dashboard?.accepted_items?.count || 54336" IconBg="#02C697" :title="t('home.Number_of_accepted_items')">
             <template #icon>
                 <IconsRequestApprove />
             </template>
         </CardsStatisticsCard>
-        <CardsStatisticsCard :CardNo="dashboard?.rejected_items?.count || 54336" IconBg="#F3616A" title="عدد طلبات الأصناف المرفوضة">
+        <CardsStatisticsCard :CardNo="dashboard?.rejected_items?.count || 54336" IconBg="#F3616A" :title="t('home.Number_of_rejected_items')">
             <template #icon>
                 <IconsRequestPending /> 
             </template>
@@ -40,9 +39,11 @@
     </CardsCustomCard>
 
     <!-- Table (Latest Accepted Items) -->
-    <CardsCustomCard title="أحدث الأصناف المقبولة">
-      <template #action>
-        <NuxtLink :to="localePath('/item-managment')" class="custom-anc secondary text-sm font-400">عرض الكل</NuxtLink>
+    <CardsCustomCard :title="t('home.latest_accepted_items')">
+      <template #actions>
+        <NuxtLink :to="localePath('/item-managment')" class="custom-anc secondary">
+          <h5>{{ t('common.view_all') }}</h5>
+        </NuxtLink>
       </template>
       
       <TablesAppTable
@@ -85,12 +86,17 @@ const dashboard = ref(null)
 const loading = ref(false)
 const filterPeriod = ref('month')
 
+const periodOptions = [
+  { label: t('home.month'), value: 'month' },
+  { label: t('home.week'), value: 'week' },
+  { label: t('home.year'), value: 'year' }
+]
 // Headers for the recent accepted items table
 const tableHeaders = [
   { label: '#', class: 'index-cell' },
-  { label: 'رقم الصنف', class: '' },
-  { label: 'تاريخ القبول', class: '' },
-  { label: 'الإجراءات', class: 'actions-cell' }
+  { label: t('common.item_number'), class: '' },
+  { label: t('common.acceptance_date'), class: '' },
+  { label: t('common.actions'), class: 'actions-cell' }
 ]
 
 // Mock data to match the image until API is connected

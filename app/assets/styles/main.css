@@ -606,14 +606,14 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .p-select-overlay {
   z-index: 9999 !important;
   font-family: inherit;
-  direction: rtl;
+  /* direction: rtl; */
   background-color: #fff !important;
 }
 
 .p-multiselect-overlay .p-multiselect-option,
 .p-select-overlay .p-select-option {
   font-size: var(--size-sm);
-  direction: rtl;
+  /* direction: rtl; */
   padding: 8px 12px;
 }
 

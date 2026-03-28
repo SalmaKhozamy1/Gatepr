@@ -21,10 +21,14 @@
     "deleting": "جاري الحذف...",
     "somethingWentWrong": "حدث خطأ ما",
     "no_results_found": "لا يوجد نتائج",
+    "no_options": "لا توجد خيارات",
     "active": "مفعّل",
     "inactive": "غير مفعّل",
     "restore": "استعادة",
-    "id": "#"
+    "id": "#",
+    "view_all": "عرض الكل",
+    "acceptance_date": "تاريخ القبول",
+    "item_number": "رقم الصنف"
   },
   "labels": {
     "welcome": "مرحبا",
@@ -89,12 +93,19 @@
   },
   "home": {
     "overview": "نظرة عامة",
-    "branches": "عدد الفروع",
-    "pending_suppliers": "طلبات تسجيل الموردين قيد الانتظار",
-    "approved_suppliers": "الموردين المعتمدين",
-    "pending_items": "طلبات الأصناف قيد الانتظار",
-    "accepted_items": "الأصناف المقبولة",
-    "total_items": "إجمالي الأصناف"
+    "Number_of_branches": "عدد الفروع",
+    "Number_of_pending_suppliers": "عدد طلبات تسجيل الموردين قيد الانتظار ",
+    "Number_of_approved_suppliers": "عدد الموردين المعتمدين",
+    "Number_of_pending_items": "عدد طلبات الأصناف قيد الانتظار",
+    "Number_of_accepted_items": "عدد الأصناف المقبولة",
+    "Number_of_rejected_items": "عدد الأصناف المرفوضة",
+    "total_items": "إجمالي الأصناف",
+    "latest_accepted_items": "أحدث الأصناف المقبولة",
+    "quick_actions": "إجراءات سريعة",
+    "create_item_request": "إنشاء طلب أصناف",
+    "month": "الشهر",
+    "week": "الأسبوع",
+    "year": "السنة"
   },
   "pages": {
     "search_filter": "فلتر البحث"

@@ -21,10 +21,14 @@
     "deleting": "Deleting...",
     "somethingWentWrong": "Something went wrong",
     "no_results_found": "No Results Found",
+    "no_options": "No Options",
     "active": "Active",
     "inactive": "Inactive",
     "restore": "Restore",
-    "id": "#"
+    "id": "#",
+    "view_all": "View All",
+    "acceptance_date": "Acceptance Date",
+    "item_number": "Item Number"
   },
   "labels": {
     "welcome": "Welcome",
@@ -89,12 +93,19 @@
   },
   "home": {
     "overview": "Overview",
-    "branches": "Branches Count",
-    "pending_suppliers": "Pending Registration Requests",
-    "approved_suppliers": "Approved Suppliers",
-    "pending_items": "Pending Item Requests",
-    "accepted_items": "Accepted Item Requests",
-    "total_items": "Total Items"
+    "Number_of_branches": "Number of Branches",
+    "Number_of_pending_suppliers": "Number of Pending Registration Requests",
+    "Number_of_approved_suppliers": "Number of Approved Suppliers",
+    "Number_of_pending_items": "Number of Pending Item Requests",
+    "Number_of_accepted_items": "Number of Accepted Item Requests",
+    "Number_of_rejected_items": "Number of Rejected Item Requests",
+    "total_items": "Total Items",
+    "latest_accepted_items": "Latest Accepted Items",
+    "quick_actions": "Quick Actions",
+    "create_item_request": "Create Item Request",
+    "month": "Month",
+    "week": "Week",
+    "year": "Year"
   },
   "pages": {
     "search_filter": "Search Filter"
