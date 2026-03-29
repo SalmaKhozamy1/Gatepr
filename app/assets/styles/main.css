@@ -423,8 +423,8 @@ html[dir="rtl"] [type="url"] {
 .danger {
   color: var(--red) !important;
 }
-.green {
-  color: #309B0F;
+.success {
+  color: var(--success-color);
 }
 .primary-bg {
   background-color: var(--primary-color) !important;
@@ -754,8 +754,44 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   color: #98A2B3;
 }
 
+.item_details {
+  padding: 8px;
+}
+.item_details:nth-child(even) {
+  background: var(--light-primary-color);
+}
+/* Section label — same style as add.vue */
+.section-label {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.section-label :deep(svg) {
+  color: var(--secondary-color) !important;
+}
+.view-field {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  flex-wrap: wrap;
+}
+.field-label {
+  font-size: 13px;
+  color: var(--placeholder);
+  white-space: nowrap;
+}
+.field-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
+  text-align: start;
+}
 
-
+/* Flat mode (backward-compat) */
+.view-field:nth-child(4n + 1),
+.view-field:nth-child(4n + 2) {
+  background-color: var(--light-primary-color);
+  border-radius: var(--radius-sm);
+}
 @media screen and (max-width: 991.98px) {
   .navbar-nav {
     width: 100% !important;

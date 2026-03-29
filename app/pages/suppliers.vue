@@ -1,12 +1,18 @@
 <template>
   <div class="settings-wrapper">
-    <PageLayout
+    <!-- لو في view page متعرضش الـ PageLayout -->
+    <template v-if="isViewPage">
+      <NuxtPage />
+    </template>
+
+    <template v-else>
+      <PageLayout
       :asideTitle="t('menu.suppliers')"
       :asideItems="suppliersMenu"
       :activeIndex="activeIndex"
       :formTitle="t('settings.record') + ' ' + activeTabTitle"
       @item-click="handleTabClick"
-    >
+      >
       <template #search>
         <div id="search-teleport-target" class="w-100"></div>
       </template>
@@ -14,7 +20,8 @@
       <template #main>
         <NuxtPage />
       </template>
-    </PageLayout>
+      </PageLayout>
+    </template>
   </div>
 </template>
 
@@ -65,6 +72,8 @@ const handleTabClick = (index) => {
   const item = suppliersMenuItems[index]
   if (item) navigateTo(localePath(item.path))
 }
+
+const isViewPage = computed(() => !!route.params.id)
 
 onMounted(() => {
   if (route.path === localePath('/suppliers')) {

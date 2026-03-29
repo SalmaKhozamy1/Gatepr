@@ -78,7 +78,7 @@ const show = defineModel('show')
 const props = defineProps({
   type: {
     type: String,
-    default: 'email'  // 'email' | 'phone'
+    default: 'email' 
   },
   endpoint: {
     type: String,

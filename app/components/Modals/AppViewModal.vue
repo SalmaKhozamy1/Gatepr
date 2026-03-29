@@ -83,41 +83,5 @@ const getValue = (key) => {
 </script>
 
 <style scoped>
-/* Section label — same style as add.vue */
-.section-label {
-  font-weight: 500;
-  font-size: 15px;
-  margin-bottom: 10px;
-}
-.section-label :deep(svg) {
-  color: var(--secondary-color) !important;
-}
-.view-field {
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
-}
-.field-label {
-  font-size: 13px;
-  color: var(--placeholder);
-  white-space: nowrap;
-}
-.field-value {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-color);
-  text-align: start;
-}
 
-/* Flat mode (backward-compat) */
-.item_details {
-  padding: 8px;
-}
-.item_details:nth-child(even) {
-  background: rgba(102, 112, 133, 0.05);
-}
-.view-field:nth-child(4n + 1),
-.view-field:nth-child(4n + 2) {
-  background-color: var(--light-primary-color);
-  border-radius: var(--radius-sm);
-}
 </style>

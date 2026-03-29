@@ -1,33 +1,37 @@
 export const useLocale = () => {
   const api = useApi()
   const { locale, setLocale } = useI18n()
+  
+  // ✅ نفس الـ options بالظبط زي app.vue
   const localeCookie = useCookie('locale', {
+    path: '/',
     maxAge: 60 * 60 * 24 * 365,
-    path: '/'
+    default: () => 'ar'
   })
+
+  const initLocale = async () => {
+    const savedLocale = localeCookie.value
+    if (savedLocale && savedLocale !== locale.value) {
+      await setLocale(savedLocale)
+    }
+  }
 
   const changeLocale = async (newLocale) => {
     try {
-      // ✅ حفظ الـ cookie الأول عشان الـ plugin يقراه
       localeCookie.value = newLocale
-
-      // ✅ غيّر الـ locale في الـ i18n
       await setLocale(newLocale)
 
-      // ✅ ابعت للـ API عشان يتحفظ في الـ server
-      const res = await api('/change-locale', {
+      await api('/change-locale', {
         method: 'POST',
         body: { locale: newLocale }
       })
 
-      return res.data?.locale || newLocale
-
+      return newLocale
     } catch (err) {
-      // ✅ لو الـ API فشلت اللغه بتفضل متغيرة محلياً
       console.error('Locale API error:', err)
       return newLocale
     }
   }
 
-  return { changeLocale, currentLocale: locale }
+  return { changeLocale, initLocale, currentLocale: locale }
 }

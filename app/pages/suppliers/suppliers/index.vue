@@ -97,6 +97,7 @@ const filters = ref({
   status: null,
   supplier_type_id: null
 })
+const localePath = useLocalePath()
 
 /* =============================
    COMPUTED
@@ -133,12 +134,6 @@ const searchFilters = computed(() => [
 /* =============================
    HELPERS
 ============================== */
-const formatDate = (dateStr) => {
-  if (!dateStr) return '—'
-  const date = new Date(dateStr)
-  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
-}
-
 const parseMeta = (meta = {}) => {
   const getValue = (val) => {
     if (Array.isArray(val)) return val[0] ?? 1
@@ -222,8 +217,8 @@ const handlePageChange = (page) => {
   fetchSuppliers()
 }
 
-const handleView = async (id) => {
-  console.log('Viewing supplier:', id)
+const handleView = (id) => {
+  navigateTo(localePath(`/suppliers/suppliers/${id}`))
 }
 
 const handleDownload = async (id) => {
@@ -231,8 +226,8 @@ const handleDownload = async (id) => {
     downloadLoading.value = id
     // Logic for downloading supplier files or summary
     console.log('Downloading supplier:', id)
-    // const res = await api(`/v1/admin/suppliers/${id}/export`)
-    // if (res.file_url) window.open(res.file_url, '_blank')
+    const res = await api(`/v1/admin/suppliers/${id}/export`)
+    if (res.file_url) window.open(res.file_url, '_blank')
   } catch (err) {
     console.error('Download error:', err)
   } finally {

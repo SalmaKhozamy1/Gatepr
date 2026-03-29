@@ -67,7 +67,7 @@ html[dir="ltr"] .slider:before,
 
 /* When checked */
 input:checked + .slider {
-  background-color: #12B76A; /* Green from the screenshot */
+  background-color: var(--success-color); 
 }
 
 /* RTL checked */

@@ -28,7 +28,7 @@
 
       <div class="form-options flex-between w-100 mb-2">
         <InputsApprove v-model="rememberMe" id="rememberMe" :label="$t('labels.rememberMe')" />
-        <a href="#" class="forgot-link custom-anc">{{ $t('buttons.forgotYourPassword') }}</a>
+        <a href="#" class="forgot-link custom-anc" @click.prevent="showChangePasswordModal = true">{{ $t('buttons.forgotYourPassword') }}</a>
       </div>
 
       <button 
@@ -42,6 +42,31 @@
 
     </form>
   </div>
+
+  <!-- Modals -->
+  <ModalsChangePasswordModal 
+    v-model:show="showChangePasswordModal" 
+    endpoint="/v1/admin/forgot-password"
+    @open-otp="openOtp"
+  />
+  <ModalsOtpModal 
+         v-model:show="showOtpModal" 
+         :contact="resetContact" 
+         :type="contactType" 
+         verifyEndpoint="/v1/admin/verify-code"
+         resendEndpoint="/v1/admin/resend-code"
+         @open-reset-password="openResetPassword"
+  />
+<ModalsResetPasswordModal 
+         v-model:show="showResetPasswordModal" 
+         :contact="resetContact"
+         :type="contactType"
+         :code="resetCode"
+         :token="resetToken"
+         resetEndpoint="/v1/admin/reset-password"
+  />
+
+
 </template>
 
 <script setup>
@@ -61,9 +86,10 @@ const rememberMe = ref(false)
 const isLoading = ref(false)
 
 const api = useApi()
-const token = useCookie('token')
 const role = useCookie('role')
 const userCookie = useCookie('user')
+const showChangePasswordModal = ref(false)
+const showResetPasswordModal = ref(false)
 
 const authStore = useAuthStore()
 const { t } = useI18n()
@@ -98,6 +124,12 @@ const onSubmit = handleSubmit(async (values) => {
         email: values.email,
         password: values.password
       }
+    })
+
+    // ✅ لو Remember Me شغال → احفظ لمدة 30 يوم، لو لأ → session cookie بس
+    const token = useCookie('token', {
+      maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
+      path: '/'
     })
 
     token.value = response.data.token

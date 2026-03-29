@@ -7,15 +7,20 @@
 
 <script setup>
 const { locale, setLocale } = useI18n()
-const localeCookie = useCookie('locale', { path: '/' })
+const localeCookie = useCookie('locale', { 
+  path: '/',
+  maxAge: 60 * 60 * 24 * 365,
+  default: () => 'ar'
+})
 
 onMounted(() => {
-  if (localeCookie.value && localeCookie.value !== locale.value) {
-    setLocale(localeCookie.value)
+  const saved = localeCookie.value
+  if (saved && saved !== locale.value) {
+    setLocale(saved)
   }
 })
 
-// ✅ مراقبة تغيير اللغة للتأكد من حفظها في الـ Cookie دائماً
+
 watch(locale, (newVal) => {
   if (localeCookie.value !== newVal) {
     localeCookie.value = newVal

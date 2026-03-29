@@ -17,7 +17,7 @@ export const useAuth = () => {
     loading.value = true
     error.value = null
     try {
-      const response = await api('/admin/login', {
+      const response = await api('/v1/admin/login', {
         method: 'POST',
         body: { email, password }
       })

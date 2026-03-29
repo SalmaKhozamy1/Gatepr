@@ -54,7 +54,7 @@ const props = defineProps({
   },
   perPage: {
     type: Number,
-    default: 15
+    default: 10
   },
   loading: {
     type: Boolean,

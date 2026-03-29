@@ -28,7 +28,10 @@
     "id": "#",
     "view_all": "عرض الكل",
     "acceptance_date": "تاريخ القبول",
-    "item_number": "رقم الصنف"
+    "item_number": "رقم الصنف",
+    "company_data": "بيانات المنشأة",
+    "contact_data": "بيانات التواصل",
+    "documents_data": "بيانات المستندات"
   },
   "labels": {
     "welcome": "مرحبا",
@@ -42,6 +45,8 @@
     "governorate": "المحافظة",
     "area": "المنطقة",
     "phone": "الهاتف",
+    "supplier_phone": "هاتف المورد الأرضي",
+    "supplier_mobile": "هاتف المورد المحمول",
     "branches": "الفروع",
     "role": "الدور",
     "roles_name_ar": "اسم الدور باللغة العربية",
@@ -73,9 +78,8 @@
     "industrial_license_end": "تاريخ نهاية الترخيص الصناعي",
     "industry_authority_cert": "شهادة الهيئة العامة للصناعة",
     "industrial_facility_cert": "شهادة المنشأة الصناعية",
-    "supplier_phone": "هاتف المورد",
-    "supplier_mobile": "موبايل المورد",
     "fax": "الفاكس",
+    "license_end_date": "تاريخ انتهاء الرخصة",
     "detailed_address": "العنوان بالتفصيل",
     "website": "الموقع الإلكتروني",
     "stamped_customs_declaration": "بيان جمركي مختوم للشركات المصدرة",
@@ -135,11 +139,9 @@
     "resend": "إعادة الإرسال",
     "continue": "استمرار",
     "sent_to": "إلى",
-    "registration_steps": {
-      "company_data": "بيانات المنشأة",
-      "responsible_data": "بيانات المسؤول",
-      "official_documents": "الأوراق الرسمية"
-    }
+    "company_data": "بيانات المنشأة",
+    "responsible_data": "بيانات المسؤول",
+    "official_documents": "الأوراق الرسمية"
   },
   "validation": {
     "email_required": "البريد الإلكتروني مطلوب",
@@ -449,6 +451,20 @@
     "registration_request_date": "تاريخ طلب التسجيل",
     "supplier_code": "كود المورد",
     "status_filter": "حالة المورد",
+    "interprise_name_ar": "اسم المنشأة باللغة العربية",
+    "interprise_name_en": "اسم المنشأة باللغة الإنجليزية",
+    "supplier_name_ar": "اسم باللغة العربية",
+    "supplier_name_en": "اسم باللغة الإنجليزية",
+    "code": "كود المورد",
+    "commercial_register": "السجل التجاري",
+    "deputy_manager_name": "اسم نائب المدير",
+    "license_start_date": "تاريخ بدء الترخيص",
+    "license_end_date": "تاريخ انتهاء الترخيص",
+    "health_license_expiry": "تاريخ انتهاء الترخيص الصحي",
+    "industrial_license_expiry": "تاريخ انتهاء الترخيص الصناعي",
+    "import_license": "رخصة الاستيراد",
+    "approved_agency_registration": "تسجيل الوكالة المعتمدة",
+    "register_request_date": "تاريخ طلب التسجيل",
     "status": {
       "pending": "قيد الانتظار",
       "approved": "مقبول",

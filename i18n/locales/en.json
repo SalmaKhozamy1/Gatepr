@@ -28,7 +28,10 @@
     "id": "#",
     "view_all": "View All",
     "acceptance_date": "Acceptance Date",
-    "item_number": "Item Number"
+    "item_number": "Item Number",
+    "company_data": "Company Data",
+    "contact_data": "Contact Data",
+    "documents_data": "Documents Data"
   },
   "labels": {
     "welcome": "Welcome",
@@ -42,6 +45,8 @@
     "governorate": "Governorate",
     "area": "Area",
     "phone": "Phone",
+    "supplier_phone": "Supplier Landline",
+    "supplier_mobile": "Supplier Mobile Number",
     "branches": "Branches",
     "role": "Role",
     "roles_name_ar": "Role Name in Arabic",
@@ -73,9 +78,8 @@
     "industrial_license_end": "Industrial License Expiry Date",
     "industry_authority_cert": "Public Authority for Industry Certificate",
     "industrial_facility_cert": "Industrial Facility Certificate",
-    "supplier_phone": "Supplier Phone",
-    "supplier_mobile": "Supplier Mobile",
     "fax": "Fax",
+    "license_end_date": "License Expiry Date",
     "detailed_address": "Detailed Address",
     "website": "Website",
     "stamped_customs_declaration": "Stamped Customs Declaration for Target Companies",
@@ -135,11 +139,9 @@
     "resend": "Resend",
     "continue": "Continue",
     "sent_to": "to",
-    "registration_steps": {
-      "company_data": "Company Data",
-      "responsible_data": "Responsible Person Data",
-      "official_documents": "Official Documents"
-    }
+    "company_data": "Company Data",
+    "responsible_data": "Responsible Person Data",
+    "official_documents": "Official Documents"
   },
   "validation": {
     "email_required": "Email is required",
@@ -447,6 +449,20 @@
     "registration_request_date": "Registration Request Date",
     "supplier_code": "Supplier Code",
     "status_filter": "Supplier Status",
+    "supplier_name_ar": "Supplier Name (AR)",
+    "supplier_name_en": "Supplier Name (EN)",
+    "interprise_name_ar": "Interprise Name (AR)",
+    "interprise_name_en": "Interprise Name (EN)",
+    "code": "Supplier Code",
+    "commercial_register": "Commercial Register",
+    "deputy_manager_name": "Deputy Manager Name",
+    "license_start_date": "License Start Date",
+    "license_end_date": "License End Date",
+    "health_license_expiry": "Health License Expiry",
+    "industrial_license_expiry": "Industrial License Expiry",
+    "import_license": "Import License",
+    "approved_agency_registration": "Approved Agency Registration",
+    "register_request_date": "Registration Request Date",
     "status": {
       "pending": "Pending",
       "approved": "Approved",
