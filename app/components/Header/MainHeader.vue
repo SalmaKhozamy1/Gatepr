@@ -1,4 +1,3 @@
-
 <template>
    <div class="header">
       <div class="container">
@@ -217,3 +216,11 @@ const openResetPassword = (data) => {
    z-index: 10;
 }
 </style>
+
+
+
+
+
+
+
+

@@ -27,10 +27,19 @@
 
       <div class="form-options flex-between w-100 mb-2">
         <InputsApprove v-model="rememberMe" id="rememberMe" :label="$t('labels.rememberMe')" />
-        <a href="#" class="forgot-link custom-anc" @click.prevent="showChangePasswordModal = true">{{ $t('buttons.forgotYourPassword') }}</a>
+        <a href="#" class="forgot-link custom-anc" @click.prevent="showChangePasswordModal = true">
+          {{ $t('buttons.forgotYourPassword') }}
+        </a>
       </div>
 
-      <button type="submit" class="custom-btn secondary-btn w-100">{{ $t('buttons.login') }}</button>
+      <button 
+        type="submit" 
+        class="custom-btn secondary-btn w-100"
+        :disabled="isLoading"
+      >
+        <span v-if="isLoading" class="spinner" />
+        <span v-else>{{ $t('buttons.login') }}</span>
+      </button>
 
     </form>
 
@@ -38,15 +47,13 @@
       <h5>{{ $t('labels.dontHaveAccount') }}</h5>
       <nuxt-link to="/register" class="signup-link custom-anc secondary">{{ $t('buttons.signUp') }}</nuxt-link>
     </div>
-
   </div>
 
-  <!-- ✅ Modals -->
+  <!-- Modals -->
   <ModalsChangePasswordWay 
     v-model:show="showChangePasswordModal" 
     @open-reset-password="handleOpenResetPassword" 
   />
-
   <ModalsResetPasswordModal 
     v-model:show="showResetPasswordModal" 
     :contact="resetContact"
@@ -61,23 +68,24 @@
 definePageMeta({
   layout: 'auth',
   middleware: 'guest',
-});
+})
 usePageMeta('menu.login')
 
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useAuthStore } from '~/stores/auth'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 const api = useApi()
 const token = useCookie('token')
 const role = useCookie('role')
+const userCookie = useCookie('user')
+
 const authStore = useAuthStore()
 const { error: toastError } = useAppToast()
 
-// Modal State
 const showChangePasswordModal = ref(false)
 const showResetPasswordModal = ref(false)
 const resetContact = ref('')
@@ -85,40 +93,42 @@ const contactType = ref('email')
 const resetCode = ref('')
 const resetToken = ref('')
 
-const showPassword = ref(false);
-const rememberMe = ref(false);
+const showPassword = ref(false)
+const rememberMe = ref(false)
+const isLoading = ref(false)
 
-/* 1️⃣ Schema (Computed for reactive translations) */
-const schema = computed(() => {
-  return yup.object({
+const schema = computed(() =>
+  yup.object({
     code: yup.string()
       .required(t('validation.code_required')),
     password: yup.string()
       .required(t('validation.password_required'))
       .min(6, t('validation.password_min'))
   })
-})
+)
 
-/* 2️⃣ useForm */
 const { handleSubmit, errors, setErrors } = useForm({
   validationSchema: schema
 })
 
-/* 3️⃣ useField */
-const { value: code } = useField('code');
-const { value: password } = useField('password');
+const { value: code } = useField('code')
+const { value: password } = useField('password')
 
-/* 4️⃣ Submit */
 const onSubmit = handleSubmit(async (values) => {
+  // Temp test account
   if (values.code === '1111' && values.password === '123456') {
     token.value = 'temp-token'
     role.value = 'supplier'
-    authStore.setUser({ name: 'Test User', code: '1111' })
+    const testUser = { name: 'Test User', code: '1111' }
+    userCookie.value = testUser
+    authStore.setUser(testUser)
     navigateTo(localePath('/home'))
     return
   }
 
   try {
+    isLoading.value = true
+
     const response = await api('/login', {
       method: 'POST',
       body: {
@@ -127,24 +137,22 @@ const onSubmit = handleSubmit(async (values) => {
       }
     })
 
-    // 3️⃣ حفظ التوكن بعد نجاح login
+    const supplierData = response.data.supplier?.[0] || response.data.supplier
+
     token.value = response.data.token
     role.value = 'supplier'
-    
-    // حفظ بيانات المورد (تكون عادةً في response.data.supplier)
-    authStore.setUser(response.data.supplier?.[0] || response.data.supplier)
+    userCookie.value = supplierData
+    authStore.setUser(supplierData)
 
-    // 4️⃣ تحويل للصفحة الرئيسية
     navigateTo(localePath('/home'))
+
   } catch (err) {
     console.error('Supplier Login Error:', err)
-    
-    if (err.data?.errors) {
-      setErrors(err.data.errors)
-    }
-    
+    if (err.data?.errors) setErrors(err.data.errors)
     const isGenericError = !err.data?.errors && (err.statusCode === 401 || err.statusCode === 422)
     toastError(isGenericError ? t('messages.invalid_login') : (err.data?.message || t('common.somethingWentWrong')))
+  } finally {
+    isLoading.value = false
   }
 })
 
@@ -161,6 +169,7 @@ const handleOpenResetPassword = (data) => {
 .login-page {
   gap: 20px;
 }
+
 .auth-title {
   font-size: var(--size-md);
   font-weight: 600;
@@ -182,8 +191,28 @@ const handleOpenResetPassword = (data) => {
 }
 
 .forgot-link {
- color: var(--text-color);
- font-size: var(--size-sm);
- font-weight: 400;
+  color: var(--text-color);
+  font-size: var(--size-sm);
+  font-weight: 400;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.custom-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 </style>
