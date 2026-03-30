@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-wrapper">
+  <div class="settings-wrapper position-relative">
     <!-- if fullPage meta is true, render NuxtPage directly without the layout wrapper -->
     <template v-if="route.meta.fullPage">
       <NuxtPage />
@@ -21,7 +21,7 @@
       <template #header-actions>
         <button
           v-if="activeHasActions"
-          class="custom-btn primary-btn min-btn-width fltr_btn py-2"
+          class="custom-btn primary-btn fltr_btn"
           @click="handleAddClick"
         >
           <span style="font-size: 20px">+</span>
@@ -97,7 +97,10 @@ const activeTabAddTitle = computed(() => settingsMenu.value[activeIndex.value]?.
 
 const handleTabClick = (index) => {
   const item = settingsMenu.value[index]
-  if (item) navigateTo(item.path)
+  
+  if (!item || !item.path) return
+
+  navigateTo(item.path)
 }
 
 onMounted(() => {
@@ -110,9 +113,6 @@ onMounted(() => {
 <style scoped>
 .settings-wrapper {
   position: relative;
-}
-.fltr_btn {
-  min-height: 42.5px;
 }
 .reset_btn {
   color: var(--placeholder);

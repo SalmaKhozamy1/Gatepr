@@ -72,8 +72,8 @@
   :icon="IconsGovernorates"
   :fields="governorateAddFields"
   :initial-data="selectedEditGovernorate"
-      data-bs-backdrop="static"
-    data-bs-keyboard="false"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
   @submit="handleEditSubmit"
 />
 
@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { IconsGovernorates } from '#components' 
@@ -109,7 +109,7 @@ const governorates = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const perPage = 15
-const loading = ref(false)
+const loading = ref(true)
 
 // Data Modals
 const showViewModal = ref(false)

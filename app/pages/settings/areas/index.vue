@@ -108,7 +108,7 @@ const areas = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const perPage = 15
-const loading = ref(false)
+const loading = ref(true)
 
 const showViewModal = ref(false)
 const selectedArea = ref(null)

@@ -7,13 +7,11 @@
           :placeholder="t('common.search')" 
           class="flex-grow-1 min-w-40 col"
         />
-        <div class="flex-start gap-sm">
-          <button class="custom-btn primary-btn min-btn-width fltr_btn" @click="handleFilter">
-            <IconsSearch />
-            <span>{{ t('common.search') }}</span>
-          </button>
-          <ButtonsResetButton @reset="resetFilters" />
-        </div>
+        <Filter_Button 
+          :loading="loading" 
+          @filter="handleFilter" 
+          @reset="resetFilters" 
+        />
       </div>
     </Teleport>
 
@@ -70,15 +68,42 @@
 import { ref, onMounted, inject, onBeforeUnmount, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 
+import { useSearchFilter } from '~/composables/useSearchFilter'
+
 const localePath = useLocalePath()
 const { t, locale } = useI18n()
 const api = useApi()
-const searchQuery = ref('')
+
 const rolesNum = ref([])
-const currentPage = ref(1)
-const totalPages = ref(1)
 const perPage = 15
-const loading = ref(false)
+
+const {
+  loading,
+  searchQuery,
+  currentPage,
+  totalPages,
+  handleFilter,
+  handleReset: resetFilters
+} = useSearchFilter(() => fetchRoles())
+
+const fetchRoles = async () => {
+  try {
+    loading.value = true
+    const params = new URLSearchParams({
+      page: currentPage.value,
+      per_page: perPage,
+    })
+    if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim())
+
+    const res = await api(`/v1/admin/roles?${params}`)
+    rolesNum.value = res.data || []
+    totalPages.value = res.meta?.last_page || 1
+  } catch (err) {
+    console.error('Error fetching roles:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 // Delete Modal State
 const showDeleteModal = ref(false)
@@ -112,43 +137,12 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     if (rolesNum.value.length === 1 && currentPage.value > 1) {
       currentPage.value--
     }
-    fetchRoles(currentPage.value)
+    fetchRoles()
   } catch (err) {
     console.error('Error deleting role:', err)
   } finally {
     setLoading(false)
   }
-}
-
-const fetchRoles = async (page = 1) => {
-  currentPage.value = typeof page === 'number' ? page : 1
-  try {
-    loading.value = true
-    const params = new URLSearchParams({
-      page: currentPage.value,
-      per_page: perPage,
-    })
-    if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim())
-
-    const res = await api(`/v1/admin/roles?${params}`)
-    rolesNum.value = res.data || []
-    totalPages.value = res.meta?.last_page || 1
-  } catch (err) {
-    console.error('Error fetching roles:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleFilter = () => {
-  currentPage.value = 1
-  fetchRoles()
-}
-
-const resetFilters = () => {
-  searchQuery.value = ''
-  currentPage.value = 1
-  fetchRoles()
 }
 
 /* =============================

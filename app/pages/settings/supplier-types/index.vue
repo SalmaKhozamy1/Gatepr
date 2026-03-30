@@ -102,8 +102,8 @@ const searchQuery = ref('')
 const supplierTypes = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
-const perPage = 15
-const loading = ref(false)
+const perPage = 10
+const loading = ref(true)
 
 const showViewModal = ref(false)
 const selectedType = ref(null)

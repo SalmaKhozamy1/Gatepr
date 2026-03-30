@@ -7,13 +7,11 @@
           :placeholder="t('common.search')" 
           class="flex-grow-1 min-w-40 col"
         />
-        <div class="flex-start gap-sm">
-          <button class="custom-btn primary-btn min-btn-width fltr_btn" @click="handleFilter">
-            <IconsSearch />
-            <span>بحث</span>
-          </button>
-          <ButtonsResetButton @reset="resetFilters" />
-        </div>
+        <Filter_Button 
+          :loading="loading" 
+          @filter="handleFilter" 
+          @reset="resetFilters" 
+        />
       </div>
     </Teleport>
 

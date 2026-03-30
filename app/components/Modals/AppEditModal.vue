@@ -21,7 +21,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `${t('placeholders.select')} ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
         />
 
         <!-- Multi Select -->
@@ -30,7 +30,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `${t('placeholders.select')} ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
         />
 
         <!-- Input -->
@@ -53,7 +53,7 @@
         <button class="custom-btn text-btn min-btn-width" @click="emit('update:modelValue', false)" :disabled="loading">{{ t('common.cancel') }}</button>
         <button class="custom-btn secondary-btn min-btn-width" @click="handleSubmit" :disabled="loading">
           <span v-if="loading">{{ t('common.saving') }}</span>
-          <span v-else>{{ t('buttons.save_changes') }}</span>
+          <span v-else>{{ t('common.save') }}</span>
         </button>
       </div>
     </template>

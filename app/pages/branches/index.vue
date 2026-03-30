@@ -15,7 +15,7 @@
 
     <template #header-actions>
       <button
-        class="custom-btn primary-btn min-btn-width fltr_btn py-2"
+        class="custom-btn primary-btn fltr_btn"
         @click="showAddModal = true"
       >
         <span style="font-size: 20px">+</span>
@@ -35,7 +35,7 @@
         <template #body="{ getIndex }">
           <tr v-if="!loading && branches.length === 0">
             <td :colspan="headers.length" class="text-center danger">
-              {{ t('errors.somethingWentWrong') }}
+              {{ t('common.no_results_found') }}
             </td>
           </tr>
 
@@ -114,6 +114,8 @@ import { useView } from '~/composables/useView'
 import { IconsBranches } from '#components'
 import { useI18n } from 'vue-i18n'
 
+import { useSearchFilter } from '~/composables/useSearchFilter'
+
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
@@ -121,15 +123,20 @@ const { viewItem, loading: viewLoading } = useView()
 /* =============================
    STATE
 ============================== */
-const searchQuery = ref('')
 const governorateFilter = ref(null)
 const branches = ref([])
 const governorateOptions = ref([])
 const areaOptions = ref([])
-const currentPage = ref(1)
-const totalPages = ref(1)
 const perPage = 15
-const loading = ref(false)
+
+const {
+  loading,
+  searchQuery,
+  currentPage,
+  totalPages,
+  handleFilter: baseFilter,
+  handleReset: baseReset
+} = useSearchFilter(() => fetchBranches())
 
 const showViewModal = ref(false)
 const selectedBranch = ref(null)

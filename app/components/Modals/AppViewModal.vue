@@ -75,9 +75,25 @@ const { locale } = useI18n()
 // Resolves dot-path from data; if final value is a locale object {ar, en}, picks current locale
 const getValue = (key) => {
   const val = key.split('.').reduce((o, i) => o?.[i], props.data)
-  if (val && typeof val === 'object' && ('ar' in val || 'en' in val)) {
-    return val[locale.value] ?? val.ar ?? val.en ?? '—'
+
+  // 1. Array handling (e.g. user.branches)
+  if (Array.isArray(val)) {
+    if (val.length === 0) return '—'
+    return val.map(item => {
+      if (typeof item === 'object') {
+        const name = item.name_localized || item.name || item.LocalizedName || item.title
+        if (typeof name === 'object') return name[locale.value] || name.ar || name.en
+        return name
+      }
+      return item
+    }).join(', ')
   }
+
+  // 2. Locale object handling {ar, en}
+  if (val && typeof val === 'object' && ('ar' in val || 'en' in val)) {
+     return val[locale.value] ?? val.ar ?? val.en ?? '—'
+  }
+
   return val ?? '—'
 }
 </script>

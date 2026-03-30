@@ -21,7 +21,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `${t('placeholders.select')} ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
         />
 
         <!-- Multi Select -->
@@ -30,7 +30,7 @@
           :model-value="getFieldValue(field.key)"
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
-          :placeholder="field.placeholder || `اختر ${field.label}`"
+          :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
         />
 
         <!-- Input -->

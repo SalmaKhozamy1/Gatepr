@@ -1,9 +1,10 @@
 <template>
-  <label class="approve-checkbox" :for="id">
+  <label class="approve-checkbox" :for="id" :class="{ 'disabled-label': disabled }">
     <input
       type="checkbox"
       :id="id"
       :checked="isChecked"
+      :disabled="disabled"
       @change="handleChange"
     />
     <span class="checkmark position-relative"></span>
@@ -35,6 +36,10 @@ const props = defineProps({
   id: {
     type: String,
     default: ''
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -73,6 +78,11 @@ const handleChange = (event) => {
   gap: 10px;
   cursor: pointer;
   user-select: none;
+}
+
+.disabled-label {
+  cursor: default;
+  opacity: 0.7;
 }
 
 .approve-checkbox input[type="checkbox"] {

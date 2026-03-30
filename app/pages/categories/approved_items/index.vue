@@ -52,6 +52,7 @@
     :title="t('items.view_details')"
     :data="selectedItem"
     :fields="itemViewFields"
+    :icon="IconsTerms"
   />
 </template>
 
@@ -63,6 +64,7 @@ import { ref, computed, onMounted, inject, onUnmounted } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
 import { useI18n } from 'vue-i18n'
+import {IconsTerms} from '#components'
 
 const { t, locale } = useI18n()
 const api = useApi()

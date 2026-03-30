@@ -74,7 +74,9 @@
     v-model="showViewModal"
     :title="t('items.view_details')"
     :data="selectedItem"
-    :fields="itemViewFields"
+    :sections="itemViewSections"
+    :icon="IconsTerms"
+    footer
   >
     <template #footer v-if="selectedItem">
       <button
@@ -110,6 +112,15 @@ import { ref, computed, onMounted, onBeforeUnmount, inject } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
 import { useI18n } from 'vue-i18n'
+import {
+  IconsReceiveType,
+  IconsDiscount,
+  IconsMeasurement,
+  IconsInfo,
+  IconsBarCode,
+  IconsPrice,
+  IconsTerms
+} from '#components'
 
 const { t, locale } = useI18n()
 const api = useApi()
@@ -150,32 +161,66 @@ const headers = computed(() => [
 /* =============================
    VIEW FIELDS
 ============================== */
-const itemViewFields = computed(() => [
-  { label: t('items.code'),                 key: 'code' },
-  { label: t('items.name_ar'),              key: 'name.ar' },
-  { label: t('items.name_en'),              key: 'name.en' },
-  { label: t('items.supplier'),             key: 'supplier.LocalizedName' },
-  { label: t('items.category'),             key: 'category.LocalizedName' },
-  { label: t('items.branch'),               key: 'branch.LocalizedName' },
-  { label: t('items.purchasing_unit'),      key: 'purchasingUnit.LocalizedName' },
-  { label: t('items.receipt_type'),         key: 'receiptType.LocalizedName' },
-  { label: t('items.supplier_price'),       key: 'supplier_price' },
-  { label: t('items.profit_margin'),        key: 'profit_margin' },
-  { label: t('items.unit_price'),           key: 'unit_price' },
-  { label: t('items.packet_price'),         key: 'packet_price' },
-  { label: t('items.carton_price'),         key: 'carton_price' },
-  { label: t('items.weight'),               key: 'weight' },
-  { label: t('items.size_volume'),          key: 'size_volume' },
-  { label: t('items.association_discount'), key: 'association_discount' },
-  { label: t('items.consumer_discount'),    key: 'consumer_discount' },
-  { label: t('items.supply_intensity'),     key: 'supply_intensity' },
-  { label: t('items.packet_intensity'),     key: 'packet_intensity' },
-  { label: t('items.carton_intensity'),     key: 'carton_intensity' },
-  { label: t('items.unit_barcode'),         key: 'unit_barcode' },
-  { label: t('items.packet_barcode'),       key: 'packet_barcode' },
-  { label: t('items.carton_barcode'),       key: 'carton_barcode' },
-  { label: t('items.status'),               key: 'status_text' },
-  { label: t('items.created_at'),           key: 'created_at' },
+const itemViewSections = computed(() => [
+  {
+    label: t('items.details'),
+    icon: IconsReceiveType,
+    fields: [
+      { label: t('items.code'),             key: 'code' },
+      { label: t('items.name_ar'),          key: 'name.ar' },
+      { label: t('items.name_en'),          key: 'name.en' },
+      { label: t('items.supplier'),         key: 'supplier.LocalizedName' },
+      { label: t('items.category'),         key: 'category.LocalizedName' },
+      { label: t('items.branch'),           key: 'branch.LocalizedName' },
+    ]
+  },
+  {
+    label: t('items.pricing'),
+    icon: IconsPrice,
+    fields: [
+      { label: t('items.supplier_price'),   key: 'supplier_price' },
+      { label: t('items.profit_margin'),    key: 'profit_margin' },
+      { label: t('items.unit_price'),       key: 'unit_price' },
+      { label: t('items.packet_price'),     key: 'packet_price' },
+      { label: t('items.carton_price'),     key: 'carton_price' },
+    ]
+  },
+  {
+    label: t('items.discounts'),
+    icon: IconsDiscount,
+    fields: [
+      { label: t('items.association_discount'), key: 'association_discount' },
+      { label: t('items.consumer_discount'),    key: 'consumer_discount' },
+    ]
+  },
+  {
+    label: t('items.measurement'),
+    icon: IconsMeasurement,
+    fields: [
+      { label: t('items.purchasing_unit'),  key: 'purchasingUnit.LocalizedName' },
+      { label: t('items.receipt_type'),     key: 'receiptType.LocalizedName' },
+      { label: t('items.weight'),           key: 'weight' },
+      { label: t('items.size_volume'),      key: 'size_volume' },
+    ]
+  },
+  {
+    label: t('items.packaging'),
+    icon: IconsInfo,
+    fields: [
+      { label: t('items.supply_intensity'), key: 'supply_intensity' },
+      { label: t('items.packet_intensity'), key: 'packet_intensity' },
+      { label: t('items.carton_intensity'), key: 'carton_intensity' },
+    ]
+  },
+  {
+    label: t('items.barcodes'),
+    icon: IconsBarCode,
+    fields: [
+      { label: t('items.unit_barcode'),     key: 'unit_barcode' },
+      { label: t('items.packet_barcode'),   key: 'packet_barcode' },
+      { label: t('items.carton_barcode'),   key: 'carton_barcode' },
+    ]
+  }
 ])
 
 /* =============================

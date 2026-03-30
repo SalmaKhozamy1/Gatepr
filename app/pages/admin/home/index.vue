@@ -1,5 +1,6 @@
 <template>
-    <CardsCustomCard :title="t('home.overview')">
+    الغي
+    <!-- <CardsCustomCard :title="t('home.overview')">
         <div class="grid grid-3">
             <CardsStatisticsCard :CardNo="dashboard?.branches?.count" IconBg="#64CBF4" :title="t('home.branches')">
                <template #icon>
@@ -32,7 +33,7 @@
                 </template>
             </CardsStatisticsCard>
         </div>
-    </CardsCustomCard>  
+    </CardsCustomCard>   -->
 </template>
 
 <script setup>

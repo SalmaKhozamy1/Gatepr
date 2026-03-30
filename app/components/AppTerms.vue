@@ -73,7 +73,7 @@ const termsEn = ref('')
 const originalAr = ref('')
 const originalEn = ref('')
 const saving = ref(false)
-const fetching = ref(false)
+const fetching = ref(true)
 
 /* =============================
    FETCH

@@ -25,8 +25,8 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      titleTemplate: '%s | GetPro',
-      title: 'GetPro',
+      titleTemplate: '%s | GatePro',
+      title: 'GatePro',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ],

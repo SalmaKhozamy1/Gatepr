@@ -14,9 +14,6 @@ const { t } = useI18n()
 </script>
 
 <style scoped>
-.fltr_btn {
-  min-height: 42.5px;
-}
 .reset_btn {
   color: var(--placeholder);
   border-color: var(--placeholder);

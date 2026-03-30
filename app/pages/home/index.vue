@@ -1,144 +1,231 @@
 <template>
-  <div class="supplier-home-page d-flex flex-column gap-4">
-    
-    <!-- Quick Actions -->
-    <CardsCustomCard :title="t('home.quick_actions')">
-      <div class="d-flex w-100">
-        <button class="custom-btn gray-btn min-btn-width" 
-        @click="$router.push(localePath('/item-managment/add'))">
-          <span style="font-size: 18px;">+</span> {{ t('home.create_item_request') }}
-        </button>
-      </div>
-    </CardsCustomCard>
+  <div class="home-page d-flex flex-column gap-4">
 
-    <!-- Overview -->
-    <CardsCustomCard :title="t('home.overview')">
-      <template #actions>
-        <InputsFormSelect 
-        v-model="filterPeriod"
-        :options="periodOptions"></InputsFormSelect>
-      </template>
+    <!-- ========== SUPPLIER VIEW ========== -->
+    <template v-if="isSupplier">
 
-      <div class="grid grid-3">
-        <CardsStatisticsCard :CardNo="dashboard?.pending_items?.count || 30" IconBg="#F0BA3E" :title="t('home.Number_of_pending_items')">
-            <template #icon>
-                <IconsRegistrationPending />
-            </template>
-        </CardsStatisticsCard>
-        <CardsStatisticsCard :CardNo="dashboard?.accepted_items?.count || 54336" IconBg="#02C697" :title="t('home.Number_of_accepted_items')">
-            <template #icon>
-                <IconsRequestApprove />
-            </template>
-        </CardsStatisticsCard>
-        <CardsStatisticsCard :CardNo="dashboard?.rejected_items?.count || 54336" IconBg="#F3616A" :title="t('home.Number_of_rejected_items')">
-            <template #icon>
-                <IconsRequestPending /> 
-            </template>
-        </CardsStatisticsCard>
-      </div>
-    </CardsCustomCard>
+      <!-- Quick Actions -->
+      <CardsCustomCard :title="t('home.quick_actions')">
+        <div class="d-flex w-100">
+          <button
+            class="custom-btn gray-btn min-btn-width"
+            @click="$router.push(localePath('/item-managment/add'))"
+          >
+            <span style="font-size: 18px;">+</span>
+            {{ t('home.create_item_request') }}
+          </button>
+        </div>
+      </CardsCustomCard>
 
-    <!-- Table (Latest Accepted Items) -->
-    <CardsCustomCard :title="t('home.latest_accepted_items')">
-      <template #actions>
-        <NuxtLink :to="localePath('/item-managment')" class="custom-anc secondary">
-          <h5>{{ t('common.view_all') }}</h5>
-        </NuxtLink>
-      </template>
-      
-      <TablesAppTable
-        :headers="tableHeaders"
-        :current-page="1"
-        :total-pages="1"
-        :per-page="5"
-        :loading="loading"
-        @update:current-page="() => {}"
-      >
-        <template #body="{ getIndex }">
-          <tr v-for="(item, index) in recentItems" :key="index">
-            <th class="index-cell">{{ index + 1 }}</th>
-            <td>{{ item.number }}</td>
-            <td>{{ item.date }}</td>
-            <td class="actions-cell">
-              <button class="action-btn view" title="عرض">
-                <IconsEye width="18" height="18" />
-              </button>
-            </td>
-          </tr>
+      <!-- Overview -->
+      <CardsCustomCard :title="t('home.overview')">
+        <template #actions>
+          <InputsFormSelect v-model="filterPeriod" :options="periodOptions" />
         </template>
-      </TablesAppTable>
-    </CardsCustomCard>
+
+        <div class="grid grid-3">
+          <CardsStatisticsCard
+            :CardNo="dashboard?.pending_items?.count"
+            IconBg="#F0BA3E"
+            :title="t('home.Number_of_pending_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsRegistrationPending /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.accepted_items?.count"
+            IconBg="#02C697"
+            :title="t('home.Number_of_accepted_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsRequestApprove /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.rejected_items?.count"
+            IconBg="#F3616A"
+            :title="t('home.Number_of_rejected_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsRequestPending /></template>
+          </CardsStatisticsCard>
+        </div>
+      </CardsCustomCard>
+
+      <!-- Latest Accepted Items Table -->
+      <CardsCustomCard :title="t('home.latest_accepted_items')">
+        <template #actions>
+          <NuxtLink :to="localePath('/item-managment')" class="custom-anc secondary">
+            <h5>{{ t('common.view_all') }}</h5>
+          </NuxtLink>
+        </template>
+
+        <TablesAppTable
+          :headers="supplierTableHeaders"
+          :current-page="1"
+          :total-pages="1"
+          :per-page="5"
+          :loading="loading"
+          @update:current-page="() => {}"
+        >
+          <template #body>
+            <tr v-for="(item, index) in recentItems" :key="index">
+              <th class="index-cell">{{ index + 1 }}</th>
+              <td>{{ item.code || '—' }}</td>
+              <td>{{ item.accepted_at || '—' }}</td>
+              <td class="actions-cell">
+                <button class="action-btn view">
+                  <IconsEye width="18" height="18" />
+                </button>
+              </td>
+            </tr>
+          </template>
+        </TablesAppTable>
+      </CardsCustomCard>
+
+    </template>
+
+    <!-- ========== ADMIN VIEW ========== -->
+    <template v-else>
+
+      <CardsCustomCard :title="t('home.overview')">
+        <div class="grid grid-3">
+          <CardsStatisticsCard
+            :CardNo="dashboard?.branches?.count"
+            IconBg="#64CBF4"
+            :title="t('home.Number_of_branches')"
+            :loading="loading"
+          >
+            <template #icon><IconsFillBranches /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.pending_suppliers?.count"
+            IconBg="#F0BA3E"
+            :title="t('home.Number_of_pending_suppliers')"
+            :loading="loading"
+          >
+            <template #icon><IconsRegistrationPending /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.approved_suppliers?.count"
+            IconBg="#408BFB"
+            :title="t('home.Number_of_approved_suppliers')"
+            :loading="loading"
+          >
+            <template #icon><IconsFillSuplliers /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.pending_items?.count"
+            IconBg="#F3616A"
+            :title="t('home.Number_of_pending_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsRequestPending /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.accepted_items?.count"
+            IconBg="#02C697"
+            :title="t('home.Number_of_accepted_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsRequestApprove /></template>
+          </CardsStatisticsCard>
+
+          <CardsStatisticsCard
+            :CardNo="dashboard?.total_items?.count"
+            IconBg="#AF72FF"
+            :title="t('home.total_items')"
+            :loading="loading"
+          >
+            <template #icon><IconsCategories /></template>
+          </CardsStatisticsCard>
+        </div>
+      </CardsCustomCard>
+
+    </template>
 
   </div>
 </template>
 
 <script setup>
-definePageMeta({
-  middleware: 'auth'
-});
+definePageMeta({ middleware: 'auth' })
 usePageMeta('menu.home')
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const localePath = useLocalePath()
 const api = useApi()
+const role = useCookie('role')
 
+/* =============================
+   ROLE
+============================== */
+const isSupplier = computed(() => role.value === 'supplier')
+
+/* =============================
+   STATE
+============================== */
 const dashboard = ref(null)
 const loading = ref(false)
 const filterPeriod = ref('month')
+const recentItems = ref([])
 
+/* =============================
+   OPTIONS
+============================== */
 const periodOptions = [
   { label: t('home.month'), value: 'month' },
-  { label: t('home.week'), value: 'week' },
-  { label: t('home.year'), value: 'year' }
-]
-// Headers for the recent accepted items table
-const tableHeaders = [
-  { label: '#', class: 'index-cell' },
-  { label: t('common.item_number'), class: '' },
-  { label: t('common.acceptance_date'), class: '' },
-  { label: t('common.actions'), class: 'actions-cell' }
+  { label: t('home.week'),  value: 'week'  },
+  { label: t('home.year'),  value: 'year'  },
 ]
 
-// Mock data to match the image until API is connected
-const recentItems = ref([
-  { number: '115415', date: '5-5-2025' },
-  { number: '61566', date: '5-5-2025' },
-  { number: '361323', date: '5-5-2025' },
-  { number: '1215', date: '5-5-2025' }
+/* =============================
+   TABLE HEADERS
+============================== */
+const supplierTableHeaders = computed(() => [
+  { label: '#',                         class: 'index-cell'   },
+  { label: t('common.item_number'),     class: ''             },
+  { label: t('common.acceptance_date'), class: ''             },
+  { label: t('common.actions'),         class: 'actions-cell' },
 ])
 
-onMounted(async () => {
-  loading.value = true
+/* =============================
+   FETCH
+============================== */
+const fetchDashboard = async () => {
   try {
-    const res = await api('/v1/admin/dashboard', { method: 'GET' }) 
+    loading.value = true
+    const endpoint = isSupplier.value
+      ? '/v1/supplier/dashboard' 
+      : '/v1/admin/dashboard'
+
+    const res = await api(endpoint, { method: 'GET' })
     dashboard.value = res.data
+
+    // لو supplier نجيب أحدث الـ accepted items
+    if (isSupplier.value) {
+      recentItems.value = res.data?.recent_accepted_items || []
+    }
   } catch (err) {
     console.error('Dashboard error:', err)
   } finally {
     loading.value = false
   }
-})
-</script>
+}
 
-<style scoped>
-.supplier-home-page {
-  width: 100%;
-}
-.filter-select {
-  padding: 6px 30px 6px 12px;
-  border: 1px solid #E0E1E5;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #667085;
-  background-color: #fff;
-  cursor: pointer;
-  outline: none;
-}
-.action-btn.view {
-  color: #98A2B3;
-  padding: 4px;
-}
-.action-btn.view:hover {
-  color: var(--primary-color);
-}
-</style>
+/* =============================
+   WATCH filter period (supplier only)
+============================== */
+watch(filterPeriod, () => {
+  if (isSupplier.value) fetchDashboard()
+})
+
+/* =============================
+   LIFECYCLE
+============================== */
+onMounted(() => fetchDashboard())
+</script>

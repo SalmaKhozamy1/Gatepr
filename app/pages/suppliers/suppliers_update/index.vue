@@ -32,7 +32,7 @@
           <td>{{ request.supplier?.email || '—' }}</td>
           <td class="nowrap">{{ formatDate(request.created_at) }}</td>
           <td class="actions-cell">
-            <button class="action-btn view" :title="t('common.view')" @click="handleView(request)">
+            <button class="action-btn view" :title="t('common.view')" @click="handleView(request.supplier?.id)">
               <IconsEye width="18" height="18" />
             </button>
           </td>
@@ -195,8 +195,8 @@ const fetchRequests = async () => {
 /* =============================
    ACTIONS
 ============================== */
-const handleView = (request) => {
-  // console.log('viewing update request:', request)
+const handleView = (id) => {
+    navigateTo(localePath(`/suppliers/suppliers/${id}`))
 }
 
 const handleAccept = async (request) => {

@@ -5,7 +5,7 @@
       v-if="placeholder"
       v-model="searchQuery"
       :placeholder="placeholder"
-      @keyup.enter="handleFilter"
+      @keyup.enter="handleFilter({ search: searchQuery, ...filterValues, ...dateValues })"
       class="flex-grow-1 search"
     />
 
@@ -30,25 +30,13 @@
       :placeholder="filter.placeholder || t('placeholders.select')"
     />
 
-    <div class="flex-start gap-sm">
-      <button
-        class="custom-btn primary-btn fltr_btn"
-        @click="handleFilter"
-        :disabled="loading"
-      >
-        <span v-if="loading" class="btn-spinner"></span>
-        <template v-else>
-          <IconsSearch />
-          <span>{{ t('common.search') }}</span>
-        </template>
-      </button>
-      <ButtonsResetButton
-        :label="t('common.reset')"
-        @reset="handleReset"
-        class="min-btn-wdth"
-        :disabled="loading"
-      />
-    </div>
+    <Filter_Button 
+      :loading="loading" 
+      :search="searchQuery"
+      :filters="{ ...filterValues, ...dateValues }"
+      @filter="handleFilter" 
+      @reset="handleReset"
+    />
   </div>
 </template>
 
@@ -89,12 +77,8 @@ watchEffect(() => {
   })
 })
 
-const handleFilter = () => {
-  emit('filter', {
-    search: searchQuery.value.trim(),
-    ...filterValues,
-    ...dateValues
-  })
+const handleFilter = (filters) => {
+  emit('filter', filters)
 }
 
 const handleReset = () => {

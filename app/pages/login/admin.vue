@@ -159,7 +159,7 @@ const onSubmit = handleSubmit(async (values) => {
     userCookieData.value = response.data.user
     authStore.setUser(response.data.user)
 
-    navigateTo(localePath('/'))
+    navigateTo(localePath('/home'))
 
   } catch (err) {
     console.error('Login Error:', err)

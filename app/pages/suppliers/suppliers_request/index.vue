@@ -32,7 +32,7 @@
           <td>{{ supplier.email || '—' }}</td>
           <td class="nowrap">{{ formatDate(supplier.created_at) }}</td>
           <td class="actions-cell">
-            <button class="action-btn view" :title="t('common.view')" @click="handleView(supplier)">
+            <button class="action-btn view" :title="t('common.view')" @click="handleView(supplier.id)">
               <IconsEye width="18" height="18" />
             </button>
           </td>
@@ -196,8 +196,8 @@ const fetchSuppliers = async () => {
 /* =============================
    ACTIONS
 ============================== */
-const handleView = (supplier) => {
-  // console.log('view:', supplier)
+const handleView = (id) => {
+  navigateTo(localePath(`/suppliers/suppliers/${id}`))
 }
 
 const handleAccept = async (supplier) => {

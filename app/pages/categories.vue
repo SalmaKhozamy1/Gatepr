@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-wrapper">
+  <div class="settings-wrapper position-relative">
     <PageLayout
       :asideTitle="t('menu.categories')"
       :asideItems="settingsMenu"
@@ -130,22 +130,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.settings-wrapper {
-  position: relative;
-}
-.fltr_btn {
-  min-height: 42.5px;
-}
-.reset_btn {
-  color: var(--placeholder);
-  border-color: var(--placeholder);
-}
-.min-w-40 {
-  min-width: 200px;
-}
-.page-title {
-  font-size: 28px;
-}
 .form-group {
   width: unset;
   flex: 1;
