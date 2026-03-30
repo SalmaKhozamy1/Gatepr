@@ -115,12 +115,22 @@ const { value: code } = useField('code')
 const { value: password } = useField('password')
 
 const onSubmit = handleSubmit(async (values) => {
+  // Shared cookie options for Remember Me
+  const cookieOptions = {
+    maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
+    path: '/'
+  }
+
+  const tokenCookie = useCookie('token', cookieOptions)
+  const roleCookie = useCookie('role', cookieOptions)
+  const userCookieData = useCookie('user', cookieOptions)
+
   // Temp test account
   if (values.code === '1111' && values.password === '123456') {
-    token.value = 'temp-token'
-    role.value = 'supplier'
+    tokenCookie.value = 'temp-token'
+    roleCookie.value = 'supplier'
     const testUser = { name: 'Test User', code: '1111' }
-    userCookie.value = testUser
+    userCookieData.value = testUser
     authStore.setUser(testUser)
     navigateTo(localePath('/home'))
     return
@@ -139,9 +149,9 @@ const onSubmit = handleSubmit(async (values) => {
 
     const supplierData = response.data.supplier?.[0] || response.data.supplier
 
-    token.value = response.data.token
-    role.value = 'supplier'
-    userCookie.value = supplierData
+    tokenCookie.value = response.data.token
+    roleCookie.value = 'supplier'
+    userCookieData.value = supplierData
     authStore.setUser(supplierData)
 
     navigateTo(localePath('/home'))

@@ -1,7 +1,7 @@
 <template>
   <div 
     class="header-box flex-center" 
-    :class="{ 'active': active, 'has-dropdown': name }"
+    :class="{'has-dropdown': name }"
     @click.stop="toggleDropdown"
     ref="dropdownRef"
   >
@@ -123,10 +123,10 @@ onUnmounted(() => {
 .header-box:hover {
     background-color: color-mix(in srgb, var(--light-primary-color), transparent 85%);;
 }
-.header-box.active {
+/* .header-box.active {
     background-color: var(--secondary-color);
     color: #fff;
-}
+} */
 .dropdown-arrow {
     transition: transform 0.3s ease;
 }

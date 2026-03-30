@@ -32,7 +32,7 @@
 
     <div class="flex-start gap-sm">
       <button
-        class="custom-btn primary-btn fltr_btn min-btn-width"
+        class="custom-btn primary-btn fltr_btn"
         @click="handleFilter"
         :disabled="loading"
       >

@@ -32,7 +32,7 @@
           <td class="nowrap">{{ formatDate(item.created_at) }}</td>
           <td>
             <span :class="['action-badge', getActionType(item.action_type).class]">
-              {{ t('items.' + item.action_type) }}
+              {{ t('common.' + item.action_type) }}
             </span>
           </td>
           <td class="actions-cell">
@@ -182,15 +182,15 @@ const itemViewFields = computed(() => [
    FILTERS
 ============================== */
 const actionTypeOptions = computed(() => [
-  { label: t('items.add'),    value: 'add' },
-  { label: t('items.update'), value: 'update' },
-  { label: t('items.delete'), value: 'delete' },
+  { label: t('common.add'),    value: 'add' },
+  { label: t('common.edit'), value: 'edit' },
+  { label: t('common.delete'), value: 'delete' },
 ])
 
 const actionTypeMap = {
   create: { class: 'badge-add' },
   add:    { class: 'badge-add' },
-  update: { class: 'badge-update' },
+  edit:   { class: 'badge-update' },
   delete: { class: 'badge-delete' },
 }
 

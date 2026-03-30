@@ -1,11 +1,31 @@
 <template>
   <NuxtLayout>
+    <NuxtLoadingIndicator color="var(--primary-color)" />
     <AppToast />
-    <NuxtPage />
+    
+    <div v-if="isPageLoading" class="page-content">
+      <PageLayoutAppSkeleton />
+    </div>
+    <NuxtPage v-else />
   </NuxtLayout>
 </template>
 
 <script setup>
+const router = useRouter()
+const isPageLoading = ref(false)
+
+// Robust page transition handling
+router.beforeEach((to, from) => {
+  if (to.path !== from.path) {
+    isPageLoading.value = true
+  }
+})
+
+router.afterEach(() => {
+  setTimeout(() => {
+    isPageLoading.value = false
+  }, 400) // ✅ Slight delay for a smoother skeleton presentation
+})
 const { locale, setLocale } = useI18n()
 const localeCookie = useCookie('locale', { 
   path: '/',

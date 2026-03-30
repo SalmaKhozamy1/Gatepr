@@ -39,8 +39,8 @@
                id="navbarSupportedContent"
             >
                <ul class="navbar-nav gap-xs custom-ul">
-                  <li v-for="item in menuItems" :key="item.path" class="nav-item">
-                     <NuxtLink :to="item.path" class="custom-anc">
+                  <li v-for="(item, index) in menuItems" :key="index + '-' + item.path" class="nav-item">
+                     <NuxtLink :to="item.path" :exact="item.exact" class="custom-anc">
                         <HeaderItem
                            :title="item.title"
                            :icon="item.icon"
@@ -133,8 +133,11 @@ const currentDate = computed(() => new Intl.DateTimeFormat(
 
 /* =============================
    MENU
-============================== */
+  ============================== */
+const normalizePath = (p) => (p || '').replace(/\/$/, '') || '/'
+
 const menuItems = computed(() => {
+   const currentPath = normalizePath(route.path)
    let items = []
    if (role.value === 'supplier') {
       items = [
@@ -144,7 +147,7 @@ const menuItems = computed(() => {
       ]
    } else {
       items = [
-         { title: t('menu.home'), icon: IconsHome, path: localePath('/') },
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
          { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
          { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
          { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
@@ -152,19 +155,37 @@ const menuItems = computed(() => {
          { title: t('menu.logs'), icon: IconsLogs, path: localePath('/activity_logs') },
       ]
    }
-   
-   return items.map(item => ({
-      ...item,
-      active: route.path === item.path || route.path.startsWith(item.path + '/')
-   }))
-})
 
+   // Detect all variations of the Home/Dashboard route across roles/languages
+   const homePaths = [
+      '/', '/en', '/ar',
+      normalizePath(localePath('/')),
+      normalizePath(localePath('/home'))
+   ]
+
+   return items.map(item => {
+      const itemPath = normalizePath(item.path)
+      const isHome = homePaths.includes(itemPath)
+      
+      // Home uses EXACT matching only
+      // Others use prefix matching for sub-pages support
+      const isActive = isHome 
+         ? currentPath === itemPath 
+         : (currentPath === itemPath || currentPath.startsWith(itemPath + '/'))
+      
+      return {
+         ...item,
+         active: isActive,
+         exact: isHome
+      }
+   })
+})
 
 /* =============================
    MODALS
 ============================== */
 const openOtp = (data) => {
-   resetContact.value = data?.value || data  // fallback code
+   resetContact.value = data?.value || data
    contactType.value = data?.type || 'email'
    showOtpModal.value = true
 }
@@ -214,6 +235,9 @@ const openResetPassword = (data) => {
 
 .top-header {
    z-index: 10;
+}
+.router-link-active > .header-box{
+   background-color: var(--secondary-color);
 }
 </style>
 

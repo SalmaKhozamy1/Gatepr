@@ -197,7 +197,7 @@ const fetchSuppliers = async () => {
    ACTIONS
 ============================== */
 const handleView = (supplier) => {
-  console.log('view:', supplier)
+  // console.log('view:', supplier)
 }
 
 const handleAccept = async (supplier) => {

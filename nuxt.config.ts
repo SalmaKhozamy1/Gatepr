@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       options: {
         ripple: true,
         components: {
-          include: ['Toast', 'MultiSelect', 'DatePicker']
+          include: ['Toast', 'MultiSelect', 'DatePicker', 'Skeleton']
         }
       }
     }],

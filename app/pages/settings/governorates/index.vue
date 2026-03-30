@@ -241,7 +241,6 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
 }
 
 const handleDelete = (gov) => {
-  console.log('gov:', gov)  // تأكد إن فيه id
   selectedDeleteGovernorate.value = gov
   showDeleteModal.value = true
 }

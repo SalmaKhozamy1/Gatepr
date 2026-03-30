@@ -225,7 +225,6 @@ const handleDownload = async (id) => {
   try {
     downloadLoading.value = id
     // Logic for downloading supplier files or summary
-    console.log('Downloading supplier:', id)
     const res = await api(`/v1/admin/suppliers/${id}/export`)
     if (res.file_url) window.open(res.file_url, '_blank')
   } catch (err) {

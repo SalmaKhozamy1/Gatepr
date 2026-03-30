@@ -196,7 +196,7 @@ const fetchRequests = async () => {
    ACTIONS
 ============================== */
 const handleView = (request) => {
-  console.log('viewing update request:', request)
+  // console.log('viewing update request:', request)
 }
 
 const handleAccept = async (request) => {

@@ -56,12 +56,10 @@ const { t } = useI18n()
 const searchQuery = ref('')
 
 const handleFilter = () => {
-    console.log('Search Governorates:', searchQuery.value)
 }
 
 const resetFilters = () => {
     searchQuery.value = ''
-    console.log('Filters reset')
 }
 
 const currentPage = ref(1)

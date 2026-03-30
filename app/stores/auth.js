@@ -4,14 +4,13 @@ import { defineStore } from 'pinia'
 export const useAuthStore = defineStore('auth', () => {
 
   const user = ref(null)
+  const token = useCookie('token')
 
   const setUser = (userData) => {
     user.value = userData
   }
 
   const logout = () => {
-    const token = useCookie('token')
-
     user.value = null
     token.value = null
   }

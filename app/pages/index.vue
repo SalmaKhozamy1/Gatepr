@@ -48,7 +48,6 @@ const dashboard = ref(null)
 onMounted(async () => {
   try {
     const res = await api('/v1/admin/dashboard', { method: 'GET' }) 
-    console.log('res:', res)
     dashboard.value = res.data
   } catch (err) {
     console.error('Dashboard error:', err)

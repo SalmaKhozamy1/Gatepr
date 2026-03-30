@@ -303,7 +303,6 @@ const fetchItems = async () => {
     totalPages.value = 1
   } finally {
     loading.value = false
-    console.log('itemsList', itemsList.value)
   }
 }
 
@@ -335,7 +334,6 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     const res = await api(`/items/${selectedDeleteItem.value.id}`, {
       method: 'DELETE'
     })
-    console.log('response');
     close()
     fetchItems()
   } catch (err) {

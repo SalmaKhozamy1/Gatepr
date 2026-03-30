@@ -95,11 +95,11 @@ const schema = computed(() =>
   yup.object({
     contact: props.type === 'email'
       ? yup.string()
-          .required(t('errors.email_required'))
-          .email(t('errors.email_invalid'))
+          .required(t('validation.email_required'))
+          .email(t('validation.email_invalid'))
       : yup.string()
-          .required(t('errors.phone_required'))
-          .matches(/^\+?[0-9]{8,15}$/, t('errors.phone_invalid'))
+          .required(t('validation.phone_required'))
+          .matches(/^\+?[0-9]{8,15}$/, t('validation.phone_invalid'))
   })
 )
 const formRef = ref(null)

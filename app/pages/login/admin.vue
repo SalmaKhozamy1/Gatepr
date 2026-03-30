@@ -88,13 +88,32 @@ const isLoading = ref(false)
 const api = useApi()
 const role = useCookie('role')
 const userCookie = useCookie('user')
-const showChangePasswordModal = ref(false)
-const showResetPasswordModal = ref(false)
-
 const authStore = useAuthStore()
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { error: toastError } = useAppToast()
+
+// Forgot Password Flow
+const showChangePasswordModal = ref(false)
+const showOtpModal = ref(false)
+const showResetPasswordModal = ref(false)
+
+const resetContact = ref('')
+const contactType = ref('email')
+const resetCode = ref('')
+const resetToken = ref('')
+
+const openOtp = (data) => {
+  resetContact.value = data.value
+  contactType.value = data.type
+  showOtpModal.value = true
+}
+
+const openResetPassword = (data) => {
+  resetCode.value = data.code
+  resetToken.value = data.token || ''
+  showResetPasswordModal.value = true
+}
 
 const schema = computed(() =>
   yup.object({
@@ -108,7 +127,7 @@ const schema = computed(() =>
 )
 
 const { handleSubmit, errors, setErrors } = useForm({
-  validationSchema: schema
+  validationSchema: schema,
 })
 
 const { value: email } = useField('email')
@@ -126,15 +145,18 @@ const onSubmit = handleSubmit(async (values) => {
       }
     })
 
-    // ✅ لو Remember Me شغال → احفظ لمدة 30 يوم، لو لأ → session cookie بس
-    const token = useCookie('token', {
+    const cookieOptions = {
       maxAge: rememberMe.value ? 60 * 60 * 24 * 30 : undefined,
       path: '/'
-    })
+    }
+
+    const token = useCookie('token', cookieOptions)
+    const roleCookie = useCookie('role', cookieOptions)
+    const userCookieData = useCookie('user', cookieOptions)
 
     token.value = response.data.token
-    role.value = 'admin'
-    userCookie.value = response.data.user
+    roleCookie.value = 'admin'
+    userCookieData.value = response.data.user
     authStore.setUser(response.data.user)
 
     navigateTo(localePath('/'))
