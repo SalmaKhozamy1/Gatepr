@@ -62,7 +62,7 @@ const normalizedOptions = computed(() => {
   border: 1px solid #e0e0e0 !important;
   box-shadow: none !important;
   min-height: 40px;
-  min-width: 100px;
+  min-width: 140px;
 }
 
 :deep(.p-select:focus) {

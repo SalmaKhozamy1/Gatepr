@@ -1,15 +1,23 @@
 <template>
   <div 
     class="header-box flex-center" 
-    :class="{'has-dropdown': name }"
+    :class="{ 'active': active, 'has-dropdown': name }"
     @click.stop="toggleDropdown"
     ref="dropdownRef"
   >
     <!-- Profile Mode -->
     <template v-if="name">
         <div class="flex-between gap-sm w-100">
-            <div class="profile-info">
-                <p class="username">{{ name }}</p>
+            <div class="flex-center gap-xs">
+                <div class="user-avatar-wrapper">
+                    <img v-if="avatar" :src="avatar" class="user-avatar" alt="user">
+                    <div v-else class="user-avatar-placeholder flex-center">
+                        <IconsProfile width="30" height="30" />
+                    </div>
+                </div>
+                 <div class="profile-info text-start">
+                    <p class="username">{{ name }}</p>
+                </div>
             </div>
             <div class="dropdown-arrow flex-center" :class="{ 'open': isDropdownOpen }">
                 <IconsDownArrow />
@@ -19,13 +27,25 @@
         <!-- Dropdown Menu -->
         <div v-if="isDropdownOpen" class="profile-dropdown">
             <!-- Dropdown Header -->
-            <div class="dropdown-header">
-                <h5 class="user-full-name mb-1">{{ name }}</h5>
-                <h6 class="desc">{{ t('labels.admin') }}</h6>
+            <div class="dropdown-header flex-start gap-sm">
+                <div class="dropdown-avatar-wrapper">
+                    <img v-if="avatar" :src="avatar" class="dropdown-avatar" alt="user">
+                    <div v-else class="flex-center">
+                        <IconsProfile width="32" height="32" />
+                    </div>
+                 </div>
+                 <div class="user-info-text">
+                    <h5 class="user-full-name mb-1">{{ name }}</h5>
+                    <h6 class="desc">{{ role === 'supplier' ? t('labels.supplier') : t('labels.admin') }}</h6>
+                 </div>
             </div>
 
             <!-- List Items -->
             <ul class="dropdown-list custom-ul">
+            <li v-if="role === 'supplier'" class="dropdown-item" @click.stop="goToProfile">
+                <IconsProfile />
+                <h5 class="item-text">{{ t('menu.supplier_profile') }}</h5>
+            </li>
             <li class="dropdown-item" @click.stop="openChangePassword">
                 <IconsLock />
                 <h5 class="item-text">{{ t('profile.change_password') }}</h5>
@@ -62,17 +82,20 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useI18n } from 'vue-i18n'  // ✅
+import { useI18n } from 'vue-i18n'  
 
 const { logout } = useAuth()
 const { t } = useI18n() 
+const localePath = useLocalePath()
 
 const props = defineProps({
   name: { type: String, default: null },
   badge: { type: [String, Number], default: null },
   active: { type: Boolean, default: false },
   title: { type: String, default: null }, 
-  icon: { type: [Object, Function, String], default: null } 
+  icon: { type: [Object, Function, String], default: null },
+  role: { type: String, default: 'admin' },
+  avatar: { type: String, default: null }
 })
 
 const emit = defineEmits(['open-change-password'])
@@ -87,6 +110,11 @@ const toggleDropdown = () => {
 const openChangePassword = () => {
     isDropdownOpen.value = false
     emit('open-change-password')
+}
+
+const goToProfile = () => {
+    isDropdownOpen.value = false
+    navigateTo(localePath('/profile'))
 }
 
 const handleClickOutside = (event) => {
@@ -123,15 +151,29 @@ onUnmounted(() => {
 .header-box:hover {
     background-color: color-mix(in srgb, var(--light-primary-color), transparent 85%);;
 }
-/* .header-box.active {
-    background-color: var(--secondary-color);
-    color: #fff;
-} */
 .dropdown-arrow {
     transition: transform 0.3s ease;
 }
 .dropdown-arrow.open {
     transform: rotate(180deg);
+}
+
+/* User Avatar */
+.user-avatar-wrapper, .dropdown-avatar-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+}
+.user-avatar, .dropdown-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.dropdown-avatar-wrapper {
+    width: 32px;
+    height: 32px;
 }
 
 /* Dropdown Styles */
@@ -157,6 +199,14 @@ onUnmounted(() => {
     padding: 8px;
     text-align: start;
     border-radius: var(--radius-sm);
+}
+.user-full-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+.desc {
+    font-size: 13px;
+    color: var(--gray-color);
 }
 .dropdown-list {
     display: flex;

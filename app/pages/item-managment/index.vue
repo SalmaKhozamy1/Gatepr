@@ -17,7 +17,10 @@
     <!-- Header Actions -->
     <template #header-actions>
       <div class="flex-start gap-sm">
-        <button class="custom-btn gray-btn">
+        <button 
+          class="custom-btn gray-btn"
+          @click="showImportModal = true"
+        >
           <span style="font-size: 20px">+</span> {{ t('items.import') }}
         </button>
         <button
@@ -78,6 +81,7 @@
                   v-if="item.can_export"
                   class="action-btn view"
                   :title="t('buttons.download')"
+                  @click="handleDownload(item)"
                 >
                   <IconsDownload width="18" height="18" />
                 </button>
@@ -110,9 +114,15 @@
   <ModalsAppDeleteModal
     v-model="showDeleteModal"
     :title="t('items.delete') + ' ' + t('items.request')"
-    itemType="الصنف"
-    :itemName="selectedDeleteItem?.name?.ar || selectedDeleteItem?.LocalizedName"
+    :itemType="t('menu.item')"
+    :itemName="selectedDeleteItem?.name?.[locale] || selectedDeleteItem?.LocalizedName"
     @confirm="handleDeleteConfirm"
+  />
+
+  <!-- Import Modal -->
+  <ModalsAppExportModal
+    v-model="showImportModal"
+    @success="fetchItems"
   />
 </template>
 
@@ -124,12 +134,14 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { useI18n } from 'vue-i18n'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsTerms, IconsInformation, IconsDiscount, IconsMeasurement, IconsInfo, IconsPrice, IconsBarCode } from '#components'
 
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 const localePath = useLocalePath()
+const toast = useAppToast()
 
 /* =============================
    STATE
@@ -154,6 +166,8 @@ const selectedDeleteItem = ref(null)
 const showEditModal = ref(false)
 const selectedEditItem = ref(null)
 
+const showImportModal = ref(false)
+
 /* =============================
    COMPUTED
 ============================== */
@@ -172,8 +186,9 @@ const itemViewSections = computed(() => [
     label: t('items.add_form.item_details'),
     icon: IconsInformation,
     fields: [
-      { label: t('items.add_form.labels.item_number'), key: 'code' },
-      { label: t('items.add_form.labels.name_ar'), key: 'name' },
+      { label: t('items.add_form.labels.item_number'), key: 'id' },
+      { label: t('items.add_form.labels.name'), key: 'LocalizedName' },
+      { label: t('items.add_form.labels.code'), key: 'code' },
       { label: t('items.add_form.labels.supplier_code'), key: 'supplier_code' },
       { label: t('items.add_form.labels.sub_category'), key: 'category.name' },
       { label: t('items.add_form.labels.weight'), key: 'weight' },
@@ -316,6 +331,20 @@ const handleView = async (id) => {
     showViewModal.value = true
   } catch (err) {
     console.error('Error viewing item:', err)
+  }
+}
+
+const handleDownload = async (item) => {
+  try {
+    const res = await api(`/items/export/${item.id}`, {
+      method: 'POST'
+    })
+    if (res.success && res.file_url) {
+      window.open(res.file_url, '_blank')
+    }
+  } catch (err) {
+    console.error('Error exporting item:', err)
+    toast.error(t('common.somethingWentWrong'))
   }
 }
 

@@ -1,13 +1,15 @@
 <template>
   <div>
-    <Teleport to="#search-teleport-target">
-      <SearchBar
-        :placeholder="t('common.search')"
-        :loading="loading"
-        @filter="handleFilter"
-        @reset="resetFilters"
-      />
-    </Teleport>
+    <ClientOnly>
+      <Teleport to="#search-teleport-target">
+        <SearchBar
+          :placeholder="t('common.search')"
+          :loading="loading"
+          @filter="handleFilter"
+          @reset="resetFilters"
+        />
+      </Teleport>
+    </ClientOnly>
 
     <TablesAppTable 
       :headers="headers"
@@ -82,9 +84,9 @@
   v-model="showDeleteModal"
   :title="t('common.delete') + ' ' + t('labels.governorate')"
   :itemType="t('settings.governorate')"
-  :itemName="selectedDeleteGovernorate?.name?.ar"
-      data-bs-backdrop="static"
-    data-bs-keyboard="false"
+  :itemName="selectedDeleteGovernorate?.name?.[locale] || selectedDeleteGovernorate?.name?.ar"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
   @confirm="handleDeleteConfirm"
 />
 </template>

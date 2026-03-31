@@ -1,14 +1,16 @@
 <template>
   <div>
-    <Teleport to="#search-teleport-target">
-      <SearchBar
-        :placeholder="t('common.search')"
-        :filters="searchFilters"
-        :loading="loading"
-        @filter="handleFilter"
-        @reset="resetFilters"
-      />
-    </Teleport>
+    <ClientOnly>
+      <Teleport to="#search-teleport-target">
+        <SearchBar
+          :placeholder="t('common.search')"
+          :filters="searchFilters"
+          :loading="loading"
+          @filter="handleFilter"
+          @reset="resetFilters"
+        />
+      </Teleport>
+    </ClientOnly>
 
     <TablesAppTable
       :headers="headers"

@@ -13,6 +13,8 @@
                </HeaderItem>
                <HeaderItem
                   :name="adminName"
+                  :role="role"
+                  :avatar="userAvatar"
                   @open-change-password="showChangePassword = true"
                />
             </div>
@@ -108,12 +110,24 @@ const role = useCookie('role')
 const userCookie = useCookie('user')
 const adminInfo = computed(() => userCookie.value || {})
 
-const adminName = computed(() =>
-   adminInfo.value?.name?.[locale.value] ||
-   adminInfo.value?.name?.ar ||
-   adminInfo.value?.LocalizedName ||
-   t('labels.admin')
-)
+const adminName = computed(() => {
+   const info = adminInfo.value?.supplier || adminInfo.value
+   const nameValue = info?.name
+   
+   if (typeof nameValue === 'string') return nameValue
+   
+   return (
+      nameValue?.[locale.value] ||
+      nameValue?.ar ||
+      info?.LocalizedName ||
+      t('labels.admin')
+   )
+})
+
+const userAvatar = computed(() => {
+   const info = adminInfo.value?.supplier || adminInfo.value
+   return info?.avatar || info?.image
+})
 
 /* =============================
    LOCALE

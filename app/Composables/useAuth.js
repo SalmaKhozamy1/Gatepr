@@ -43,6 +43,7 @@ export const useAuth = () => {
 
   return {
     user,
+    role,
     loading,
     error,
     logout

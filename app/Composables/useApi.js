@@ -6,13 +6,17 @@ export const useApi = () => {
     baseURL: config.public.apiBase,
 
     async onRequest({ options }) {
+      const { $i18n } = useNuxtApp()
+      const localeValue = $i18n.locale.value || 'ar'
+
       options.headers = {
         ...options.headers,
         Accept: 'application/json, text/plain, */*',
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept-Language': localeValue
       }
 
-      if (options.body && !options.headers['Content-Type']) {
+      if (options.body && !(options.body instanceof FormData) && !options.headers['Content-Type']) {
         options.headers['Content-Type'] = 'application/json'
       }
 

@@ -9,8 +9,9 @@
           :label="t('labels.roles_name_ar')"
           :placeholder="t('placeholders.name_ar')"
           required
-          :disabled="isView"
+          :disabled="mode === 'view'"
           :error="errors['name.ar']"
+          @blur="$emit('blur-name', 'ar')"
         />
         <InputsFormInput
           :modelValue="roleData.name.en"
@@ -18,17 +19,12 @@
           :label="t('labels.roles_name_en')"
           :placeholder="t('placeholders.name_en')"
           required
-          :disabled="isView"
+          :disabled="mode === 'view'"
           :error="errors['name.en']"
+          @blur="$emit('blur-name', 'en')"
         />
       </div>
-      <!-- Actions for name section -->
-      <ButtonsFormActions 
-        v-if="!isView"
-        :loading="loading" 
-        @cancel="handleCancel" 
-        @save="onSaveName" 
-      />
+      <!-- Global Save button moved to the bottom -->
     </CardsCustomCard>
 
     <div class="accordion d-flex flex-column gap-3 mt-3" id="permissionsAccordion">
@@ -54,7 +50,7 @@
               <InputsApprove
                 :label="translateModel(group.model)"
                 :modelValue="isGroupAllSelected(group)"
-                :disabled="isView"
+                :disabled="mode === 'view'"
                 @update:modelValue="(val) => toggleGroup(group, val)"
               />
             </template>
@@ -67,21 +63,13 @@
                 :id="'perm-' + permission.id"
                 :modelValue="internalSelectedPermissions"
                 :value="permission.id"
-                :disabled="isView"
+                :disabled="mode === 'view'"
                 @update:modelValue="(val) => internalSelectedPermissions = val"
               />
             </div>
           </AppAccordion>
         </div>
 
-        <!-- FormActions for this parent group -->
-        <div v-if="!isView" class="mt-3">
-          <ButtonsFormActions
-            :loading="savingGroup === 'Settings'"
-            @cancel="handleCancel"
-            @save="onSaveGroup('Settings', settingsPermissions)"
-          />
-        </div>
       </AppAccordion>
 
       <!-- Other Permission Groups (Parents) -->
@@ -105,22 +93,25 @@
               :id="'perm-' + permission.id"
               :modelValue="internalSelectedPermissions"
               :value="permission.id"
-              :disabled="isView"
+              :disabled="mode === 'view'"
               @update:modelValue="(val) => internalSelectedPermissions = val"
             />
           </div>
         </div>
 
-        <!-- FormActions for each parent accordion -->
-        <div v-if="!isView" class="mt-3">
-          <ButtonsFormActions
-            :loading="savingGroup === group.model"
-            @cancel="handleCancel"
-            @save="onSaveGroup(group.model, [group])"
-          />
-        </div>
       </AppAccordion>
     </div>
+
+    <!-- Global Actions Section -->
+    <div v-if="mode != 'view'">
+      <ButtonsFormActions 
+        :loading="loading" 
+        :btnCancelClass="'white'"
+        @cancel="handleCancel" 
+        @save="onSave"
+      />
+    </div>
+
   </div>
 </template>
 
@@ -145,7 +136,7 @@ import {
 
 const props = defineProps({
   mode: {
-    type: String, // 'create', 'edit', 'view'
+    type: String,
     default: 'create'
   },
   roleData: {
@@ -177,9 +168,9 @@ const props = defineProps({
 const emit = defineEmits([
   'update:selectedPermissions', 
   'update:roleData',
-  'save-name', 
-  'save-group', 
-  'cancel'
+  'save',   
+  'cancel',
+  'blur-name'
 ])
 
 const { t } = useI18n()
@@ -206,7 +197,9 @@ const settingsModels = [
   'Category',
   'Purchasing Unit',
   'Receipt Type',
-  'Terms'
+  'Terms',
+  'permission',
+  'permissions'
 ]
 
 const settingsPermissions = computed(() =>
@@ -226,8 +219,13 @@ const internalSelectedPermissions = computed({
    UPDATES
 ============================== */
 const updateName = (lang, value) => {
-  const newData = { ...props.roleData }
-  newData.name[lang] = value
+  const newData = { 
+    ...props.roleData, 
+    name: { 
+      ...props.roleData.name, 
+      [lang]: value 
+    } 
+  }
   emit('update:roleData', newData)
 }
 
@@ -248,8 +246,16 @@ const modelTranslations = {
   'Branch': 'menu.branches',
   'Notification': 'menu.notifications',
   'Static Page': 'settings.terms_and_conditions',
-  'Item': 'labels.categories',
-  'Supplier': 'settings.supplier'
+  'Item': 'menu.categories',
+  'Supplier': 'settings.supplier',
+  "Supplier Profile Update Request": 'menu.supplier_registration_requests',
+  "Supplier Profile": "menu.supplier_profile",
+  "Item": "menu.items-management",
+  "Item Action": "menu.item-managment-action",
+  "Item Actions": "menu.item-managment-actions",
+  "permission": "labels.permission",
+  "permissions.permission": "labels.permission",
+  "permissions": "labels.permissions"
 }
 
 const actionTranslations = {
@@ -297,7 +303,7 @@ const iconMap = {
   'Supplier Profile Update Request': IconsSuppliers,
   'Supplier Type': IconsSuppliers,
   'User': IconsSettingsUsers,
-  'permissions.permission': IconsSettings,
+  'permissions': IconsSettings,
 }
 
 const getGroupIcon = (model) => iconMap[model] || IconsSettings
@@ -324,8 +330,7 @@ const toggleGroup = (group, checked) => {
 /* =============================
    EMITS
 ============================== */
-const onSaveName = () => emit('save-name')
-const onSaveGroup = (name, groups) => emit('save-group', { name, groups })
+const onSave = () => emit('save') 
 const handleCancel = () => emit('cancel')
 
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="flex-start gap-sm">
     <button
-      class="custom-btn primary-btn fltr_btn"
+      class="custom-btn primary-btn fltr_btn min-btn-width"
       @click="handleFilterClick"
       :disabled="loading"
     >
@@ -13,7 +13,6 @@
     </button>
     <ButtonsResetButton
       @reset="$emit('reset')"
-      class="min-btn-wdth"
       :disabled="loading"
     />
   </div>
@@ -54,6 +53,10 @@ const handleFilterClick = () => {
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+.min-btn-width {
+  min-width: 120px;
 }
 
 @keyframes spin {

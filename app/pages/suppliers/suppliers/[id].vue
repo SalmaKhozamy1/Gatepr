@@ -15,85 +15,85 @@
         <template v-else-if="supplier">
 
           <!-- Tab 0: بيانات المنشأة -->
-          <div v-if="activeTab === 0" class="grid grid-2 gap-sm">
+          <div v-if="activeTab === 0" class="grid grid-2 gap-xs">
 
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.interprise_name_ar') }}</label>
               <p class="field-value">{{ supplier.name?.ar || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.interprise_name_en') }}</label>
               <p class="field-value">{{ supplier.name?.en || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.supplier_type') }}</label>
               <p class="field-value">{{ supplier.supplierType?.LocalizedName || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.code') }}</label>
               <p class="field-value">{{ supplier.code || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.commercial_register') }}</label>
               <p class="field-value">{{ supplier.commercial_register || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.deputy_manager_name') }}</label>
               <p class="field-value">{{ supplier.deputy_manager_name || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.license_start_date') }}</label>
               <p class="field-value">{{ supplier.license_start_date || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.license_end_date') }}</label>
               <p class="field-value">{{ supplier.license_end_date || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.health_license_expiry') }}</label>
               <p class="field-value">{{ supplier.health_license_expiry || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.industrial_license_expiry') }}</label>
               <p class="field-value">{{ supplier.industrial_license_expiry || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('common.status') }}</label>
               <p class="field-value">{{ supplier.status || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('suppliers.register_request_date') }}</label>
               <p class="field-value">{{ supplier.register_request_date || '—' }}</p>
             </div>
           </div>
 
           <!-- Tab 1: بيانات التواصل -->
-          <div v-else-if="activeTab === 1" class="grid grid-2 gap-sm">
-            <div class="flex-between gap-md view-field">
+          <div v-else-if="activeTab === 1" class="grid grid-2 gap-xs">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.supplier_phone') }}</label>
               <p class="field-value">{{ supplier.phone || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.supplier_mobile') }}</label>
               <p class="field-value">{{ supplier.mobile || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.license_end_date') }}</label>
               <p class="field-value">{{ supplier.license_end_date || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.fax') }}</label>
               <p class="field-value">{{ supplier.fax || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.email') }}</label>
               <p class="field-value">{{ supplier.email || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.address') }}</label>
               <p class="field-value">{{ supplier.address || '—' }}</p>
             </div>
-            <div class="flex-between gap-md view-field">
+            <div class="flex-between gap-xs view-field">
               <label class="field-label">{{ t('labels.website') }}</label>
               <a v-if="supplier.website" :href="supplier.website" target="_blank" class="success">
                 {{ supplier.website }}
@@ -116,28 +116,28 @@
             </div>
 
               <div class="flex-start">
-                <div class="grid grid-2 gap-sm w-100">
-                <div class="flex-between gap-md view-field">
+                <div class="grid grid-2 gap-xs w-100">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('suppliers.supplier_name_ar') }}</label>
                   <p class="field-value">{{ doc.name?.ar || '—' }}</p>
                 </div>
-                <div class="flex-between gap-md view-field">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('suppliers.supplier_name_en') }}</label>
                   <p class="field-value">{{ doc.name?.en || '—' }}</p>
                 </div>
-                <div class="flex-between gap-md view-field">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('labels.start_date') }}</label>
                   <p class="field-value">{{ doc.start_date || '—' }}</p>
                 </div>
-                <div class="flex-between gap-md view-field">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('labels.end_date') }}</label>
                   <p class="field-value">{{ doc.end_date || '—' }}</p>
                 </div>
-                <div class="flex-between gap-md view-field">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('labels.license_expiry') }}</label>
                   <p class="field-value">{{ doc.license_expiry || '—' }}</p>
                 </div>
-                <div class="flex-between gap-md view-field">
+                <div class="flex-between gap-xs view-field">
                   <label class="field-label">{{ t('labels.license_number') }}</label>
                   <p class="field-value">{{ doc.license_number || '—' }}</p>
                 </div>

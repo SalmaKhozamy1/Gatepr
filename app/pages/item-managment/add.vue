@@ -318,6 +318,7 @@
 import { ref, onMounted } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import { useAppToast } from '~/composables/useAppToast'
 
 definePageMeta({ middleware: 'auth' })
 usePageMeta('menu.item-managment')
@@ -325,6 +326,7 @@ usePageMeta('menu.item-managment')
 const localePath = useLocalePath()
 const { t, locale } = useI18n()
 const api = useApi()
+const toast = useAppToast()
 
 /* =============================
    VALIDATION SCHEMA
@@ -482,8 +484,13 @@ const onSubmit = handleSubmit(async (values) => {
     }
 
     await api('/items', { method: 'POST', body: payload })
+    toast.success(t('messages.added_successfully', { item: t('menu.item') }))
     navigateTo(localePath('/item-managment'))
   } catch (err) {
+    if (err?.data?.errors) {
+      setErrors(err.data.errors)
+    }
+    toast.error(t('common.somethingWentWrong'))
     console.error('Error creating item:', err)
   } finally {
     loading.value = false

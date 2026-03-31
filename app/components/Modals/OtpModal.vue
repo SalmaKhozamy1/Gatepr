@@ -3,7 +3,7 @@
     <div class="otp-container flex-column-center gap-md">
       <div class="header-text text-center">
         <h4 class="mb-2">{{ t('auth.activation_code') }}</h4>
-        <p class="desc px-4">{{ t('auth.enter_otp') }}  <div class="inline text">{{ t('auth.sent_to') }} {{ contact }}</div></p>
+        <p class="desc px-4">{{ t('auth.enter_otp') }}  <span class="inline text">{{ t('auth.sent_to') }} {{ contact }}</span></p>
       </div>
 
       <!-- Simple PIN Input Mockup -->

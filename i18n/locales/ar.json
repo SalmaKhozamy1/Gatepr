@@ -32,7 +32,9 @@
     "item_number": "رقم الصنف",
     "company_data": "بيانات المنشأة",
     "contact_data": "بيانات التواصل",
-    "documents_data": "بيانات المستندات"
+    "documents_data": "بيانات المستندات",
+    "loading": "تحميل ....",
+    "download_template": "تحميل تيمبلت للداتا المطلوبة"
   },
   "labels": {
     "welcome": "مرحبا",
@@ -41,6 +43,7 @@
     "rememberMe": "تذكرني",
     "dontHaveAccount": "ليس لدي حساب؟ ",
     "admin": "أدمن",
+    "supplier": "مورد",
     "name_ar": "اسم باللغة العربية",
     "name_en": "اسم باللغة الانجليزية",
     "governorate": "المحافظة",
@@ -56,6 +59,7 @@
     "user": "المستخدم",
     "branches_count": "عدد الفروع",
     "permissions": "الصلاحيات",
+    "permission": "الصلاحية",
     "select_all": "تحديد الكل",
     "code": "الكود",
     "all_statuses": "كل الحالات",
@@ -72,7 +76,7 @@
     "company_name_ar": "اسم المنشأة بالعربي",
     "company_name_en": "اسم المنشأة باللغة الإنجليزية",
     "license_start": "تاريخ بداية الرخصة",
-    "license_number": "رقم الرخصة / السجل التجاري",
+    "license_number": "رقم الرخصة",
     "supplier_deputy": "نائب المورد",
     "license_end": "تاريخ نهاية الرخصة",
     "health_license_end": "تاريخ نهاية الترخيص الصحي",
@@ -93,8 +97,9 @@
     "choose_verification_method": "أختر وسيلة التحقق"
   },
   "profile": {
-    "change_password": "تغيير كلمة المرور",
-    "logout": "تسجيل الخروج"
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "change_password": "تعديل كلمة المرور"
   },
   "home": {
     "overview": "نظرة عامة",
@@ -123,6 +128,7 @@
     "categories": "التصنيفات",
     "suppliers": "الموردين",
     "logs": "سجل النظام",
+    "item": "الصنف",
     "items-management": "إدارة الأصناف",
     "terms_and_conditions": "الشروط والأحكام",
     "login": "تسجيل دخول",
@@ -131,7 +137,11 @@
     "approved_categories": "الأصناف المقبولة",
     "supplier_registration_requests": "طلبات تسجيل الموردين",
     "data_edit_requests": "طلبات تعديل البيانات",
-    "item-managment": "سجل الأصناف"
+    "item-managment": "سجل الأصناف",
+    "item-managment-action": "إجراء الصنف",
+    "item-managment-actions": "إجراءات الأصناف",
+    "notifications": "الإشعارات",
+    "supplier_profile": "ملف المورد"
   },
   "auth": {
     "loginTitle": "تسجيل دخول",
@@ -150,7 +160,9 @@
     "password_required": "كلمة المرور مطلوبة",
     "password_min": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
     "agree_to_terms_required": "يجب الموافقة على الشروط والأحكام",
-    "code_required": "كود المورد مطلوب"
+    "code_required": "كود المورد مطلوب",
+    "arabic_only": "يجب أن يحتوي على أحرف عربية فقط",
+    "english_only": "يجب أن يحتوي على أحرف إنجليزية فقط"
   },
   "placeholders": {
     "email": "أدخل البريد الإلكتروني",
@@ -377,6 +389,8 @@
         "sub_category": "التصنيف الفرعي",
         "weight": "الوزن",
         "volume": "الحجم",
+        "code": "الكود",
+        "name": "اسم الصنف",
         "purchasing_unit": "وحدة الشراء",
         "association_discount": "خصم الجمعية",
         "consumer_discount": "خصم المستهلك",
@@ -466,7 +480,7 @@
     "supplier_name_en": "اسم باللغة الإنجليزية",
     "code": "كود المورد",
     "commercial_register": "السجل التجاري",
-    "deputy_manager_name": "اسم نائب المدير",
+    "deputy_manager_name": " نائب المدير",
     "license_start_date": "تاريخ بدء الترخيص",
     "license_end_date": "تاريخ انتهاء الترخيص",
     "health_license_expiry": "تاريخ انتهاء الترخيص الصحي",

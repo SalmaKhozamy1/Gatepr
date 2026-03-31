@@ -6,47 +6,77 @@
       <span>{{ t('common.loading') }}</span>
     </div>
 
+    <!-- Error/No Data -->
+    <div v-else-if="!termsAr && !termsEn" class="text-center p-5">
+      <p class="text-muted">{{ t('common.no_results_found') }}</p>
+    </div>
+
+    <!-- Static or Admin View -->
     <template v-else>
-      <h5>{{ t('labels.content_ar') }}</h5>
-      <div class="editor-wrapper" dir="rtl">
-        <ClientOnly>
-          <QuillEditor
-            v-model:content="termsAr"
-            content-type="html"
-            :options="editorOptions"
-            theme="snow"
-          />
-        </ClientOnly>
+      <!-- Supplier View (Styled Template) -->
+      <div v-if="role === 'supplier'" class="terms-supplier-layout w-100">
+         <div class="terms-sections">
+            <!-- Arabic Section -->
+            <div v-if="termsAr" class="terms-section mb-4">
+               <div class="terms-section-label mb-2">{{ t('labels.content_ar') }}</div>
+               <div class="terms-content-card" dir="rtl">
+                  <div class="terms-content-display" v-html="termsAr"></div>
+               </div>
+            </div>
+
+            <!-- English Section -->
+            <div v-if="termsEn" class="terms-section">
+               <div class="terms-section-label mb-2">{{ t('labels.content_en') }}</div>
+               <div class="terms-content-card" dir="ltr">
+                  <div class="terms-content-display" v-html="termsEn"></div>
+               </div>
+            </div>
+         </div>
       </div>
 
-      <h5>{{ t('labels.content_en') }}</h5>
-      <div class="editor-wrapper" dir="ltr">
-        <ClientOnly>
-          <QuillEditor
-            v-model:content="termsEn"
-            content-type="html"
-            :options="editorOptionsEn"
-            theme="snow"
-          />
-        </ClientOnly>
-      </div>
+      <!-- Admin View (Quill Editor) -->
+      <div v-else class="flex-column gap-sm w-100">
+        <h5 class="mb-3">{{ t('labels.content_ar') }}</h5>
+        <div class="editor-wrapper mb-4" dir="rtl">
+          <ClientOnly>
+            <QuillEditor
+              v-model:content="termsAr"
+              content-type="html"
+              :options="editorOptions"
+              theme="snow"
+            />
+          </ClientOnly>
+        </div>
 
-      <div class="flex-end gap-sm">
-        <button
-          class="custom-btn text-btn min-btn-width"
-          @click="handleCancel"
-          :disabled="saving"
-        >
-          {{ t('common.cancel') }}
-        </button>
-        <button
-          class="custom-btn secondary-btn min-btn-width"
-          @click="handleSave"
-          :disabled="saving"
-        >
-          <span v-if="saving">{{ t('common.saving') }}</span>
-          <span v-else>{{ t('common.save') }}</span>
-        </button>
+        <h5 class="mb-3">{{ t('labels.content_en') }}</h5>
+        <div class="editor-wrapper mb-4" dir="ltr">
+          <ClientOnly>
+            <QuillEditor
+              v-model:content="termsEn"
+              content-type="html"
+              :options="editorOptionsEn"
+              theme="snow"
+            />
+          </ClientOnly>
+        </div>
+
+        <div class="flex-end gap-sm mt-3">
+          <button
+            class="custom-btn text-btn min-btn-width"
+            @click="handleCancel"
+            :disabled="saving"
+          >
+            {{ t('common.cancel') }}
+          </button>
+          <button
+            class="custom-btn secondary-btn min-btn-width"
+            @click="handleSave"
+            :disabled="saving"
+          >
+            <span v-if="saving">{{ t('common.saving') }}</span>
+            <span v-else>{{ t('common.save') }}</span>
+          </button>
+        </div>
       </div>
     </template>
 
@@ -58,16 +88,18 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
+import { useAuth } from '~/composables/useAuth'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const api = useApi()
+const { role } = useAuth()
 const { success, error: toastError } = useAppToast()
 
 const SLUG = 'terms-and-conditions'
 
 /* =============================
    STATE
-============================== */
+ ============================== */
 const termsAr = ref('')
 const termsEn = ref('')
 const originalAr = ref('')
@@ -77,15 +109,18 @@ const fetching = ref(true)
 
 /* =============================
    FETCH
-============================== */
+ ============================== */
 const fetchTerms = async () => {
   try {
     fetching.value = true
-    const res = await api(`/v1/admin/static-pages/${SLUG}`)
+    const endpoint = role.value === 'supplier' 
+      ? `/static-pages/${SLUG}` 
+      : `/v1/admin/static-pages/${SLUG}`
+    
+    const res = await api(endpoint)
     if (res?.data) {
       termsAr.value = res.data.content?.ar || ''
       termsEn.value = res.data.content?.en || ''
-      // احتفظ بالأصل عشان الـ cancel يرجعهم
       originalAr.value = termsAr.value
       originalEn.value = termsEn.value
     }
@@ -98,7 +133,7 @@ const fetchTerms = async () => {
 
 /* =============================
    EDITOR OPTIONS
-============================== */
+ ============================== */
 const editorOptions = computed(() => ({
   modules: {
     toolbar: [
@@ -127,7 +162,7 @@ const editorOptionsEn = computed(() => ({
 
 /* =============================
    ACTIONS
-============================== */
+ ============================== */
 const handleSave = async () => {
   try {
     saving.value = true
@@ -140,12 +175,9 @@ const handleSave = async () => {
         }
       }
     })
-    // حدّث الأصل بعد الحفظ
     originalAr.value = termsAr.value
     originalEn.value = termsEn.value
-
     success(t('messages.updated_successfully', { item: t('settings.terms_and_conditions') }))
-
   } catch (err) {
     toastError(err?.data?.message || t('errors.somethingWentWrong'))
   } finally {
@@ -160,13 +192,60 @@ const handleCancel = () => {
 
 /* =============================
    INIT
-============================== */
+ ============================== */
 onMounted(() => {
   fetchTerms()
 })
 </script>
 
 <style scoped>
+/* Supplier View Styles */
+.terms-supplier-layout {
+  padding: 0;
+}
+.terms-title-bar {
+  background-color: #344054;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: start;
+}
+.terms-section-label {
+  color: #667085;
+  font-size: 14px;
+  font-weight: 500;
+}
+.terms-content-card {
+  background: #FFFFFF;
+  border: 1px solid #EAECF0;
+  border-radius: 8px;
+  padding: 24px;
+}
+.terms-content-display {
+  line-height: 2;
+  color: #344054;
+  font-size: 15px;
+}
+.terms-content-display :deep(p) {
+  margin-bottom: 20px;
+}
+.terms-content-display :deep(p):last-child {
+  margin-bottom: 0;
+}
+.terms-content-display :deep(ul), .terms-content-display :deep(ol) {
+  padding-inline-start: 30px;
+  margin-bottom: 20px;
+}
+.terms-content-display :deep(li) {
+  margin-bottom: 12px;
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
 .editor-wrapper {
   width: 100%;
 }

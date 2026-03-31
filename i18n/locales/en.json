@@ -32,7 +32,9 @@
     "item_number": "Item Number",
     "company_data": "Company Data",
     "contact_data": "Contact Data",
-    "documents_data": "Documents Data"
+    "documents_data": "Documents Data",
+    "loading": "Loading ...",
+    "download_template": "Download Template For Required Data"
   },
   "labels": {
     "welcome": "Welcome",
@@ -41,6 +43,7 @@
     "rememberMe": "Remember Me",
     "dontHaveAccount": "Don't have an account? ",
     "admin": "Admin",
+    "supplier": "Supplier",
     "name_ar": "Name (AR)",
     "name_en": "Name (EN)",
     "governorate": "Governorate",
@@ -56,6 +59,7 @@
     "user": "User",
     "branches_count": "Branches Count",
     "permissions": "Permissions",
+    "permission": "Permission",
     "select_all": "Select All",
     "code": "Code",
     "all_statuses": "All Statuses",
@@ -93,8 +97,9 @@
     "choose_verification_method": "Choose Verification Method"
   },
   "profile": {
-    "change_password": "Change Password",
-    "logout": "Logout"
+    "profile": "Profile",
+    "logout": "Logout",
+    "change_password": "Change Password"
   },
   "home": {
     "overview": "Overview",
@@ -126,12 +131,17 @@
     "items-management": "Item Management",
     "terms_and_conditions": "Terms & Conditions",
     "login": "Login",
+    "item": "Item",
     "category_requests": "Category Requests",
     "accreditation": "Accreditation",
     "approved_categories": "Approved Categories",
     "supplier_registration_requests": "Supplier Registration Requests",
     "data_edit_requests": "Data Edit Requests",
-    "item-managment": "Items Logs"
+    "item-managment": "Items Logs",
+    "item-managment-action": "Item Action",
+    "item-managment-actions": "Items Actions",
+    "notifications": "Notifications",
+    "supplier_profile": "Supplier Profile"
   },
   "auth": {
     "loginTitle": "Login",
@@ -150,7 +160,9 @@
     "password_required": "Password is required",
     "password_min": "Password must be at least 6 characters",
     "agree_to_terms_required": "You must agree to the Terms and Conditions",
-    "code_required": "Supplier code is required"
+    "code_required": "Supplier code is required",
+    "arabic_only": "Must contain Arabic characters only",
+    "english_only": "Must contain English characters only"
   },
   "placeholders": {
     "email": "Enter email address",
@@ -375,6 +387,8 @@
         "sub_category": "Sub Category",
         "weight": "Weight",
         "volume": "Volume",
+        "code": "Code",
+        "name": "Item Name",
         "purchasing_unit": "Purchasing Unit",
         "association_discount": "Association Discount",
         "consumer_discount": "Consumer Discount",
@@ -464,7 +478,7 @@
     "interprise_name_en": "Interprise Name (EN)",
     "code": "Supplier Code",
     "commercial_register": "Commercial Register",
-    "deputy_manager_name": "Deputy Manager Name",
+    "deputy_manager_name": "Deputy Manager",
     "license_start_date": "License Start Date",
     "license_end_date": "License End Date",
     "health_license_expiry": "Health License Expiry",

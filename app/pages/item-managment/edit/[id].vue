@@ -318,6 +318,9 @@
 import { ref, onMounted } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import { useAppToast } from '~/composables/useAppToast'
+import { useApi } from '~/composables/useApi'
+import { useI18n } from 'vue-i18n'
 
 definePageMeta({ middleware: 'auth' })
 usePageMeta('menu.item-managment')
@@ -326,6 +329,7 @@ const localePath = useLocalePath()
 const { t, locale } = useI18n()
 const api = useApi()
 const route = useRoute()
+const toast = useAppToast()
 
 // Item ID from route params
 const itemId = route.params.id
@@ -526,11 +530,13 @@ const onSubmit = handleSubmit(async (values) => {
     }
 
     await api(`/items/${itemId}`, { method: 'PUT', body: payload })
+    toast.success(t('messages.updated_successfully', { item: t('menu.items-management') }))
     navigateTo(localePath('/item-managment'))
   } catch (err) {
     if (err?.data?.errors) {
       setErrors(err.data.errors)
     }
+    toast.error(t('common.somethingWentWrong'))
     console.error('Error updating item:', err)
   } finally {
     loading.value = false

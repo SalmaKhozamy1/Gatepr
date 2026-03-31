@@ -42,14 +42,14 @@
             <component :is="getFileIcon(file.name)" />
           </div>
           <!-- File Info -->
-          <div class="file-info text-end flex-grow-1">
+          <div class="file-info flex-grow-1">
             <p>{{ file.name }}</p>
             <p class="desc mt-1">{{ formatSize(file.size) }}</p>
           </div>
 
           <!-- Delete Button -->
           <IconsDelete
-            class="icon delete-btn"
+            class="icon delete-btn danger"
             width="18"
             height="18"
             @click.stop="removeFile(index)"
@@ -70,6 +70,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  modelValue: {
+    type: [Array, Object, String, File], 
+    default: () => []
+  },
   accept: {
     type: String,
     default: '.pdf,.xml,.doc,.docx'
@@ -80,11 +84,24 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:files'])
+const emit = defineEmits(['update:modelValue', 'update:files'])
+
+import { watch, onMounted } from 'vue'
 
 const fileInput = ref(null)
 const isDragging = ref(false)
 const uploadedFiles = ref([])
+
+// Synchronize with modelValue
+watch(() => props.modelValue, (newVal) => {
+  if (Array.isArray(newVal)) {
+    uploadedFiles.value = newVal
+  } else if (newVal) {
+    uploadedFiles.value = [newVal]
+  } else {
+    uploadedFiles.value = []
+  }
+}, { immediate: true })
 
 function triggerFileInput() {
   fileInput.value.click()
@@ -103,11 +120,13 @@ function handleDrop(event) {
 
 function addFiles(files) {
   uploadedFiles.value.push(...files)
+  emit('update:modelValue', uploadedFiles.value)
   emit('update:files', uploadedFiles.value)
 }
 
 function removeFile(index) {
   uploadedFiles.value.splice(index, 1)
+  emit('update:modelValue', uploadedFiles.value)
   emit('update:files', uploadedFiles.value)
 }
 
@@ -177,5 +196,8 @@ function getFileIcon(filename) {
 }
 .delete-btn:hover {
   opacity: 0.7;
+}
+.desc {
+  font-size: 12px;
 }
 </style>

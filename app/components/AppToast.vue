@@ -3,7 +3,7 @@
     <template #message="{ message }">
       <div class="flex-start gap-sm w-100">
         <IconsCheck v-if="message.severity === 'success'" width="20" height="20" />
-        <IconsCross v-else-if="message.severity === 'error'" width="20" height="20" />
+        <!-- <IconsCross v-else-if="message.severity === 'error'" width="20" height="20" /> -->
         <div class="flex-column">
           <span v-if="message.detail" class="toast-detail">{{ message.detail }}</span>
         </div>
@@ -70,7 +70,8 @@ import { IconsCheck, IconsCross } from '#components'
 
 .toast-detail {
   font-weight: 500;
-  font-size: 16px !important;
+  font-size: 14px !important;
   color: inherit;
+  white-space: pre-wrap !important;
 }
 </style>

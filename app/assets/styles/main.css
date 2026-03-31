@@ -53,6 +53,7 @@
   --desc-color: #535862;
   --dark-gray: #535862;
   --placeholder: #8F92A1;
+  --input-border: #e0e0e0; 
   /*///////// Font Size /////////*/
   --size-xs:12px;
   --size-sm:14px;
@@ -498,6 +499,11 @@ html[dir="rtl"] [type="url"] {
   color: var(--text-color);
   border: 1px solid rgba(34, 41, 62, 0.03);
 }
+.white-btn {
+  background-color: #fff;
+  color: var(--text-color);
+  border: 1px solid #E0E1E5;
+}
 .success-btn {
    background-color: var(--success-color);
    color: #fff;
@@ -606,17 +612,22 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .p-select-overlay {
   z-index: 9999 !important;
   font-family: inherit;
-  /* direction: rtl; */
   background-color: #fff !important;
+  border: 1px solid var(--input-border) !important;
+  border-top: 0px !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 .p-multiselect-overlay .p-multiselect-option,
 .p-select-overlay .p-select-option {
   font-size: var(--size-sm);
-  /* direction: rtl; */
   padding: 8px 12px;
 }
-
+.p-select-overlay .p-select-empty-message {
+  padding: 10px;
+  color: var(--red);
+  text-align: center;
+}
 .p-multiselect-overlay .p-multiselect-option-selected ,
 .p-select-overlay .p-select-option-selected {
   background-color: color-mix(in srgb, var(--primary-color) 10%, transparent) !important;
@@ -641,7 +652,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   color: var(--red) !important;
 }
 .p-multiselect:hover {
-  border: 1px solid #e0e0e0 !important;
+  border: 1px solid var(--input-border) !important;
 }
 .p-multiselect-filter,
 .p-select-filter {
@@ -657,10 +668,10 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   padding: 7px 10px;
 }
 .p-iconfield {
-  border-bottom: 2px solid #e0e0e0 !important;
+  border-bottom: 2px solid var(--input-border) !important;
 }
 .p-multiselect-overlay {
-  border: 1px solid #e0e0e0 !important;
+  border: 1px solid var(--input-border) !important;
   border-bottom-left-radius: var(--radius-sm) !important;
   border-bottom-right-radius: var(--radius-sm) !important;
 }

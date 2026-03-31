@@ -8,6 +8,7 @@
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
+        @blur="$emit('blur', $event)"
         class="form-control w-100"
         :class="{ 'is-invalid': error, 'has-suffix': hasSuffix, 'has-icon': icon }"
       >

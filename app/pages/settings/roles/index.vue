@@ -1,19 +1,21 @@
 <template>
   <div>
-    <Teleport to="#search-teleport-target">
-      <div class="flex-start gap-sm w-100 flex-wrap">
-        <InputsFormInput 
-          v-model="searchQuery"
-          :placeholder="t('common.search')" 
-          class="flex-grow-1 min-w-40 col"
-        />
-        <Filter_Button 
-          :loading="loading" 
-          @filter="handleFilter" 
-          @reset="resetFilters" 
-        />
-      </div>
-    </Teleport>
+    <ClientOnly>
+      <Teleport to="#search-teleport-target">
+        <div class="flex-start gap-sm w-100 flex-wrap">
+          <InputsFormInput 
+            v-model="searchQuery"
+            :placeholder="t('common.search')" 
+            class="flex-grow-1 min-w-40 col"
+          />
+          <Filter_Button 
+            :loading="loading" 
+            @filter="handleFilter" 
+            @reset="resetFilters" 
+          />
+        </div>
+      </Teleport>
+    </ClientOnly>
 
     <TablesAppTable 
       :headers="headers"

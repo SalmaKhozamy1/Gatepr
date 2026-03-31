@@ -1,15 +1,17 @@
 <template>
   <div>
-    <Teleport to="#search-teleport-target">
-      <!-- <div class="flex-start gap-sm w-100 flex-wrap"> -->
-        <SearchBar
-          :placeholder="t('common.search')"
-          :filters="searchFilters"
-          @filter="handleFilter"
-          @reset="resetFilters"
-        />
-      <!-- </div> -->
-    </Teleport>
+    <ClientOnly>
+      <Teleport to="#search-teleport-target">
+        <!-- <div class="flex-start gap-sm w-100 flex-wrap"> -->
+          <SearchBar
+            :placeholder="t('common.search')"
+            :filters="searchFilters"
+            @filter="handleFilter"
+            @reset="resetFilters"
+          />
+        <!-- </div> -->
+      </Teleport>
+    </ClientOnly>
 
     <TablesAppTable
       :headers="headers"

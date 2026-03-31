@@ -1,5 +1,6 @@
 <template>
   <div>
+  <ClientOnly>
     <Teleport to="#search-teleport-target">
       <div class="flex-start gap-sm w-100 flex-wrap">
         <InputsFormInput 
@@ -14,6 +15,7 @@
         />
       </div>
     </Teleport>
+  </ClientOnly>
 
     <TablesAppTable 
       :headers="headers"
