@@ -38,7 +38,7 @@
               </li>
             </ul>
           </td>
-          <td>{{ user.role?.name || '—' }}</td>
+          <td>{{ user.role?.name || user.roles?.[0]?.name || '—' }}</td>
           <td class="actions-cell">
             <div>
               <button class="action-btn view" :title="t('common.view')" @click="handleView(user.id)" :disabled="viewLoading">
@@ -57,56 +57,60 @@
     </TablesAppTable>
   </div>
 
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('labels.user')"
-    :data="selectedUser"
-    :fields="userViewFields"
-    :icon="IconsSettingsUsers"
-  />
+  <ClientOnly>
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('common.view') + ' ' + t('labels.user')"
+      :data="selectedUser"
+      :fields="userViewFields"
+      :icon="IconsSettingsUsers"
+    />
 
-  <ModalsAppAddModal
-    v-model="showAddModal"
-    :title="t('common.add') + ' ' + t('labels.user')"
-    :icon="IconsSettingsUsers"
-    :fields="userFormFields"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleAddSubmit"
-  />
+    <ModalsAppAddModal
+      v-model="showAddModal"
+      :title="t('common.add') + ' ' + t('labels.user')"
+      :icon="IconsSettingsUsers"
+      :fields="userFormFields"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleAddSubmit"
+    />
 
-  <ModalsAppEditModal
-    v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('labels.user')"
-    :icon="IconsSettingsUsers"
-    :fields="userEditFields"
-    :initial-data="selectedEditUser"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleEditSubmit"
-  />
+    <ModalsAppEditModal
+      v-model="showEditModal"
+      :title="t('common.edit') + ' ' + t('labels.user')"
+      :icon="IconsSettingsUsers"
+      :fields="userEditFields"
+      :initial-data="selectedEditUser"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleEditSubmit"
+    />
 
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('common.delete') + ' ' + t('labels.user')"
-    :itemType="t('labels.user')"
-    :itemName="selectedDeleteUser?.name?.[locale] || selectedDeleteUser?.name?.ar"
-        data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @confirm="handleDeleteConfirm"
-  />
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('common.delete') + ' ' + t('labels.user')"
+      :itemType="t('labels.user')"
+      :itemName="selectedDeleteUser?.name?.[locale] || selectedDeleteUser?.name?.ar"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @confirm="handleDeleteConfirm"
+    />
+  </ClientOnly>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsSettingsUsers } from '#components'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -183,7 +187,7 @@ const userEditFields = computed(() => [
     options: roleOptions.value
   },
   {
-    key: 'branch_id',
+    key: 'branch_ids',
     label: t('labels.branches'),
     type: 'multi-select',
     placeholder: t('placeholders.branch'),
@@ -222,9 +226,10 @@ const fetchRoles = async () => {
   try {
     const res = await api('/v1/admin/roles?per_page=100')
     roleOptions.value = (res.data || []).map(item => ({
-      label: item.name?.[locale.value] || item.name?.ar || item.name,
+      label: item.name?.[locale.value] || item.name,
       value: item.id
     }))
+    
   } catch (err) {
     console.error('Error fetching roles:', err)
     roleOptions.value = []
@@ -298,6 +303,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         branch_ids: data.branch_ids?.length ? data.branch_ids : []
       }
     })
+    success(t('messages.added_successfully', { item: t('labels.user') }))
     close()
     fetchUsers()
   } catch (err) {
@@ -307,6 +313,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -314,22 +322,36 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
 }
 
 const handleEdit = (user) => {
-  selectedEditUser.value = user
+  const data = { ...user }
+  // ✅ Map role_id from nested object or array
+  if (!data.role_id && data.role?.id) {
+    data.role_id = data.role.id
+  } else if (!data.role_id && data.roles?.[0]?.id) {
+    data.role_id = data.roles[0].id
+  }
+  
+  // ✅ Map branch_ids from nested array
+  if (!data.branch_ids && data.branches?.length) {
+    data.branch_ids = data.branches.map(b => b.id)
+  }
+  selectedEditUser.value = data
   showEditModal.value = true
 }
 
 const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
-    const body = { ...data,
-       branch_ids: data.branch_ids.length ? data.branch_ids : [] 
-     }
+    const body = { 
+      ...data,
+      branch_ids: data.branch_ids?.length ? data.branch_ids : [] 
+    }
     if (!body.password) delete body.password
 
     await api(`/v1/admin/users/${selectedEditUser.value.id}`, {
       method: 'PUT',
       body
     })
+    success(t('messages.updated_successfully', { item: t('labels.user') }))
     close()
     fetchUsers()
   } catch (err) {
@@ -339,6 +361,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -354,9 +378,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
     await api(`/v1/admin/users/${selectedDeleteUser.value.id}`, { method: 'DELETE' })
+    success(t('messages.deleted_successfully', { item: t('labels.user') }))
     close()
     fetchUsers()
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting user:', err)
   } finally {
     setLoading(false)

@@ -46,56 +46,60 @@
     </TablesAppTable>
   </div>
 
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('settings.add_category')"
-    :data="selectedCategory"
-    :fields="categoryViewFields"
-    :icon="IconsCategories"
-  />
+  <ClientOnly>
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('common.view') + ' ' + t('settings.add_category')"
+      :data="selectedCategory"
+      :fields="categoryViewFields"
+      :icon="IconsCategories"
+    />
 
-  <ModalsAppAddModal
-    v-model="showAddModal"
-    :title="t('common.add') + ' ' + t('settings.add_category')"
-    :icon="IconsCategories"
-    :fields="categoryFormFields"
-        data-bs-backdrop="static"
-    data-bs-keyboard="false"  
-    @submit="handleAddSubmit"
-  />
+    <ModalsAppAddModal
+      v-model="showAddModal"
+      :title="t('common.add') + ' ' + t('settings.add_category')"
+      :icon="IconsCategories"
+      :fields="categoryFormFields"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleAddSubmit"
+    />
 
-  <ModalsAppEditModal
-    v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('settings.add_category')"
-    :icon="IconsCategories"
-    :fields="categoryFormFields"
-    :initial-data="selectedEditCategory"
-        data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleEditSubmit"
-  />
+    <ModalsAppEditModal
+      v-model="showEditModal"
+      :title="t('common.edit') + ' ' + t('settings.add_category')"
+      :icon="IconsCategories"
+      :fields="categoryFormFields"
+      :initial-data="selectedEditCategory"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleEditSubmit"
+    />
 
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('common.delete') + ' ' + t('settings.add_category')"
-    :itemType="t('settings.add_category')"
-    :itemName="selectedDeleteCategory?.name?.[locale] || selectedDeleteCategory?.name?.ar"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @confirm="handleDeleteConfirm"
-  />
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('common.delete') + ' ' + t('settings.add_category')"
+      :itemType="t('settings.add_category')"
+      :itemName="selectedDeleteCategory?.name?.[locale] || selectedDeleteCategory?.name?.ar"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @confirm="handleDeleteConfirm"
+    />
+  </ClientOnly>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsCategories } from '#components'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -200,6 +204,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         code: Number(data.code)   // ✅ API بتتوقع number
       }
     })
+    success(t('messages.added_successfully', { item: t('settings.add_category') }))
     close()
     fetchCategories()
   } catch (err) {
@@ -209,6 +214,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -231,6 +238,7 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         category_id: selectedEditCategory.value.id  // ✅ required في الـ PUT
       }
     })
+    success(t('messages.updated_successfully', { item: t('settings.add_category') }))
     close()
     fetchCategories()
   } catch (err) {
@@ -240,6 +248,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -257,9 +267,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     await api(`/v1/admin/categories/${selectedDeleteCategory.value.id}`, {
       method: 'DELETE'
     })
+    success(t('messages.deleted_successfully', { item: t('settings.add_category') }))
     close()
     fetchCategories()
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting category:', err)
   } finally {
     setLoading(false)

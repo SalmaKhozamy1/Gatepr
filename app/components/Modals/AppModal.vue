@@ -3,6 +3,7 @@
     class="modal fade" 
     tabindex="-1" 
     aria-hidden="true"
+    data-bs-focus="false"
     ref="modalElement"
   >
     <div class="modal-dialog modal-dialog-centered" :style="{ maxWidth: width }">
@@ -64,7 +65,10 @@ onMounted(() => {
   if (process.client) {
     const { $bootstrap } = useNuxtApp()
     if ($bootstrap && $bootstrap.Modal) {
-      modalInstance = new $bootstrap.Modal(modalElement.value)
+      modalInstance = new $bootstrap.Modal(modalElement.value, {
+        focus: false,
+        keyboard: true
+      })
       
       modalElement.value.addEventListener('hidden.bs.modal', () => {
         emit('update:modelValue', false)
@@ -146,14 +150,17 @@ onUnmounted(() => {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+.modal-body > :deep(div) ,
 :deep(.modal-data) {
   overflow-y: auto;
   max-height: 450px;
   padding-inline-end: 10px;
 }
+.modal-body > :deep(div::-webkit-scrollbar),
 :deep(.modal-data::-webkit-scrollbar) {
   background-color: transparent;
 }
+.modal-body > :deep(div::-webkit-scrollbar-thumb),
 :deep(.modal-data::-webkit-scrollbar-thumb) {
   background-color: #D9D9D9;
 }

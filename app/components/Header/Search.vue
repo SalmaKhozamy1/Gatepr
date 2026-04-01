@@ -241,7 +241,7 @@ watch(searchHistory, (newHistory) => {
 .search-popover {
    position: absolute;
    top: 50px;
-   inset-inline-start: 50%;
+   left: 50%;
    transform: translateX(-50%);
    width: 101%;
    background: var(--primary-color);

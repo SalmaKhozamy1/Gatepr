@@ -70,7 +70,6 @@ const handleConfirm = () => {
   emit('confirm', {
     setLoading: (val) => { loading.value = val },
     close: () => {
-      success(t('messages.deleted_successfully', { item: props.itemType }))  // ✅
       emit('update:modelValue', false)
     }
   })

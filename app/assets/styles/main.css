@@ -614,8 +614,9 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   font-family: inherit;
   background-color: #fff !important;
   border: 1px solid var(--input-border) !important;
-  border-top: 0px !important;
+  /* border-top: 0px !important; */
   border-radius: var(--radius-sm) !important;
+  margin-top: 3px;
 }
 
 .p-multiselect-overlay .p-multiselect-option,

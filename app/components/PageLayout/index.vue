@@ -1,5 +1,7 @@
 <template>
-  <div :class="['gap-md', hasAside ? 'side-page-layout grid grid-2' : 'flex-column']">
+  <div class="page-layout-container flex-column gap-sm">
+    <AppBreadcrumb />
+    <div :class="['gap-md w-100', hasAside ? 'side-page-layout grid grid-2' : 'flex-column']">
       <PageLayoutAsideContent
       v-if="hasAside"
       :title="asideTitle"
@@ -20,6 +22,7 @@
         </page-layout-main-content>
       </div>
    
+    </div>
   </div>
 </template>
 

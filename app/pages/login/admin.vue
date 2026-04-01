@@ -18,12 +18,6 @@
         :placeholder="$t('placeholders.password')"
         :error="errors.password"
       >
-        <template #suffix>
-          <button type="button" class="password-toggle icon" @click="showPassword = !showPassword">
-            <IconsEye v-if="showPassword" width="24" height="24" />
-            <IconsEyeOff v-else width="24" height="24" />
-          </button>
-        </template>
       </InputsFormInput>
 
       <div class="form-options flex-between w-100 mb-2">
@@ -181,16 +175,6 @@ const onSubmit = handleSubmit(async (values) => {
   font-size: var(--size-md);
   font-weight: 600;
   color: var(--primary-color);
-}
-
-.password-toggle {
-  position: absolute;
-  inset-inline-end: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  color: #a0aec0;
 }
 
 .signup-link {

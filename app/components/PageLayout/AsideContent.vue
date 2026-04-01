@@ -9,6 +9,7 @@
          :title="item.title"
          :icon="item.icon"
          :active="activeIndex === index"
+         :disabled="item.disabled"
          @on-click="$emit('item-click', index)">
 
        </PageLayoutSideNavItem>

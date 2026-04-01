@@ -49,56 +49,60 @@
     </TablesAppTable>
   </div>
 
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('settings.add_area')"
-    :data="selectedArea"
-    :fields="areaViewFields"
-    :icon="IconsSettingsRegions"
-  />
+  <ClientOnly>
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('common.view') + ' ' + t('settings.add_area')"
+      :data="selectedArea"
+      :fields="areaViewFields"
+      :icon="IconsSettingsRegions"
+    />
 
-  <ModalsAppAddModal
-    v-model="showAddModal"
-    :title="t('common.add') + ' ' + t('settings.add_area')"
-    :icon="IconsSettingsRegions"
-    :fields="areaFormFields"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleAddSubmit"
-  />
+    <ModalsAppAddModal
+      v-model="showAddModal"
+      :title="t('common.add') + ' ' + t('settings.add_area')"
+      :icon="IconsSettingsRegions"
+      :fields="areaFormFields"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleAddSubmit"
+    />
 
-  <ModalsAppEditModal
-    v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('settings.add_area')"
-    :icon="IconsSettingsRegions"
-    :fields="areaFormFields"
-    :initial-data="selectedEditArea"
-        data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleEditSubmit"
-  />
+    <ModalsAppEditModal
+      v-model="showEditModal"
+      :title="t('common.edit') + ' ' + t('settings.add_area')"
+      :icon="IconsSettingsRegions"
+      :fields="areaFormFields"
+      :initial-data="selectedEditArea"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleEditSubmit"
+    />
 
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('common.delete') + ' ' + t('settings.add_area')"
-    :itemType="t('settings.add_area')"
-    :itemName="selectedDeleteArea?.name?.[locale] || selectedDeleteArea?.name?.ar"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @confirm="handleDeleteConfirm"
-  />
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('common.delete') + ' ' + t('settings.add_area')"
+      :itemType="t('settings.add_area')"
+      :itemName="selectedDeleteArea?.name?.[locale] || selectedDeleteArea?.name?.ar"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @confirm="handleDeleteConfirm"
+    />
+  </ClientOnly>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsSettingsRegions } from '#components'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -177,10 +181,14 @@ const parseMeta = (meta = {}) => {
 const fetchGovernorates = async () => {
   try {
     const res = await api('/v1/admin/governorates?per_page=100')
-    governorateOptions.value = (res.data || []).map(item => ({
+    const fetched = (res.data || []).map(item => ({
       label: item.name?.[locale.value] || item.name?.ar,
       value: item.id
     }))
+    governorateOptions.value = [
+      { label: t('common.no_options'), value: null },
+      ...fetched
+    ]
   } catch (err) {
     console.error('Error fetching governorates:', err)
   }
@@ -232,6 +240,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
     await api('/v1/admin/areas', { method: 'POST', body: data })
+    success(t('messages.added_successfully', { item: t('settings.add_area') }))
     close()
     fetchAreas()
   } catch (err) {
@@ -241,6 +250,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -248,7 +259,12 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
 }
 
 const handleEdit = (area) => {
-  selectedEditArea.value = area
+  // Ensure governorate_id is at root for the form fields
+  const data = { ...area }
+  if (!data.governorate_id && data.governorate?.id) {
+    data.governorate_id = data.governorate.id
+  }
+  selectedEditArea.value = data
   showEditModal.value = true
 }
 
@@ -256,6 +272,7 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
   try {
     setLoading(true)
     await api(`/v1/admin/areas/${selectedEditArea.value.id}`, { method: 'PUT', body: data })
+    success(t('messages.updated_successfully', { item: t('settings.add_area') }))
     close()
     fetchAreas()
   } catch (err) {
@@ -265,6 +282,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -280,9 +299,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
     await api(`/v1/admin/areas/${selectedDeleteArea.value.id}`, { method: 'DELETE' })
-    close()
-    fetchAreas()
+    success(t('messages.deleted_successfully', { item: t('settings.add_area') }))
+    close()             // ✅ هنا بعد نجاح الـ request
+    fetchAreas()        // ✅ refresh الـ table
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting area:', err)
   } finally {
     setLoading(false)
@@ -301,8 +322,8 @@ const handlePageChange = (page) => {
 /* =============================
    SEARCH & FILTER
 ============================== */
-const handleFilter = ({ search, governorate_id }) => {
-  searchQuery.value = search
+const handleFilter = ({ search, governorate_id } = {}) => {
+  searchQuery.value = search ?? ''
   governorateFilter.value = governorate_id || null
   currentPage.value = 1
   fetchAreas()

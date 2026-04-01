@@ -140,8 +140,8 @@ onUnmounted(() => {
     background: rgba(249, 249, 250, 0.05);
     backdrop-filter: blur(16.350000381469727px);
     padding: 8px;
-    min-width: 48px;
-    min-height: 48px;
+    min-width: 44px;
+    height: 44px;
     color: rgba(255, 255, 255, 0.70);
     position: relative;
     cursor: pointer;
@@ -229,7 +229,7 @@ onUnmounted(() => {
     color: var(--primary-color);
 }
 .has-dropdown {
-    min-width: 100px;
+    min-width: min-content;
 }
 .item-text {
   color: var(--gray-color);

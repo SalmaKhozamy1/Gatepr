@@ -47,6 +47,15 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const emit = defineEmits(['update:valid'])
+
 const schema = yup.object({
   phone: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_phone') })),
   mobile: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_mobile') })),
@@ -56,9 +65,14 @@ const schema = yup.object({
   website: yup.string().url(t('errors.website')).optional(), // Using labels.website for generic error or can be specific
 })
 
-const { errors, validate } = useForm({
+const { errors, validate, meta } = useForm({
   validationSchema: schema,
+  initialValues: props.initialData || {}
 })
+
+watch(() => meta.value.valid, (newVal) => {
+  emit('update:valid', newVal)
+}, { immediate: true })
 
 const { value: phone } = useField('phone')
 const { value: mobile } = useField('mobile')
@@ -71,6 +85,16 @@ defineExpose({
   validate: async () => {
     const { valid } = await validate()
     return valid
+  },
+  getValues: () => {
+    return {
+      phone: phone.value,
+      mobile: mobile.value,
+      fax: fax.value,
+      email: email.value,
+      address: address.value,
+      website: website.value
+    }
   }
 })
 </script>

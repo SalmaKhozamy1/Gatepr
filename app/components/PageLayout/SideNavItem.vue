@@ -1,8 +1,8 @@
 <template>
   <div 
     class="side-nav-item" 
-    :class="{ 'active': active }"
-    @click="$emit('on-click')"
+    :class="{ 'active': active, 'disabled': disabled }"
+    @click="!disabled && $emit('on-click')"
   >
     <div class="content flex-start gap-sm w-100">
         <div class="icon-case flex-center">
@@ -19,7 +19,8 @@
 defineProps({
   title: { type: String, required: true },
   icon: { type: [Object, String], default: null },
-  active: { type: Boolean, default: false }
+  active: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false }
 })
 
 defineEmits(['on-click'])
@@ -34,6 +35,12 @@ defineEmits(['on-click'])
     margin-bottom: 6px;
     position: relative;
     overflow: hidden;
+}
+.side-nav-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    filter: grayscale(1);
+    pointer-events: none;
 }
 .icon-case {    
     color: var(--placeholder);

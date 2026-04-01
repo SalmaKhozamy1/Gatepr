@@ -11,9 +11,6 @@
     @blur-name="handleBlurName"
   />
 
-  <div style="background-color: red;">
-  {{"mode" + mode }}
-  </div>
 </template>
 
 <script setup>

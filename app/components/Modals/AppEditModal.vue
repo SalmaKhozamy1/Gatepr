@@ -160,7 +160,6 @@ const handleSubmit = async () => {
       setErrors: (errs) => { errors.value = errs },
       setLoading: (val) => { loading.value = val },
       close: () => {
-        success(t('messages.updated_successfully'))  // ✅
         emit('update:modelValue', false)
       }
     })

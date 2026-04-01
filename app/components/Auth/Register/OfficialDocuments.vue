@@ -1,113 +1,119 @@
 <template>
-  <div class="grid grid-3 gap-md">
-    <!-- Section 1 -->
-    <h5 class="secondary-title full-width">{{ t('labels.stamped_customs_declaration') }}</h5>
-    <InputsFormInput v-model="s1_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s1_nameAr"/>
-    <InputsFormInput v-model="s1_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s1_nameEn"/>
-    <InputsFormInput v-model="s1_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s1_licenseNumber"/>
-    <InputsDatePicker v-model="s1_startDate" :label="t('labels.start_date')" :error="errors.s1_startDate"/>
-    <InputsDatePicker v-model="s1_endDate" :label="t('labels.end_date')" :error="errors.s1_endDate"/>
-    <InputsDatePicker v-model="s1_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s1_licenseExpiry"/>
-    <div class="full-width">
-      <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s1_files = $event" />
+  <div class="documents-wrapper flex-column gap-md">
+    <!-- Loop through all document types -->
+    <div v-for="(doc, index) in officialDocsList" :key="doc.document_type" class="grid grid-3 gap-md">
+      
+      <!-- Section Title -->
+      <h5 class="secondary-title full-width">{{ doc.labelAr }} / {{ doc.labelEn }}</h5>
+      
+      <InputsFormInput v-model="doc.nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" />
+      <InputsFormInput v-model="doc.nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" />
+      <InputsFormInput v-model="doc.license_number" :label="t('labels.license_number')" type="text" :placeholder="t('placeholders.license_number')" />
+      
+      <InputsDatePicker v-model="doc.start_date" :label="t('labels.start_date')" />
+      <InputsDatePicker v-model="doc.end_date" :label="t('labels.end_date')" />
+      <InputsDatePicker v-model="doc.license_expiry" :label="t('labels.license_expiry')" />
+      
+      <div class="full-width">
+        <InputsFileUploader accept=".pdf,.xml,.doc,.docx,.png,.jpg,.jpeg" accept-label="PDF , XML , Word , Images" @update:files="doc.file = $event" />
+      </div>
     </div>
 
-    <!-- Section 2 -->
-    <h5 class="secondary-title full-width">{{ t('labels.import_license') }}</h5>
-    <InputsFormInput v-model="s2_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s2_nameAr"/>
-    <InputsFormInput v-model="s2_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s2_nameEn" />
-    <InputsFormInput v-model="s2_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s2_licenseNumber"/>
-    <InputsDatePicker v-model="s2_startDate" :label="t('labels.start_date')" :error="errors.s2_startDate"/>
-    <InputsDatePicker v-model="s2_endDate" :label="t('labels.end_date')" :error="errors.s2_endDate"/>
-    <InputsDatePicker v-model="s2_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s2_licenseExpiry"/>
-    <div class="full-width">
-      <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s2_files = $event" />
+    <!-- Agreement -->
+    <div class="mt-3">
+        <InputsApprove id="agree-terms" v-model="agreed" :label="t('labels.agree_to_terms')" :error="agreedError" />
     </div>
-
-    <!-- Section 3 -->
-    <h5 class="secondary-title full-width">{{ t('labels.approved_agency_registration') }}</h5>
-    <InputsFormInput v-model="s3_nameAr" :label="t('labels.name_ar')" :placeholder="t('placeholders.name_ar')" :error="errors.s3_nameAr"/>
-    <InputsFormInput v-model="s3_nameEn" :label="t('labels.name_en')" :placeholder="t('placeholders.name_en')" :error="errors.s3_nameEn"/>
-    <InputsFormInput v-model="s3_licenseNumber" :label="t('labels.license_number')" type="number" :placeholder="t('placeholders.license_number')" :error="errors.s3_licenseNumber"/>
-    <InputsDatePicker v-model="s3_startDate" :label="t('labels.start_date')" :error="errors.s3_startDate" />
-    <InputsDatePicker v-model="s3_endDate" :label="t('labels.end_date')" :error="errors.s3_endDate" />
-    <InputsDatePicker v-model="s3_licenseExpiry" :label="t('labels.license_expiry')" :error="errors.s3_licenseExpiry" />
-    <div class="full-width">
-      <InputsFileUploader accept=".pdf,.xml,.doc,.docx" accept-label="PDF , XML , Word" @update:files="s3_files = $event" />
-    </div>
-
-    <InputsApprove v-model="agreed" :label="t('labels.agree_to_terms')" :error="errors.agreed" />
   </div>
 </template>
 
 <script setup>
-import { useForm, useField } from 'vee-validate'
-import * as yup from 'yup'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAppToast } from '#imports'
 
 const { t } = useI18n()
+const { error: toastError } = useAppToast()
 
-const s1_files = ref([])
-const s2_files = ref([])
-const s3_files = ref([])
-
-const schema = yup.object({
-  s1_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
-  s1_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
-  s1_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
-  s1_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
-  s1_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
-  s1_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
-
-  s2_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
-  s2_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
-  s2_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
-  s2_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
-  s2_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
-  s2_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
-
-  s3_nameAr: yup.string().required(t('errors.isRequired', { name: t('labels.name_ar') })),
-  s3_nameEn: yup.string().required(t('errors.isRequired', { name: t('labels.name_en') })),
-  s3_licenseNumber: yup.string().required(t('errors.isRequired', { name: t('labels.license_number') })),
-  s3_startDate: yup.string().required(t('errors.isRequired', { name: t('labels.start_date') })),
-  s3_endDate: yup.string().required(t('errors.isRequired', { name: t('labels.end_date') })),
-  s3_licenseExpiry: yup.string().required(t('errors.isRequired', { name: t('labels.license_expiry') })),
-  
-  agreed: yup.boolean().oneOf([true], t('validation.agree_to_terms_required')),
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: () => ({})
+  }
 })
 
-const { errors, validate } = useForm({
-  validationSchema: schema,
-})
+// We define the 12 enums with their default translations so if the user sends them they have the right info
+const documentEnums = [
+  { type: 'CUSTOM_DECLARATION', ar: 'تصريح جمركي', en: 'Custom Declaration' },
+  { type: 'IMPORT_LICENSE', ar: 'رخصة استيراد', en: 'Import License' },
+  { type: 'AGENCY_REGISTRATION', ar: 'تسجيل وكالة', en: 'Agency Registration' },
+  { type: 'TRADEMARK_LOGO', ar: 'شعار تجاري', en: 'Trademark Logo' },
+  { type: 'IMPORTED_FOOD_CERTIFICATE', ar: 'شهادة استيراد أغذية', en: 'Imported Food Certificate' },
+  { type: 'UNION_CIRCULAR', ar: 'تعميم الاتحاد', en: 'Union Circular' },
+  { type: 'SIGNATURE_APPROVAL', ar: 'اعتماد توقيع', en: 'Signature Approval' },
+  { type: 'COMMERCIAL_LICENSE_COPY', ar: 'نسخة رخصة تجارية', en: 'Commercial License Copy' },
+  { type: 'CHAMBER_CERTIFICATE', ar: 'شهادة الغرفة', en: 'Chamber Certificate' },
+  { type: 'MUNICIPALITY_HEALTH_CERTIFICATE', ar: 'شهادة صحية بلدية', en: 'Municipality Health Certificate' },
+  { type: 'INDUSTRIAL_AUTHORITY_CERTIFICATE', ar: 'شهادة الهيئة العامة للصناعة', en: 'Industrial Authority Certificate' },
+  { type: 'INDUSTRIAL_FACILITY_CERTIFICATE', ar: 'شهادة منشأة صناعية', en: 'Industrial Facility Certificate' },
+]
 
-const { value: s1_nameAr } = useField('s1_nameAr')
-const { value: s1_nameEn } = useField('s1_nameEn')
-const { value: s1_licenseNumber } = useField('s1_licenseNumber')
-const { value: s1_startDate } = useField('s1_startDate')
-const { value: s1_endDate } = useField('s1_endDate')
-const { value: s1_licenseExpiry } = useField('s1_licenseExpiry')
+const officialDocsList = ref(documentEnums.map(doc => {
+  const existing = props.initialData?.documents?.find(d => d.document_type === doc.type) || {}
+  return {
+    document_type: doc.type,
+    labelAr: doc.ar,
+    labelEn: doc.en,
+    nameAr: existing.name?.ar || doc.ar,
+    nameEn: existing.name?.en || doc.en,
+    license_number: existing.license_number || '',
+    start_date: existing.start_date || '',
+    end_date: existing.end_date || '',
+    license_expiry: existing.license_expiry || '',
+    file: existing.file ? [existing.file] : []
+  }
+}))
 
-const { value: s2_nameAr } = useField('s2_nameAr')
-const { value: s2_nameEn } = useField('s2_nameEn')
-const { value: s2_licenseNumber } = useField('s2_licenseNumber')
-const { value: s2_startDate } = useField('s2_startDate')
-const { value: s2_endDate } = useField('s2_endDate')
-const { value: s2_licenseExpiry } = useField('s2_licenseExpiry')
+const agreed = ref(props.initialData?.agreed || false)
+const agreedError = ref('')
 
-const { value: s3_nameAr } = useField('s3_nameAr')
-const { value: s3_nameEn } = useField('s3_nameEn')
-const { value: s3_licenseNumber } = useField('s3_licenseNumber')
-const { value: s3_startDate } = useField('s3_startDate')
-const { value: s3_endDate } = useField('s3_endDate')
-const { value: s3_licenseExpiry } = useField('s3_licenseExpiry')
+const emit = defineEmits(['update:valid'])
 
-const { value: agreed } = useField('agreed')
+watch(agreed, (newVal) => {
+  emit('update:valid', newVal)
+}, { immediate: true })
 
 defineExpose({
   validate: async () => {
-    const { valid } = await validate()
-    return valid
+    agreedError.value = ''
+    if (!agreed.value) {
+      agreedError.value = t('validation.agree_to_terms_required')
+      toastError(t('validation.agree_to_terms_required'))
+      return false
+    }
+    return true
+  },
+  getValues: () => {
+    // Only return documents that have a file uploaded or minimal info filled out
+    const validDocs = officialDocsList.value.filter(d => (d.file && d.file.length > 0) || d.license_number)
+    
+    // Fallback: If they expect ALL 12 empty ones to be passed for some reason, we can drop the filter.
+    // But usually APIs don't want 12 empty files.
+
+    return {
+      documents: validDocs.map(d => ({
+        document_type: d.document_type,
+        name: {
+          ar: d.nameAr,
+          en: d.nameEn
+        },
+        license_number: d.license_number,
+        start_date: d.start_date,
+        end_date: d.end_date,
+        license_expiry: d.license_expiry,
+        file: d.file[0] // Extract file out of array
+      })),
+      agreed: agreed.value
+    }
   }
 })
 </script>
@@ -116,7 +122,8 @@ defineExpose({
 .secondary-title {
   font-size: 16px;
   padding: 10px;
-  background-color: var(--light-gray);
+  background-color: var(--light-primary-color);
   border-radius: var(--radius-sm);
+  margin-bottom: 8px;
 }
 </style>

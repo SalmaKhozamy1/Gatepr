@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ClientOnly> 
     <Teleport to="#search-teleport-target">
       <SearchBar
         :placeholder="t('placeholders.search')"
@@ -9,6 +10,7 @@
         @reset="resetFilters"
       />
     </Teleport>
+    </ClientOnly> 
 
     <TablesAppTable
       :headers="headers"

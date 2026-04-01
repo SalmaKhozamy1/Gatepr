@@ -3,6 +3,7 @@
     :hasAside="false"
     :formTitle="t('activity_logs.title')"
   >
+   <ClientOnly>
     <template #search>
       <SearchBar
         :filters="searchFilters"
@@ -12,7 +13,8 @@
         @reset="resetFilters"
       />
     </template>
-
+   </ClientOnly>
+   
     <template #main>
       <TablesAppTable
         :headers="headers"

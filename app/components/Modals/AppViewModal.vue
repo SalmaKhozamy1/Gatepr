@@ -30,7 +30,12 @@
               :class="{ 'full-col': field.fullWidth }"
             >
               <span class="field-label">{{ field.label }}</span>
-              <span class="field-value">{{ getValue(field.key) ?? '—' }}</span>
+              <div v-if="resolveValue(field.key).type === 'list'" class="value-list">
+                <span v-for="(item, idx) in resolveValue(field.key).value" :key="idx" class="list-item">
+                  {{ item }}
+                </span>
+              </div>
+              <span v-else class="field-value">{{ resolveValue(field.key).value }}</span>
             </div>
           </div>
         </div>
@@ -44,7 +49,12 @@
           class="flex-between gap-md w-100 item_details"
         >
           <p>{{ field.label }}</p>
-          <h5>{{ getValue(field.key) ?? '—' }}</h5>
+          <div v-if="resolveValue(field.key).type === 'list'" class="value-list">
+            <h5 v-for="(item, idx) in resolveValue(field.key).value" :key="idx" class="list-item m-0">
+              {{ item }}
+            </h5>
+          </div>
+          <h5 v-else-if="resolveValue(field.key).type === 'text'">{{ resolveValue(field.key).value }}</h5>
         </div>
       </template>
 
@@ -72,32 +82,44 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const { locale } = useI18n()
 
-// Resolves dot-path from data; if final value is a locale object {ar, en}, picks current locale
-const getValue = (key) => {
+const resolveValue = (key) => {
   const val = key.split('.').reduce((o, i) => o?.[i], props.data)
 
   // 1. Array handling (e.g. user.branches)
   if (Array.isArray(val)) {
-    if (val.length === 0) return '—'
-    return val.map(item => {
+    if (val.length === 0) return { type: 'text', value: '—' }
+    const items = val.map(item => {
       if (typeof item === 'object') {
-        const name = item.name_localized || item.name || item.LocalizedName || item.title
-        if (typeof name === 'object') return name[locale.value] || name.ar || name.en
+        const name = item.LocalizedName || item.name_localized || item.name || item.title
+        if (name && typeof name === 'object') return name[locale.value] || name.ar || name.en
         return name
       }
       return item
-    }).join(', ')
+    })
+    return { type: 'list', value: items }
   }
 
   // 2. Locale object handling {ar, en}
   if (val && typeof val === 'object' && ('ar' in val || 'en' in val)) {
-     return val[locale.value] ?? val.ar ?? val.en ?? '—'
+     return { type: 'text', value: val[locale.value] ?? val.ar ?? val.en ?? '—' }
   }
 
-  return val ?? '—'
+  return { type: 'text', value: val ?? '—' }
 }
 </script>
 
 <style scoped>
+.view-field, .item_details {
+  align-items: flex-start !important;
+}
 
+.value-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: end;
+}
+.list-item {
+  display: block;
+}
 </style>

@@ -93,6 +93,10 @@ const getIndex = (i) => (props.currentPage - 1) * props.perPage + i + 1
   font-weight: 400;
 }
 
+.custom-table tr {
+  vertical-align: top;
+}
+
 .custom-table tbody :deep(tr:not(:last-child) td),
 .custom-table tbody :deep(tr:not(:last-child) th) {
   border-bottom: 1px solid #E9EAEB;

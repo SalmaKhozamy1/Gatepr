@@ -47,6 +47,7 @@
     </TablesAppTable>
   </div>
 
+
   <!-- View Modal -->
   <ModalsAppViewModal
     v-model="showViewModal"
@@ -88,17 +89,20 @@
   data-bs-backdrop="static"
   data-bs-keyboard="false"
   @confirm="handleDeleteConfirm"
-/>
+    />
+
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsGovernorates } from '#components' 
 
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n() 
@@ -199,6 +203,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
       method: 'POST',
       body: data
     })
+    success(t('messages.added_successfully', { item: t('settings.add_governorate') }))
     close()
     fetchGovernorates()
   } catch (err) {
@@ -208,6 +213,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -227,6 +234,7 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
       method: 'PUT',
       body: data
     })
+    success(t('messages.updated_successfully', { item: t('settings.add_governorate') }))
     close()
     fetchGovernorates()
   } catch (err) {
@@ -236,6 +244,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -253,9 +263,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     await api(`/v1/admin/governorates/${selectedDeleteGovernorate.value.id}`, {
       method: 'DELETE'
     })
+    success(t('messages.deleted_successfully', { item: t('settings.add_governorate') }))
     close()             // ✅ هنا بعد نجاح الـ request
     fetchGovernorates() // ✅ refresh الـ table
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting governorate:', err)
   } finally {
     setLoading(false)

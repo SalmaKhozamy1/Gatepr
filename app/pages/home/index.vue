@@ -1,8 +1,13 @@
 <template>
   <div class="home-page d-flex flex-column gap-4">
+    <!-- Welcome Header -->
+    <!-- <div class="welcome-header d-flex flex-column gap-1" v-if="dashboard?.admin_info">
+       <h1 class="m-0 fw-bold">{{ t('labels.welcome') }}, {{ dashboard.admin_info.name }}</h1>
+       <p class="text-secondary m-0">{{ dashboard.admin_info.date }}</p>
+    </div> -->
 
     <!-- ========== SUPPLIER VIEW ========== -->
-    <template v-if="isSupplier">
+    <template v-if="isSupplier && dashboard">
 
       <!-- Quick Actions -->
       <CardsCustomCard :title="t('home.quick_actions')">
@@ -25,7 +30,7 @@
 
         <div class="grid grid-3">
           <CardsStatisticsCard
-            :CardNo="dashboard?.pending_items?.count"
+            :CardNo="dashboard?.items_count?.pending?.count"
             IconBg="#F0BA3E"
             :title="t('home.Number_of_pending_items')"
             :loading="loading"
@@ -34,7 +39,7 @@
           </CardsStatisticsCard>
 
           <CardsStatisticsCard
-            :CardNo="dashboard?.accepted_items?.count"
+            :CardNo="dashboard?.items_count?.accepted?.count"
             IconBg="#02C697"
             :title="t('home.Number_of_accepted_items')"
             :loading="loading"
@@ -43,7 +48,7 @@
           </CardsStatisticsCard>
 
           <CardsStatisticsCard
-            :CardNo="dashboard?.rejected_items?.count"
+            :CardNo="dashboard?.items_count?.rejected?.count"
             IconBg="#F3616A"
             :title="t('home.Number_of_rejected_items')"
             :loading="loading"
@@ -72,6 +77,7 @@
           <template #body>
             <tr v-for="(item, index) in recentItems" :key="index">
               <th class="index-cell">{{ index + 1 }}</th>
+              <td>{{ item.LocalizedName || item.name?.[locale] || item.name?.ar }}</td>
               <td>{{ item.code || '—' }}</td>
               <td>{{ item.accepted_at || '—' }}</td>
               <td class="actions-cell">
@@ -87,7 +93,7 @@
     </template>
 
     <!-- ========== ADMIN VIEW ========== -->
-    <template v-else>
+    <template v-else-if="role === 'admin' && dashboard">
 
       <CardsCustomCard :title="t('home.overview')">
         <div class="grid grid-3">
@@ -149,6 +155,12 @@
 
     </template>
 
+    <!-- ========== LOADING / FALLBACK ========== -->
+    <div v-else class="flex-center" style="min-height: 400px;">
+       <span v-if="loading" class="spinner-border text-primary"></span>
+       <p v-else-if="!dashboard">{{ t('common.loading') }}</p>
+    </div>
+
   </div>
 </template>
 
@@ -188,6 +200,7 @@ const periodOptions = [
 ============================== */
 const supplierTableHeaders = computed(() => [
   { label: '#',                         class: 'index-cell'   },
+  { label: t('items.name'),             class: ''             },
   { label: t('common.item_number'),     class: ''             },
   { label: t('common.acceptance_date'), class: ''             },
   { label: t('common.actions'),         class: 'actions-cell' },
@@ -200,15 +213,15 @@ const fetchDashboard = async () => {
   try {
     loading.value = true
     const endpoint = isSupplier.value
-      ? '/v1/supplier/dashboard' 
+      ? '/dashboard' 
       : '/v1/admin/dashboard'
 
     const res = await api(endpoint, { method: 'GET' })
     dashboard.value = res.data
 
-    // لو supplier نجيب أحدث الـ accepted items
+    // If supplier, map the provided structure
     if (isSupplier.value) {
-      recentItems.value = res.data?.recent_accepted_items || []
+      recentItems.value = res.data?.latest_items || []
     }
   } catch (err) {
     console.error('Dashboard error:', err)

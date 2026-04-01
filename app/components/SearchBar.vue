@@ -77,6 +77,10 @@ watchEffect(() => {
   })
 })
 
+const handleFilter = (payload) => {
+  emit('filter', payload)
+}
+
 const handleReset = () => {
   searchQuery.value = ''
   props.filters.forEach(f => { filterValues[f.key] = null })

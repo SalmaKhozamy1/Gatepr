@@ -21,7 +21,7 @@
     "deleting": "جاري الحذف...",
     "somethingWentWrong": "حدث خطأ ما",
     "no_results_found": "لا يوجد نتائج",
-    "no_options": "لا توجد خيارات",
+    "no_options": "لم يتم اختيار عنصر",
     "selected_items": "{0} عناصر محددة",
     "active": "مفعّل",
     "inactive": "غير مفعّل",
@@ -73,7 +73,7 @@
     "from_date": "من تاريخ",
     "to_date": "إلى تاريخ",
     "event_type": "نوع الحدث",
-    "company_name_ar": "اسم المنشأة بالعربي",
+    "company_name_ar": "اسم المنشأة باللغة العربية",
     "company_name_en": "اسم المنشأة باللغة الإنجليزية",
     "license_start": "تاريخ بداية الرخصة",
     "license_number": "رقم الرخصة",
@@ -152,7 +152,7 @@
     "sent_to": "إلى",
     "company_data": "بيانات المنشأة",
     "responsible_data": "بيانات المسؤول",
-    "official_documents": "الأوراق الرسمية"
+    "official_documents": "المستندات الرسمية"
   },
   "validation": {
     "email_required": "البريد الإلكتروني مطلوب",
@@ -178,7 +178,7 @@
     "role": "اختر الدور",
     "branch": "اختر الفرع",
     "code": "أدخل الكود",
-    "company_name_ar": "أدخل اسم المنشأة بالعربي",
+    "company_name_ar": "أدخل اسم المنشأة باللغة العربية",
     "company_name_en": "أدخل اسم المنشأة باللغة الانجليزية",
     "license_number": "أدخل رقم الرخصة",
     "supplier_deputy": "أدخل اسم نائب المورد",

@@ -69,6 +69,7 @@
 <script setup>
 import { ref, onMounted, inject, onBeforeUnmount, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { useAppToast } from '~/composables/useAppToast'
 
 import { useSearchFilter } from '~/composables/useSearchFilter'
 
@@ -130,17 +131,21 @@ const handleDelete = (role) => {
   showDeleteModal.value = true
 }
 
+const { success, error: toastError } = useAppToast()
+
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   if (!selectedRole.value) return
   try {
     setLoading(true)
     await api(`/v1/admin/roles/${selectedRole.value.id}`, { method: 'DELETE' })
+    success(t('messages.deleted_successfully', { item: t('labels.role') }))
     close()
     if (rolesNum.value.length === 1 && currentPage.value > 1) {
       currentPage.value--
     }
     fetchRoles()
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting role:', err)
   } finally {
     setLoading(false)

@@ -46,56 +46,58 @@
     </TablesAppTable>
   </div>
 
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('settings.add_supplier_type')"
-    :data="selectedType"
-    :fields="typeViewFields"
-    :icon="IconsSuppliers"
-  />
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('common.view') + ' ' + t('settings.add_supplier_type')"
+      :data="selectedType"
+      :fields="typeViewFields"
+      :icon="IconsSuppliers"
+    />
 
-  <ModalsAppAddModal
-    v-model="showAddModal"
-    :title="t('common.add') + ' ' + t('settings.add_supplier_type')"
-    :icon="IconsSuppliers"
-    :fields="typeFormFields"    
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleAddSubmit"
-  />
+    <ModalsAppAddModal
+      v-model="showAddModal"
+      :title="t('common.add') + ' ' + t('settings.add_supplier_type')"
+      :icon="IconsSuppliers"
+      :fields="typeFormFields"    
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleAddSubmit"
+    />
 
-  <ModalsAppEditModal
-    v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('settings.add_supplier_type')"
-    :icon="IconsSuppliers"
-    :fields="typeFormFields"
-    :initial-data="selectedEditType"
-        data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleEditSubmit"
-  />
+    <ModalsAppEditModal
+      v-model="showEditModal"
+      :title="t('common.edit') + ' ' + t('settings.add_supplier_type')"
+      :icon="IconsSuppliers"
+      :fields="typeFormFields"
+      :initial-data="selectedEditType"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleEditSubmit"
+    />
 
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('common.delete') + ' ' + t('settings.add_supplier_type')"
-    :itemType="t('settings.add_supplier_type')"
-    :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @confirm="handleDeleteConfirm"
-  />
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('common.delete') + ' ' + t('settings.add_supplier_type')"
+      :itemType="t('settings.add_supplier_type')"
+      :itemName="selectedDeleteType?.name?.[locale] || selectedDeleteType?.name?.ar"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @confirm="handleDeleteConfirm"
+    />
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsSuppliers } from '#components'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -194,6 +196,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
       method: 'POST',
       body: data
     })
+    success(t('messages.added_successfully', { item: t('settings.add_supplier_type') }))
     close()
     fetchSupplierTypes()
   } catch (err) {
@@ -203,6 +206,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -221,6 +226,7 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
       method: 'PUT',
       body: data
     })
+    success(t('messages.updated_successfully', { item: t('settings.add_supplier_type') }))
     close()
     fetchSupplierTypes()
   } catch (err) {
@@ -230,6 +236,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -247,10 +255,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     await api(`/v1/admin/supplier-types/${selectedDeleteType.value.id}`, {
       method: 'DELETE'
     })
+    success(t('messages.deleted_successfully', { item: t('settings.add_supplier_type') }))
     close()
     fetchSupplierTypes()
   } catch (err) {
-    console.error('Error deleting supplier type:', err)
+    toastError(err?.data?.message || t('common.somethingWentWrong'))    
   } finally {
     setLoading(false)
   }

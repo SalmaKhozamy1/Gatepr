@@ -79,6 +79,7 @@ const normalizedOptions = computed(() => {
 /* dropdown icon */
 :deep(.p-select-dropdown) {
   color: var(--placeholder, #9ca3af);
+  padding-inline-start: 5px;
 }
 
 /* invalid */

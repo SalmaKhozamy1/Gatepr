@@ -3,6 +3,7 @@
     :hasAside="false"
     :formTitle="t('settings.record') + ' ' + t('menu.branches')"
   >
+   <ClientOnly>
     <template #search>
       <SearchBar
         :placeholder="t('common.search')"
@@ -12,6 +13,7 @@
         @reset="resetFilters"
       />
     </template>
+   </ClientOnly>
 
     <template #header-actions>
       <button
@@ -64,44 +66,46 @@
     </template>
   </PageLayout>
 
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('common.view') + ' ' + t('settings.add_branch')"
-    :data="selectedBranch"
-    :fields="branchViewFields"
-    :icon="IconsBranches"
-  />
+  <ClientOnly>
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('common.view') + ' ' + t('settings.add_branch')"
+      :data="selectedBranch"
+      :fields="branchViewFields"
+      :icon="IconsBranches"
+    />
 
-  <ModalsAppAddModal
-    v-model="showAddModal"
-    :title="t('settings.add') + ' ' + t('settings.add_branch')"
-    :icon="IconsBranches"
-    :fields="branchFormFields"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleAddSubmit"
-  />
+    <ModalsAppAddModal
+      v-model="showAddModal"
+      :title="t('settings.add') + ' ' + t('settings.add_branch')"
+      :icon="IconsBranches"
+      :fields="branchFormFields"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleAddSubmit"
+    />
 
-  <ModalsAppEditModal
-    v-model="showEditModal"
-    :title="t('common.edit') + ' ' + t('settings.add_branch')"
-    :icon="IconsBranches"
-    :fields="branchFormFields"
-    :initial-data="selectedEditBranch"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @submit="handleEditSubmit"
-  />
+    <ModalsAppEditModal
+      v-model="showEditModal"
+      :title="t('common.edit') + ' ' + t('settings.add_branch')"
+      :icon="IconsBranches"
+      :fields="branchFormFields"
+      :initial-data="selectedEditBranch"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @submit="handleEditSubmit"
+    />
 
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('buttons.delete') + ' ' + t('settings.add_branch')"
-    :itemType="t('settings.add_branch')"
-    :itemName="selectedDeleteBranch?.name?.[locale] || selectedDeleteBranch?.name?.ar"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    @confirm="handleDeleteConfirm"
-  />
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('buttons.delete') + ' ' + t('settings.add_branch')"
+      :itemType="t('settings.add_branch')"
+      :itemName="selectedDeleteBranch?.name?.[locale] || selectedDeleteBranch?.name?.ar"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      @confirm="handleDeleteConfirm"
+    />
+  </ClientOnly>
 </template>
 
 <script setup>
@@ -111,6 +115,7 @@ usePageMeta('menu.branches')
 import { ref, computed, onMounted, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
+import { useAppToast } from '~/composables/useAppToast'
 import { IconsBranches } from '#components'
 import { useI18n } from 'vue-i18n'
 
@@ -119,6 +124,7 @@ import { useSearchFilter } from '~/composables/useSearchFilter'
 const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -296,6 +302,7 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
       method: 'POST',
       body: data
     })
+    success(t('messages.added_successfully', { item: t('settings.add_branch') }))
     close()
     fetchBranches()
   } catch (err) {
@@ -305,6 +312,8 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -312,7 +321,12 @@ const handleAddSubmit = async ({ data, setErrors, setLoading, close }) => {
 }
 
 const handleEdit = (branch) => {
-  selectedEditBranch.value = branch
+  const data = { ...branch }
+  // ✅ Map IDs from nested objects for selects
+  if (!data.governorate_id && data.governorate?.id) data.governorate_id = data.governorate.id
+  if (!data.area_id && data.area?.id) data.area_id = data.area.id
+  
+  selectedEditBranch.value = data
   showEditModal.value = true
 }
 
@@ -326,6 +340,7 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         branch_id: selectedEditBranch.value.id
       }
     })
+    success(t('messages.updated_successfully', { item: t('settings.add_branch') }))
     close()
     fetchBranches()
   } catch (err) {
@@ -335,6 +350,8 @@ const handleEditSubmit = async ({ data, setErrors, setLoading, close }) => {
         apiErrors[key] = messages[0]
       })
       setErrors(apiErrors)
+    } else {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
     }
   } finally {
     setLoading(false)
@@ -352,9 +369,11 @@ const handleDeleteConfirm = async ({ setLoading, close }) => {
     await api(`/v1/admin/branches/${selectedDeleteBranch.value.id}`, {
       method: 'DELETE'
     })
+    success(t('messages.deleted_successfully', { item: t('settings.add_branch') }))
     close()
     fetchBranches()
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting branch:', err)
   } finally {
     setLoading(false)

@@ -3,7 +3,7 @@
       <div class="container">
          <div class="flex-between gap-lg position-relative top-header">
             <img class="main_logo" src="@/assets/images/login_logo.svg" alt="Gatepro_logo">
-            <div class="header-actions flex-start gap-sm">
+            <div v-if="!isPublicPage" class="header-actions flex-start gap-sm align-items-stretch">
                <HeaderSearch />
                <HeaderItem class="lang" :badge="locale === 'ar' ? 'ع' : 'E'" @click="toggleLocale">
                   <IconsLang />
@@ -11,21 +11,36 @@
                <HeaderItem badge="2">
                   <IconsNotification />
                </HeaderItem>
+               <InputsFormSelect 
+                  v-if="role === 'supplier'" 
+                  v-model="selectedBranch" 
+                  :options="branchOptions" 
+                  class="header_Select"
+               />
                <HeaderItem
                   :name="adminName"
                   :role="role"
                   :avatar="userAvatar"
                   @open-change-password="showChangePassword = true"
                />
+
             </div>
          </div>
 
          <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="user_info">
-               <h3 class="title nowrap mb-2">{{ $t('labels.welcome') }}, {{ adminName }}</h3>
-               <p class="nowrap">{{ currentDate }}</p>
+               <h3 class="title nowrap mb-2">
+                 <template v-if="isPublicPage">
+                   {{ $t('buttons.signUp') }}
+                 </template>
+                 <template v-else>
+                   {{ $t('labels.welcome') }}, {{ adminName }}
+                 </template>
+               </h3>
+               <p v-if="!isPublicPage" class="nowrap">{{ currentDate }}</p>
             </div>
             <button
+               v-if="!isPublicPage"
                class="navbar-toggler"
                type="button"
                @click="isMenuOpen = !isMenuOpen"
@@ -36,6 +51,7 @@
                <span class="navbar-toggler-icon"></span>
             </button>
             <div
+               v-if="!isPublicPage"
                class="collapse navbar-collapse flex-end"
                :class="{ 'show': isMenuOpen }"
                id="navbarSupportedContent"
@@ -103,6 +119,10 @@ const resetCode = ref('')
 const resetToken = ref('')
 const route = useRoute()
 const role = useCookie('role')
+
+const isPublicPage = computed(() => {
+  return route.path.includes('/register')
+})
 
 /* =============================
    USER INFO
@@ -211,6 +231,45 @@ const openResetPassword = (data) => {
    resetToken.value = data.token || ''
    showResetPasswordModal.value = true
 }
+
+/* =============================
+   BRANCHES (Supplier)
+ ============================== */
+const api = useApi()
+const branchesCount = ref(0)
+const branchesRaw = ref([])
+const branchOptions = ref([])
+const selectedBranch = useCookie('selected_branch')
+
+const fetchBranches = async () => {
+    if (role.value !== 'supplier') return
+    try {
+        const res = await api('/branches')
+        branchesRaw.value = res.data || []
+        branchOptions.value = branchesRaw.value.map(b => ({
+            label: b.LocalizedName || b.name?.[locale.value] || b.name?.ar || b.name,
+            value: b.id
+        }))
+        
+        // Default selection if empty
+        if (!selectedBranch.value && branchOptions.value.length) {
+            selectedBranch.value = branchOptions.value[0].value
+        }
+    } catch (err) {
+        console.error('Error fetching branches in header:', err)
+    }
+}
+
+watch(locale, () => {
+    if (role.value === 'supplier') {
+        branchOptions.value = branchesRaw.value.map(b => ({
+            label: b.LocalizedName || b.name?.[locale.value] || b.name?.ar || b.name,
+            value: b.id
+        }))
+    }
+})
+
+onMounted(() => fetchBranches())
 </script>
 
 <style scoped>
@@ -252,6 +311,16 @@ const openResetPassword = (data) => {
 }
 .router-link-active > .header-box{
    background-color: var(--secondary-color);
+}
+
+.header_Select :deep(.p-select) {
+   min-width: min-content !important;
+   border-radius: var(--radius-sm) !important;
+   border: 1px solid rgba(255, 255, 255, 0.05) !important;
+   background-color: rgba(249, 249, 250, 0.05) !important;
+   backdrop-filter: blur(16.350000381469727px) !important;
+   height: 100%;
+   align-items: center;
 }
 </style>
 

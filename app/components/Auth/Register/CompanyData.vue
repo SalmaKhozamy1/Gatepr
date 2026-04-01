@@ -6,12 +6,14 @@
           :label="t('labels.company_name_ar')" 
           :placeholder="t('placeholders.company_name_ar')" 
           :error="errors.nameAr"
+          class="required"
         />
         <InputsFormInput 
           v-model="nameEn" 
           :label="t('labels.company_name_en')" 
           :placeholder="t('placeholders.company_name_en')" 
           :error="errors.nameEn"
+          class="required"
         />
         <InputsDatePicker 
           v-model="licenseStart" 
@@ -98,6 +100,15 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: () => ({})
+  }
+})
+
+const emit = defineEmits(['update:valid'])
+
 const generalIndustryFiles = ref([])
 const facilityFiles = ref([])
 
@@ -114,9 +125,25 @@ const schema = yup.object({
   password: yup.string().required(t('validation.password_required')).min(6, t('validation.password_min')),
 })
 
-const { errors, validate } = useForm({
+const { errors, validate, meta } = useForm({
   validationSchema: schema,
+  initialValues: {
+    nameAr: props.initialData?.['name[ar]'] || '',
+    nameEn: props.initialData?.['name[en]'] || '',
+    licenseStart: props.initialData?.['license_start_date'] || '',
+    licenseNumber: props.initialData?.['commercial_register'] || '',
+    supplierDeputy: props.initialData?.['deputy_manager_name'] || '',
+    licenseEnd: props.initialData?.['license_end_date'] || '',
+    supplierType: props.initialData?.['supplier_type_id'] === 1 ? 'Type 1' : '', // Map back if possible
+    healthLicenseEnd: props.initialData?.['health_license_expiry'] || '',
+    industrialLicenseEnd: props.initialData?.['industrial_license_expiry'] || '',
+    password: props.initialData?.['password'] || '',
+  }
 })
+
+watch(() => meta.value.valid, (newVal) => {
+  emit('update:valid', newVal)
+}, { immediate: true })
 
 const { value: nameAr } = useField('nameAr')
 const { value: nameEn } = useField('nameEn')
@@ -133,6 +160,22 @@ defineExpose({
   validate: async () => {
     const { valid } = await validate()
     return valid
+  },
+  getValues: () => {
+    return {
+      nameAr: nameAr.value,
+      nameEn: nameEn.value,
+      commercial_register: licenseNumber.value,
+      license_start_date: licenseStart.value,
+      license_end_date: licenseEnd.value,
+      health_license_expiry: healthLicenseEnd.value,
+      industrial_license_expiry: industrialLicenseEnd.value,
+      deputy_manager_name: supplierDeputy.value,
+      password: password.value,
+      supplier_type_id: 1, // default or map from supplierType.value
+      general_industry_certificate: generalIndustryFiles.value?.[0], 
+      industrial_establishment_certificate: facilityFiles.value?.[0]
+    }
   }
 })
 </script>

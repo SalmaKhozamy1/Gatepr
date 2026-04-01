@@ -4,6 +4,7 @@
     :formTitle="t('items.add_form.title_list')"
   >
     <!-- Search / Filter -->
+    <ClientOnly> 
     <template #search>
       <SearchBar
         placeholder="بحث .."
@@ -13,6 +14,7 @@
         @reset="resetFilters"
       />
     </template>
+    </ClientOnly>
 
     <!-- Header Actions -->
     <template #header-actions>
@@ -101,29 +103,32 @@
     </template>
   </PageLayout>
 
-  <!-- View Modal -->
-  <ModalsAppViewModal
-    v-model="showViewModal"
-    :title="t('items.view_details')"
-    :data="selectedItem"
-    :sections="itemViewSections"
-    :icon="IconsTerms"
-  />
+  <!-- Modals Section -->
+  <ClientOnly>
+    <!-- View Modal -->
+    <ModalsAppViewModal
+      v-model="showViewModal"
+      :title="t('items.view_details')"
+      :data="selectedItem"
+      :sections="itemViewSections"
+      :icon="IconsTerms"
+    />
 
-  <!-- Delete Modal -->
-  <ModalsAppDeleteModal
-    v-model="showDeleteModal"
-    :title="t('items.delete') + ' ' + t('items.request')"
-    :itemType="t('menu.item')"
-    :itemName="selectedDeleteItem?.name?.[locale] || selectedDeleteItem?.LocalizedName"
-    @confirm="handleDeleteConfirm"
-  />
+    <!-- Delete Modal -->
+    <ModalsAppDeleteModal
+      v-model="showDeleteModal"
+      :title="t('items.delete') + ' ' + t('items.request')"
+      :itemType="t('menu.item')"
+      :itemName="selectedDeleteItem?.name?.[locale] || selectedDeleteItem?.LocalizedName"
+      @confirm="handleDeleteConfirm"
+    />
 
-  <!-- Import Modal -->
-  <ModalsAppExportModal
-    v-model="showImportModal"
-    @success="fetchItems"
-  />
+    <!-- Import Modal -->
+    <ModalsAppExportModal
+      v-model="showImportModal"
+      @success="fetchItems"
+    />
+  </ClientOnly>
 </template>
 
 <script setup>
@@ -141,7 +146,7 @@ const { t, locale } = useI18n()
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 const localePath = useLocalePath()
-const toast = useAppToast()
+const { success, error: toastError } = useAppToast()
 
 /* =============================
    STATE
@@ -360,12 +365,14 @@ const handleDelete = (item) => {
 const handleDeleteConfirm = async ({ setLoading, close }) => {
   try {
     setLoading(true)
-    const res = await api(`/items/${selectedDeleteItem.value.id}`, {
+    await api(`/items/${selectedDeleteItem.value.id}`, {
       method: 'DELETE'
     })
+    success(t('messages.deleted_successfully', { item: t('menu.item') }))
     close()
     fetchItems()
   } catch (err) {
+    toastError(err?.data?.message || t('common.somethingWentWrong'))
     console.error('Error deleting item:', err)
   } finally {
     setLoading(false)
