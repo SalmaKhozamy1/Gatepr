@@ -176,12 +176,6 @@ const submit = async () => {
 
         buildFormData(fd, payload);
 
-        // Debug: Log the final FormData keys and values
-        // console.log('Submitting Registration Payload...')
-        // for (const [key, value] of fd.entries()) {
-        //     console.log(`${key}:`, value);
-        // }
-
         await api('/v1/supplier/suppliers', {
             method: 'POST',
             body: fd

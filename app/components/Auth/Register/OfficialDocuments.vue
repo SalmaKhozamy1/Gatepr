@@ -41,7 +41,7 @@ const props = defineProps({
   }
 })
 
-// We define the 12 enums with their default translations so if the user sends them they have the right info
+// Define only the types confirmed from the user's collection to avoid validation issues with unknown types
 const documentEnums = [
   { type: 'CUSTOM_DECLARATION', ar: 'تصريح جمركي', en: 'Custom Declaration' },
   { type: 'IMPORT_LICENSE', ar: 'رخصة استيراد', en: 'Import License' },
@@ -93,24 +93,22 @@ defineExpose({
     return true
   },
   getValues: () => {
-    // Only return documents that have a file uploaded or minimal info filled out
-    const validDocs = officialDocsList.value.filter(d => (d.file && d.file.length > 0) || d.license_number)
+    // Only return documents that have a file uploaded
+    // Filter strictly to prevent sending empty document slots that trigger Laravel validation errors
+    const validDocs = officialDocsList.value.filter(d => d.file && d.file.length > 0)
     
-    // Fallback: If they expect ALL 12 empty ones to be passed for some reason, we can drop the filter.
-    // But usually APIs don't want 12 empty files.
-
     return {
       documents: validDocs.map(d => ({
         document_type: d.document_type,
         name: {
-          ar: d.nameAr,
-          en: d.nameEn
+          ar: d.nameAr || d.labelAr,
+          en: d.nameEn || d.labelEn
         },
-        license_number: d.license_number,
-        start_date: d.start_date,
-        end_date: d.end_date,
-        license_expiry: d.license_expiry,
-        file: d.file[0] // Extract file out of array
+        license_number: d.license_number || null,
+        start_date: d.start_date || null,
+        end_date: d.end_date || null,
+        license_expiry: d.license_expiry || null,
+        file: d.file[0]
       })),
       agreed: agreed.value
     }
