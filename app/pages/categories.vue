@@ -123,8 +123,8 @@ const handlePageAction = async (name) => {
 
 const settingsMenuItems = [
   { title: 'category_requests', icon: IconsTerms, path: '/categories/categories_required', addTitle: 'category' },
-  { title: 'accreditation', icon: IconsDependance, path: '/categories/accredited', addTitle: 'category' },
-  { title: 'approved_categories', icon: IconsApprovalCategory, path: '/categories/approved_items', addTitle: 'category' }
+  { title: 'accredited', icon: IconsDependance, path: '/categories/accredited', addTitle: 'category' },
+  { title: 'approved_items', icon: IconsApprovalCategory, path: '/categories/approved_items', addTitle: 'category' }
 ]
 
 const settingsMenu = computed(() => settingsMenuItems.map(item => ({

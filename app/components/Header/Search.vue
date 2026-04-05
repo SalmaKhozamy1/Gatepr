@@ -85,14 +85,14 @@ const allSearchableItems = computed(() => {
    if (role.value === 'supplier') {
       baseLinks = [
          { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
-         { title: 'إدارة الأصناف', icon: IconsCategories, path: localePath('/item-managment') },
+         { title: t('menu.items-management'), icon: IconsCategories, path: localePath('/item-managment') },
       ]
       subSettings = [
          { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
       ]
    } else {
       baseLinks = [
-         { title: t('menu.home'), icon: IconsHome, path: localePath('/') },
+         { title: t('menu.home'), icon: IconsHome, path: localePath('/home') },
          { title: t('menu.settings'), icon: IconsSettings, path: localePath('/settings') },
          { title: t('menu.branches'), icon: IconsBranches, path: localePath('/branches') },
          { title: t('menu.categories'), icon: IconsCategories, path: localePath('/categories') },
@@ -105,10 +105,10 @@ const allSearchableItems = computed(() => {
          { title: t('settings.areas'), icon: IconsSettings, path: localePath('/settings/areas') },
          { title: t('settings.users'), icon: IconsSettings, path: localePath('/settings/users') },
          { title: t('settings.roles'), icon: IconsSettings, path: localePath('/settings/roles') },
-         { title: t('settings.supplier_types'), icon: IconsSettings, path: localePath('/settings/supplier-types') },
+         { title: t('settings.supplier_types'), icon: IconsSettings, path: localePath('/settings/supplier_types') },
          { title: t('settings.categories'), icon: IconsSettings, path: localePath('/settings/categories') },
-         { title: t('settings.purchasing_units'), icon: IconsSettings, path: localePath('/settings/purchasing-units') },
-         { title: t('settings.receipt_types'), icon: IconsSettings, path: localePath('/settings/receipt-types') },
+         { title: t('settings.purchasing_units'), icon: IconsSettings, path: localePath('/settings/purchasing_units') },
+         { title: t('settings.receipt_types'), icon: IconsSettings, path: localePath('/settings/receipt_types') },
          { title: t('settings.terms_and_conditions'), icon: IconsSettings, path: localePath('/settings/terms') },
       ]  
    }

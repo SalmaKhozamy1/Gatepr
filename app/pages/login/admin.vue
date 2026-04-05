@@ -114,14 +114,23 @@ const schema = computed(() =>
     email: yup.string()
       .required(t('validation.email_required'))
       .email(t('validation.email_invalid')),
-    password: yup.string()
-      .required(t('validation.password_required'))
-      .min(6, t('validation.password_min'))
+   password: yup.string()
+    .required(t('validation.password_required'))
+    .min(8, t('errors.min', { num: 8 }))
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).+$/,
+      t('errors.passwordComplexity')
+    )
   })
 )
 
 const { handleSubmit, errors, setErrors } = useForm({
   validationSchema: schema,
+  validateOnMount: false,
+  validateOnInput: false,
+  validateOnChange: false,
+  validateOnBlur: true,
+  validateOnModelUpdate: false,
 })
 
 const { value: email } = useField('email')
@@ -156,13 +165,20 @@ const onSubmit = handleSubmit(async (values) => {
     navigateTo(localePath('/home'))
 
   } catch (err) {
-    console.error('Login Error:', err)
-    if (err.data?.errors) setErrors(err.data.errors)
-    const isGenericError = !err.data?.errors && (err.statusCode === 401 || err.statusCode === 422)
-    toastError(isGenericError ? t('messages.invalid_login') : (err.data?.message || t('common.somethingWentWrong')))
-  } finally {
-    isLoading.value = false
+  console.error('Login Error:', err)
+  
+  if (err.data?.errors) {
+    setErrors(err.data.errors)
+  } else if (err.statusCode === 401 || err.statusCode === 422) {
+    // ✅ لو credentials غلط — حط error على الـ fields
+    setErrors({
+      email: t('messages.invalid_login'),
+      password: t('messages.invalid_login'),
+    })
+  } else {
+    toastError(err.data?.message || t('common.somethingWentWrong'))
   }
+}
 })
 </script>
 

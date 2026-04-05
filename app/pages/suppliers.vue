@@ -52,8 +52,8 @@ provide('unregisterAddModal', () => {
 })
 
 const suppliersMenuItems = [
-  { title: 'supplier_registration_requests', icon: IconsSupplierRequest, path: '/suppliers/suppliers_request', addTitle: 'supplier' },
-  { title: 'data_edit_requests', icon: IconsEditRequest, path: '/suppliers/suppliers_update', addTitle: 'supplier' },
+  { title: 'suppliers_request', icon: IconsSupplierRequest, path: '/suppliers/suppliers_request', addTitle: 'supplier' },
+  { title: 'suppliers_update', icon: IconsEditRequest, path: '/suppliers/suppliers_update', addTitle: 'supplier' },
   { title: 'suppliers', icon: IconsSuppliers, path: '/suppliers/suppliers', addTitle: 'supplier' }
 ]
 

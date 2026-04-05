@@ -82,10 +82,10 @@ const settingsMenu = computed(() => [
   { title: t('settings.areas'), icon: IconsSettingsRegions, path: localePath('/settings/areas'), addTitle: t('settings.add_area') },
   { title: t('settings.users'), icon: IconsSettingsUsers, path: localePath('/settings/users'), addTitle: t('settings.add_user') },
   { title: t('settings.roles'), icon: IconsSettingsRoles, path: localePath('/settings/roles'), addTitle: t('settings.add_role') },
-  { title: t('settings.supplier_types'), icon: IconsSuppliers, path: localePath('/settings/supplier-types'), addTitle: t('settings.add_supplier_type') },
+  { title: t('settings.supplier_types'), icon: IconsSuppliers, path: localePath('/settings/supplier_types'), addTitle: t('settings.add_supplier_type') },
   { title: t('settings.categories'), icon: IconsCategories, path: localePath('/settings/categories'), addTitle: t('settings.add_category') },
-  { title: t('settings.purchasing_units'), icon: IconsUnits, path: localePath('/settings/purchasing-units'), addTitle: t('settings.add_purchasing_unit') },
-  { title: t('settings.receipt_types'), icon: IconsReceiveType, path: localePath('/settings/receipt-types'), addTitle: t('settings.add_receipt_type') },
+  { title: t('settings.purchasing_units'), icon: IconsUnits, path: localePath('/settings/purchasing_units'), addTitle: t('settings.add_purchasing_unit') },
+  { title: t('settings.receipt_types'), icon: IconsReceiveType, path: localePath('/settings/receipt_types'), addTitle: t('settings.add_receipt_type') },
   { title: t('settings.terms_and_conditions'), icon: IconsTerms, path: localePath('/settings/terms-and-conditions'), addTitle: t('settings.add_term'), hasSearch: false, hasActions: false  },
 ])
 

@@ -77,9 +77,9 @@ const breadcrumbs = computed(() => {
   })
 
   // ✅ Force localization of the last segment if page-level title is registered via usePageMeta
-  if (crumbs.length > 0 && route.meta.title) {
-    crumbs[crumbs.length - 1].label = t(route.meta.title)
-  }
+  // if (crumbs.length > 0 && route.meta.title) {
+  //   crumbs[crumbs.length - 1].label = t(route.meta.title)
+  // }
   
   return crumbs
 })
