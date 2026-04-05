@@ -8,9 +8,7 @@
                <HeaderItem class="lang" :badge="locale === 'ar' ? 'ع' : 'E'" @click="toggleLocale">
                   <IconsLang />
                </HeaderItem>
-               <HeaderItem badge="2">
-                  <IconsNotification />
-               </HeaderItem>
+               <notification badge="2" />
                <InputsFormSelect 
                   v-if="role === 'supplier'" 
                   v-model="selectedBranch" 
@@ -335,7 +333,7 @@ onMounted(() => fetchBranches())
 }
 
 .header_Select :deep(.p-select) {
-   min-width: min-content !important;
+   min-width: 90px !important;
    border-radius: var(--radius-sm) !important;
    border: 1px solid rgba(255, 255, 255, 0.05) !important;
    background-color: rgba(249, 249, 250, 0.05) !important;

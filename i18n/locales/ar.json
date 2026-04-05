@@ -26,14 +26,18 @@
     "inactive": "غير مفعّل",
     "restore": "استعادة",
     "id": "#",
+    "all": "الكل",
     "view_all": "عرض الكل",
+    "read": "مقروء",
+    "unread": "غير مقروء",
     "acceptance_date": "تاريخ القبول",
     "item_number": "رقم الصنف",
     "company_data": "بيانات المنشأة",
     "contact_data": "بيانات التواصل",
     "documents_data": "بيانات المستندات",
     "loading": "تحميل ....",
-    "download_template": "تحميل تيمبلت للداتا المطلوبة"
+    "download_template": "تحميل تيمبلت للداتا المطلوبة",
+    "mark_all_read": "تحديد الكل كمقروء"
   },
   "labels": {
     "welcome": "مرحبا",

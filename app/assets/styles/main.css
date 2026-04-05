@@ -646,6 +646,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   /* border-top: 0px !important; */
   border-radius: var(--radius-sm) !important;
   margin-top: 3px;
+  min-width: 140px !important;
 }
 
 .p-multiselect-overlay .p-multiselect-option,

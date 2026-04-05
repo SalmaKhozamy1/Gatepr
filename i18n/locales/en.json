@@ -26,14 +26,18 @@
     "inactive": "Inactive",
     "restore": "Restore",
     "id": "#",
+    "all": "All",
     "view_all": "View All",
+    "read": "Read",
+    "unread": "Unread",
     "acceptance_date": "Acceptance Date",
     "item_number": "Item Number",
     "company_data": "Company Data",
     "contact_data": "Contact Data",
     "documents_data": "Documents Data",
     "loading": "Loading ...",
-    "download_template": "Download Template For Required Data"
+    "download_template": "Download Template For Required Data",
+    "mark_all_read": "Mark All As Read"
   },
   "labels": {
     "welcome": "Welcome",

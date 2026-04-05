@@ -56,8 +56,7 @@ import {
   IconsApprovalCategory,
   IconsTerms,
   IconsCheck,
-  IconsCross,
-  IconsExport
+  IconsCross
 } from '#components'
 
 import { provide, ref, computed, onMounted} from 'vue'
@@ -87,12 +86,39 @@ provide('unregisterPageAction', (actionName) => {
   delete pageActions.value[actionName]
 })
 
-const handleAddClick = () => {
-  addModalOpener.value?.()
-}
+const handlePageAction = async (name) => {
+  if (pageActions.value[name]) {
+    pageActions.value[name]()
+    return
+  }
+  // ✅ Accept All
+  if (name === 'acceptAll') {
+    try {
+      actionLoading.value = 'acceptAll'
+      await api('/v1/admin/items/approve', { method: 'POST' })
+      toastSuccess(t('messages.updated_successfully'))
+      // reload الـ child page
+      pageActions.value['refresh']?.()
+    } catch (err) {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
+    } finally {
+      actionLoading.value = null
+    }
+  }
 
-const handlePageAction = (name) => {
-  pageActions.value[name]?.()
+  // ✅ Reject All
+  if (name === 'rejectAll') {
+    try {
+      actionLoading.value = 'rejectAll'
+      await api('/v1/admin/items/reject', { method: 'POST' })
+      toastSuccess(t('messages.updated_successfully'))
+      pageActions.value['refresh']?.()
+    } catch (err) {
+      toastError(err?.data?.message || t('common.somethingWentWrong'))
+    } finally {
+      actionLoading.value = null
+    }
+  }
 }
 
 const settingsMenuItems = [

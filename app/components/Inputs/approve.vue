@@ -119,7 +119,7 @@ const handleChange = (event) => {
   width: 6px;
   height: 11px;
   border: solid #fff;
-  border-width: 0 2.5px 2.5px 0;
+  border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   margin-bottom: 3px;
 }
