@@ -4,7 +4,7 @@
       <Teleport to="#search-teleport-target">
         <!-- <div class="flex-start gap-sm w-100 flex-wrap"> -->
           <SearchBar
-            :placeholder="t('common.search')"
+            :placeholder="t('placeholders.search')"
             :filters="searchFilters"
             @filter="handleFilter"
             @reset="resetFilters"
@@ -98,6 +98,7 @@ import { useView } from '~/composables/useView'
 import { useAppToast } from '~/composables/useAppToast'
 import { IconsSettingsRegions } from '#components'
 import { useI18n } from 'vue-i18n'
+import * as yup from 'yup'
 
 const { t, locale } = useI18n()
 const api = useApi()
@@ -139,14 +140,33 @@ const areaViewFields = computed(() => [
 
 // ✅ computed عشان الـ options تتحدث تلقائي
 const areaFormFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('labels.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('labels.name_en') },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('labels.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('labels.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
   {
     key: 'governorate_id',
     label: t('labels.governorate'),
     type: 'select',
     placeholder: t('placeholders.select'),
-    options: governorateOptions.value
+    options: governorateOptions.value,
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.governorate') }))
+      .nullable()
   },
 ])
 
@@ -186,7 +206,6 @@ const fetchGovernorates = async () => {
       value: item.id
     }))
     governorateOptions.value = [
-      { label: t('common.no_options'), value: null },
       ...fetched
     ]
   } catch (err) {

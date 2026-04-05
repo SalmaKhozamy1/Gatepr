@@ -12,6 +12,7 @@
       </template>
     </button>
     <ButtonsResetButton
+      class="min-btn-width"
       @reset="$emit('reset')"
       :disabled="loading"
     />

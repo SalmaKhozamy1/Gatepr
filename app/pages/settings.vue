@@ -15,6 +15,7 @@
       @item-click="handleTabClick"
     >
       <template #search>
+        <!-- The target is now safely managed here by the layout, but let's ensure it's robust -->
         <div id="search-teleport-target" class="w-100"></div>
       </template>
 
@@ -33,10 +34,14 @@
         <NuxtPage />
       </template>
     </PageLayout>
+    
+    <!-- Fallback hidden target to prevent Teleport crashes during unmounting phase -->
+    <div v-if="route.meta.fullPage" id="search-teleport-target" class="d-none"></div>
   </div>
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'auth', adminOnly: true })
 usePageMeta('menu.settings')
 
 import { 
@@ -111,41 +116,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.settings-wrapper {
-  position: relative;
-}
-.reset_btn {
-  color: var(--placeholder);
-  border-color: var(--placeholder);
-}
-.min-w-40 {
-  min-width: 200px;
-}
-.page-title {
-  font-size: 28px;
-}
 .form-group {
   width: unset;
   flex: 1;
-}
-.breadcrumb {
-  background: transparent;
-  padding: 0;
-  font-size: 14px;
-}
-.breadcrumb-item + .breadcrumb-item::before {
-  content: ">";
-  color: rgba(255, 255, 255, 0.5);
-  padding: 0 8px;
-}
-.breadcrumb-item a {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-}
-.breadcrumb-item.active {
-  color: #fff;
-}
-[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
-  content: "<";
 }
 </style>

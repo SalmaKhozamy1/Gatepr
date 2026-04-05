@@ -24,9 +24,14 @@
               <button class="custom-btn text-btn min-btn-width" v-else @click="navigateTo('/')">{{ t('common.cancel') }}</button>
               
               <button class="custom-btn secondary-btn min-btn-width" @click="nextStep" v-if="activeIndex < steps.length - 1" :disabled="!currentStepValid">{{ t('buttons.next') }}</button>
-              <button class="custom-btn secondary-btn min-btn-width" @click="submit" v-else :disabled="!currentStepValid">{{ t('buttons.send') }}</button>
+              <button class="custom-btn secondary-btn min-btn-width" @click="submit" v-else :disabled="!currentStepValid || loading">
+                <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                <span>{{ t('buttons.send') }}</span>
+              </button>
           </div>
         </div>
+
+        <ModalsRegistrationSuccess v-model="showSuccessModal" />
       </template>
     </PageLayout>
   </div>
@@ -46,6 +51,8 @@ const activeIndex = ref(0)
 const stepComponent = ref(null)
 const currentStepValid = ref(false)
 const maxVisitedStep = ref(0)
+const showSuccessModal = ref(false)
+const loading = ref(false)
 
 const formData = ref({
   company: null,
@@ -111,6 +118,7 @@ const submit = async () => {
     }
     
     try {
+        loading.value = true
         const company = formData.value.company || {}
         const responsible = formData.value.responsible || {}
         const docsObj = formData.value.documents || {}
@@ -181,11 +189,37 @@ const submit = async () => {
             body: fd
         })
         
-        success(t('messages.success'))
-        navigateTo('/login/supplier')
+        showSuccessModal.value = true
     } catch(err) {
         console.error('Registration error:', err)
-        toastError(err.data?.message || t('common.somethingWentWrong'))
+        if (err.data?.errors) {
+            const errors = err.data.errors
+            const stepErrors = {}
+            
+            // Map common API fields back to our step-specific fields
+            Object.entries(errors).forEach(([backendKey, backendMessages]) => {
+                const message = Array.isArray(backendMessages) ? backendMessages[0] : backendMessages
+                
+                // Hard-coded mapping for Company step
+                if (backendKey === 'name.ar') stepErrors.nameAr = message
+                else if (backendKey === 'name.en') stepErrors.nameEn = message
+                else if (backendKey === 'phone') stepErrors.phone = message
+                else if (backendKey === 'email') stepErrors.email = message
+                else stepErrors[backendKey] = message
+            })
+
+            // Attempt to pass these errors to the current step component
+            if (stepComponent.value && typeof stepComponent.value.setErrors === 'function') {
+                stepComponent.value.setErrors(stepErrors)
+            }
+            
+            // Still show a general toast
+            toastError(err.data?.message || t('common.somethingWentWrong'))
+        } else {
+            toastError(err.data?.message || t('common.somethingWentWrong'))
+        }
+    } finally {
+        loading.value = false
     }
 }
 </script>

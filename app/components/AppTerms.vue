@@ -13,31 +13,31 @@
 
     <!-- Static or Admin View -->
     <template v-else>
-      <!-- Supplier View (Styled Template) -->
-      <div v-if="role === 'supplier'" class="terms-supplier-layout w-100">
-         <div class="terms-sections">
-            <!-- Arabic Section -->
-            <div v-if="termsAr" class="terms-section mb-4">
-               <div class="terms-section-label mb-2">{{ t('labels.content_ar') }}</div>
-               <div class="terms-content-card" dir="rtl">
-                  <div class="terms-content-display" v-html="termsAr"></div>
-               </div>
-            </div>
 
-            <!-- English Section -->
-            <div v-if="termsEn" class="terms-section">
-               <div class="terms-section-label mb-2">{{ t('labels.content_en') }}</div>
-               <div class="terms-content-card" dir="ltr">
-                  <div class="terms-content-display" v-html="termsEn"></div>
-               </div>
+      <!-- Supplier View -->
+      <div v-if="role === 'supplier'" class="terms-supplier-layout w-100">
+        <div class="terms-sections">
+          <div v-if="termsAr" class="terms-section mb-4">
+            <div class="terms-section-label mb-2">{{ t('labels.content_ar') }}</div>
+            <div class="terms-content-card" dir="rtl">
+              <div class="terms-content-display" v-html="termsAr"></div>
             </div>
-         </div>
+          </div>
+          <div v-if="termsEn" class="terms-section">
+            <div class="terms-section-label mb-2">{{ t('labels.content_en') }}</div>
+            <div class="terms-content-card" dir="ltr">
+              <div class="terms-content-display" v-html="termsEn"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Admin View (Quill Editor) -->
+      <!-- Admin View -->
       <div v-else class="flex-column gap-sm w-100">
-        <h5 class="mb-3">{{ t('labels.content_ar') }}</h5>
-        <div class="editor-wrapper mb-4" dir="rtl">
+
+        <!-- Arabic Editor -->
+        <h5>{{ t('labels.content_ar') }}</h5>
+        <div class="editor-wrapper" dir="rtl" :class="{ 'is-invalid-wrapper': errorAr }">
           <ClientOnly>
             <QuillEditor
               v-model:content="termsAr"
@@ -47,9 +47,11 @@
             />
           </ClientOnly>
         </div>
+        <span v-if="errorAr" class="text-danger small mt-1 d-block">{{ errorAr }}</span>
 
-        <h5 class="mb-3">{{ t('labels.content_en') }}</h5>
-        <div class="editor-wrapper mb-4" dir="ltr">
+        <!-- English Editor -->
+        <h5>{{ t('labels.content_en') }}</h5>
+        <div class="editor-wrapper" dir="ltr" :class="{ 'is-invalid-wrapper': errorEn }">
           <ClientOnly>
             <QuillEditor
               v-model:content="termsEn"
@@ -59,6 +61,7 @@
             />
           </ClientOnly>
         </div>
+        <span v-if="errorEn" class="text-danger small mt-1 d-block">{{ errorEn }}</span>
 
         <div class="flex-end gap-sm mt-3">
           <button
@@ -77,6 +80,7 @@
             <span v-else>{{ t('common.save') }}</span>
           </button>
         </div>
+
       </div>
     </template>
 
@@ -84,13 +88,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useApi } from '~/composables/useApi'
 import { useAppToast } from '~/composables/useAppToast'
 import { useAuth } from '~/composables/useAuth'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const api = useApi()
 const { role } = useAuth()
 const { success, error: toastError } = useAppToast()
@@ -99,28 +103,89 @@ const SLUG = 'terms-and-conditions'
 
 /* =============================
    STATE
- ============================== */
-const termsAr = ref('')
-const termsEn = ref('')
+============================== */
+const termsAr    = ref('')
+const termsEn    = ref('')
 const originalAr = ref('')
 const originalEn = ref('')
-const saving = ref(false)
-const fetching = ref(true)
+const saving     = ref(false)
+const fetching   = ref(true)
+const errorAr    = ref('')
+const errorEn    = ref('')
+
+/* =============================
+   HELPERS
+   بنشيل الـ HTML tags والأرقام والمسافات
+   عشان نتحقق من الحروف بس
+   الرموز بتعدي لأنها مش في أي range
+============================== */
+const stripHtml     = (html) => html?.replace(/<[^>]*>/g, '').trim() || ''
+const stripNonAlpha = (text) => text.replace(/[0-9\s]/g, '')
+
+/* =============================
+   REAL-TIME VALIDATION
+============================== */
+watch(termsAr, (val) => {
+  const text = stripNonAlpha(stripHtml(val))
+  if (!text) {
+    errorAr.value = ''
+    return
+  }
+  errorAr.value = /[a-zA-Z]/.test(text) ? t('validation.arabic_only') : ''
+})
+
+watch(termsEn, (val) => {
+  const text = stripNonAlpha(stripHtml(val))
+  if (!text) {
+    errorEn.value = ''
+    return
+  }
+  errorEn.value = /[ء-ي]/.test(text) ? t('validation.english_only') : ''
+})
+
+/* =============================
+   VALIDATE BEFORE SAVE
+============================== */
+const validateAll = () => {
+  errorAr.value = ''
+  errorEn.value = ''
+
+  const textAr = stripNonAlpha(stripHtml(termsAr.value))
+  const textEn = stripNonAlpha(stripHtml(termsEn.value))
+
+  if (!stripHtml(termsAr.value)) {
+    errorAr.value = t('errors.isRequired', { name: t('labels.content_ar') })
+  } else if (/[a-zA-Z]/.test(textAr)) {
+    errorAr.value = t('validation.arabic_only')
+  } else {
+    errorAr.value = ''
+  }
+
+  if (!stripHtml(termsEn.value)) {
+    errorEn.value = t('errors.isRequired', { name: t('labels.content_en') })
+  } else if (/[ء-ي]/.test(textEn)) {
+    errorEn.value = t('validation.english_only')
+  } else {
+    errorEn.value = ''
+  }
+
+  return !errorAr.value && !errorEn.value
+}
 
 /* =============================
    FETCH
- ============================== */
+============================== */
 const fetchTerms = async () => {
   try {
     fetching.value = true
-    const endpoint = role.value === 'supplier' 
-      ? `/static-pages/${SLUG}` 
+    const endpoint = role.value === 'supplier'
+      ? `/static-pages/${SLUG}`
       : `/v1/admin/static-pages/${SLUG}`
-    
+
     const res = await api(endpoint)
     if (res?.data) {
-      termsAr.value = res.data.content?.ar || ''
-      termsEn.value = res.data.content?.en || ''
+      termsAr.value    = res.data.content?.ar || ''
+      termsEn.value    = res.data.content?.en || ''
       originalAr.value = termsAr.value
       originalEn.value = termsEn.value
     }
@@ -133,37 +198,31 @@ const fetchTerms = async () => {
 
 /* =============================
    EDITOR OPTIONS
- ============================== */
+============================== */
+const toolbarOptions = [
+  ['bold', 'italic', 'underline'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
+  [{ header: [1, 2, 3, false] }],
+  [{ align: [] }],
+  ['clean'],
+]
+
 const editorOptions = computed(() => ({
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ header: [1, 2, 3, false] }],
-      [{ align: [] }],
-      ['clean']
-    ]
-  },
+  modules: { toolbar: toolbarOptions },
   placeholder: t('placeholders.search'),
 }))
 
 const editorOptionsEn = computed(() => ({
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ header: [1, 2, 3, false] }],
-      [{ align: [] }],
-      ['clean']
-    ]
-  },
+  modules: { toolbar: toolbarOptions },
   placeholder: t('placeholders.search'),
 }))
 
 /* =============================
    ACTIONS
- ============================== */
+============================== */
 const handleSave = async () => {
+  if (!validateAll()) return
+
   try {
     saving.value = true
     await api(`/v1/admin/static-pages/${SLUG}`, {
@@ -188,30 +247,18 @@ const handleSave = async () => {
 const handleCancel = () => {
   termsAr.value = originalAr.value
   termsEn.value = originalEn.value
+  errorAr.value = ''
+  errorEn.value = ''
 }
 
 /* =============================
    INIT
- ============================== */
-onMounted(() => {
-  fetchTerms()
-})
+============================== */
+onMounted(() => fetchTerms())
 </script>
 
 <style scoped>
-/* Supplier View Styles */
-.terms-supplier-layout {
-  padding: 0;
-}
-.terms-title-bar {
-  background-color: #344054;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 600;
-  text-align: start;
-}
+.terms-supplier-layout { padding: 0; }
 .terms-section-label {
   color: #667085;
   font-size: 14px;
@@ -228,27 +275,18 @@ onMounted(() => {
   color: #344054;
   font-size: 15px;
 }
-.terms-content-display :deep(p) {
-  margin-bottom: 20px;
-}
-.terms-content-display :deep(p):last-child {
-  margin-bottom: 0;
-}
-.terms-content-display :deep(ul), .terms-content-display :deep(ol) {
-  padding-inline-start: 30px;
-  margin-bottom: 20px;
-}
-.terms-content-display :deep(li) {
-  margin-bottom: 12px;
-}
+.terms-content-display :deep(p)            { margin-bottom: 20px; }
+.terms-content-display :deep(p):last-child { margin-bottom: 0; }
+.terms-content-display :deep(ul),
+.terms-content-display :deep(ol)           { padding-inline-start: 30px; margin-bottom: 20px; }
+.terms-content-display :deep(li)           { margin-bottom: 12px; }
 
-.text-primary {
-  color: var(--primary-color) !important;
-}
+.editor-wrapper { width: 100%; }
 
-.editor-wrapper {
-  width: 100%;
-}
+/* ✅ invalid border */
+.is-invalid-wrapper :deep(.ql-toolbar)   { border-color: var(--danger-color, #dc3545) !important; }
+.is-invalid-wrapper :deep(.ql-container) { border-color: var(--danger-color, #dc3545) !important; }
+
 :deep(.ql-toolbar) {
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   border-color: #E4E4E4 !important;
@@ -261,7 +299,6 @@ onMounted(() => {
   font-size: var(--size-sm);
   min-height: 200px;
 }
-
 :deep(.ql-editor) {
   min-height: 200px;
   font-family: inherit;
@@ -270,39 +307,25 @@ onMounted(() => {
   padding: 16px 12px;
   text-align: start !important;
 }
-:deep(.ql-editor li:not(.ql-direction-rtl)::before) {
-    margin-left: unset !important;
-}
-:deep(.ql-editor p) {
-  margin-bottom: 12px;
-}
+:deep(.ql-editor li:not(.ql-direction-rtl)::before) { margin-left: unset !important; }
+:deep(.ql-editor p)                                  { margin-bottom: 12px; }
 
 [dir="rtl"] :deep(.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg) {
-    left: 0px !important;
-    right: unset !important;
+  left: 0px !important;
+  right: unset !important;
 }
 :deep(.ql-toolbar.ql-snow .ql-formats) {
-    margin-inline-end: 15px !important;
-    margin-right: 0px !important;
+  margin-inline-end: 15px !important;
+  margin-right: 0px !important;
 }
-
 :deep(.ql-editor.ql-blank::before) {
   font-style: normal;
   color: var(--placeholder, #9ca3af);
 }
-
 :deep(.ql-toolbar button:hover),
-:deep(.ql-toolbar button.ql-active) {
-  color: var(--primary-color) !important;
-}
-
+:deep(.ql-toolbar button.ql-active)             { color: var(--primary-color) !important; }
 :deep(.ql-toolbar button:hover .ql-stroke),
-:deep(.ql-toolbar button.ql-active .ql-stroke) {
-  stroke: var(--primary-color) !important;
-}
-
+:deep(.ql-toolbar button.ql-active .ql-stroke)  { stroke: var(--primary-color) !important; }
 :deep(.ql-toolbar button:hover .ql-fill),
-:deep(.ql-toolbar button.ql-active .ql-fill) {
-  fill: var(--primary-color) !important;
-}
+:deep(.ql-toolbar button.ql-active .ql-fill)    { fill: var(--primary-color) !important; }
 </style>

@@ -4,8 +4,8 @@
     :formTitle="t('items.add_form.title_list')"
   >
     <!-- Search / Filter -->
-    <ClientOnly> 
-    <template #search>
+    <template #search>    
+     <ClientOnly> 
       <SearchBar
         placeholder="بحث .."
         :filters="searchFilters"
@@ -13,8 +13,8 @@
         @filter="handleFilter"
         @reset="resetFilters"
       />
+     </ClientOnly>
     </template>
-    </ClientOnly>
 
     <!-- Header Actions -->
     <template #header-actions>
@@ -132,7 +132,7 @@
 </template>
 
 <script setup>
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', supplierOnly: true })
 usePageMeta('menu.item-managment')
 
 import { ref, computed, onMounted, watch } from 'vue'

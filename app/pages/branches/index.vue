@@ -3,17 +3,17 @@
     :hasAside="false"
     :formTitle="t('settings.record') + ' ' + t('menu.branches')"
   >
-   <ClientOnly>
     <template #search>
+     <ClientOnly>
       <SearchBar
-        :placeholder="t('common.search')"
+        :placeholder="t('placeholders.search')"
         :filters="searchFilters"
         :loading="loading"
         @filter="handleFilter"
         @reset="resetFilters"
-      />
+      />  
+    </ClientOnly>
     </template>
-   </ClientOnly>
 
     <template #header-actions>
       <button
@@ -76,6 +76,7 @@
     />
 
     <ModalsAppAddModal
+      ref="addModal"
       v-model="showAddModal"
       :title="t('settings.add') + ' ' + t('settings.add_branch')"
       :icon="IconsBranches"
@@ -83,9 +84,11 @@
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       @submit="handleAddSubmit"
+      @change="handleModalChange"
     />
 
     <ModalsAppEditModal
+      ref="editModal"
       v-model="showEditModal"
       :title="t('common.edit') + ' ' + t('settings.add_branch')"
       :icon="IconsBranches"
@@ -94,11 +97,12 @@
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       @submit="handleEditSubmit"
+      @change="handleModalChange"
     />
 
     <ModalsAppDeleteModal
       v-model="showDeleteModal"
-      :title="t('buttons.delete') + ' ' + t('settings.add_branch')"
+      :title="t('common.delete') + ' ' + t('settings.add_branch')"
       :itemType="t('settings.add_branch')"
       :itemName="selectedDeleteBranch?.name?.[locale] || selectedDeleteBranch?.name?.ar"
       data-bs-backdrop="static"
@@ -109,7 +113,7 @@
 </template>
 
 <script setup>
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', adminOnly: true })
 usePageMeta('menu.branches')
 
 import { ref, computed, onMounted, watch } from 'vue'
@@ -118,6 +122,7 @@ import { useView } from '~/composables/useView'
 import { useAppToast } from '~/composables/useAppToast'
 import { IconsBranches } from '#components'
 import { useI18n } from 'vue-i18n'
+import * as yup from 'yup'
 
 import { useSearchFilter } from '~/composables/useSearchFilter'
 
@@ -132,7 +137,8 @@ const { success, error: toastError } = useAppToast()
 const governorateFilter = ref(null)
 const branches = ref([])
 const governorateOptions = ref([])
-const areaOptions = ref([])
+const areaOptions = ref([]) // if still used elsewhere
+const governoratesWithAreas = ref([])
 const perPage = 15
 
 const {
@@ -151,6 +157,9 @@ const showEditModal = ref(false)
 const selectedEditBranch = ref(null)
 const showDeleteModal = ref(false)
 const selectedDeleteBranch = ref(null)
+const selectedGovernorateInModal = ref(null)
+const addModal = ref(null)
+const editModal = ref(null)
 
 /* =============================
    COMPUTED
@@ -175,24 +184,68 @@ const branchViewFields = computed(() => [
 ])
 
 const branchFormFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
-  { key: 'email', label: t('labels.email'), placeholder: 'example@email.com', type: 'email' },
-  { key: 'phone', label: t('labels.phone'), placeholder: '96512345678', type: 'text' },
-  { key: 'address', label: t('labels.address'), placeholder: t('labels.address') },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('placeholders.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('placeholders.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
+  { 
+    key: 'email', 
+    label: t('labels.email'), 
+    placeholder: 'example@email.com', 
+    type: 'email',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.email') }))
+      .email(t('validation.email_invalid'))
+  },
+  { 
+    key: 'phone', 
+    label: t('labels.phone'), 
+    placeholder: '96512345678', 
+    type: 'text',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.phone') }))
+      .matches(/^[0-9]+$/, t('validation.no_text'))
+      .min(8, t('errors.min', { name: t('labels.phone'), num: 8 }))
+      .max(15, t('errors.max', { name: t('labels.phone'), num: 15 }))
+  },
+  { 
+    key: 'address', 
+    label: t('labels.address'), 
+    placeholder: t('labels.address'),
+    rules: yup.string().required(t('errors.isRequired', { name: t('labels.address') }))
+  },
   {
     key: 'governorate_id',
     label: t('labels.governorate'),
     type: 'select',
     placeholder: t('placeholders.select'),
-    options: governorateOptions.value
+    options: governorateOptions.value,
+    rules: yup.mixed().required(t('errors.isRequired', { name: t('labels.governorate') }))
   },
   {
     key: 'area_id',
     label: t('labels.area'),
     type: 'select',
     placeholder: t('placeholders.select'),
-    options: areaOptions.value
+    options: (governoratesWithAreas.value.find(g => g.id === selectedGovernorateInModal.value)?.areas || []).map(area => ({
+        label: area.name?.[locale.value] || area.name?.ar || area.LocalizedName,
+        value: area.id
+    })),
+    rules: yup.mixed().required(t('errors.isRequired', { name: t('labels.area') }))
   },
 ])
 
@@ -227,29 +280,14 @@ const parseMeta = (meta = {}) => {
 const fetchGovernorates = async () => {
   try {
     const res = await api('/v1/admin/governorates?per_page=100')
-    governorateOptions.value = (res.data || []).map(item => ({
+    governoratesWithAreas.value = (res.data || [])
+    governorateOptions.value = governoratesWithAreas.value.map(item => ({
       label: item.name?.[locale.value] || item.name?.ar,
       value: item.id
     }))
   } catch (err) {
     console.error('Error fetching governorates:', err)
     governorateOptions.value = []
-  }
-}
-
-/* =============================
-   FETCH AREAS
-============================== */
-const fetchAreas = async () => {
-  try {
-    const res = await api('/v1/admin/areas?per_page=100')
-    areaOptions.value = (res.data || []).map(item => ({
-      label: item.name?.[locale.value] || item.name?.ar,
-      value: item.id
-    }))
-  } catch (err) {
-    console.error('Error fetching areas:', err)
-    areaOptions.value = []
   }
 }
 
@@ -406,6 +444,28 @@ const resetFilters = () => {
   fetchBranches()
 }
 
+const handleModalChange = ({ key, value }) => {
+  if (key === 'governorate_id') {
+    selectedGovernorateInModal.value = value
+    // ✅ ريست المنطقة عشان ميطلعش إيرور "المنطقة لا تتبع المحافظة"
+    if (addModal.value) addModal.value.setFieldValue('area_id', '')
+    if (editModal.value) editModal.value.setFieldValue('area_id', '')
+  }
+}
+
+watch([showAddModal, showEditModal], ([newAdd, newEdit]) => {
+  if (!newAdd && !newEdit) {
+    selectedGovernorateInModal.value = null
+  }
+})
+
+// ✅ عند تعديل فرع، خزن المحافظة عشان الـ dropdown بتاعة المناطق تتملي صح
+watch(selectedEditBranch, (newVal) => {
+  if (newVal?.governorate_id) {
+    selectedGovernorateInModal.value = newVal.governorate_id
+  }
+})
+
 /* =============================
    WATCHERS & LIFECYCLE
 ============================== */
@@ -414,6 +474,5 @@ watch(currentPage, () => fetchBranches())
 onMounted(() => {
   fetchBranches().catch(console.error)
   fetchGovernorates().catch(console.error)
-  fetchAreas().catch(console.error)
 })
 </script>

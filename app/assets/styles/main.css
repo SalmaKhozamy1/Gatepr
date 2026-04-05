@@ -63,7 +63,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 24px;
-  --form-control-padding: 10px;
+  --form-control-padding: 6px 10px;
   --main-inline-padding: 80px;
 
   /*/////////// Spacing //////////*/
@@ -196,7 +196,7 @@ input {
   text-decoration: none;
   gap: 5px;
   cursor: pointer;
-  min-height: 43px;
+  min-height: 42px;
   padding: 8px 14px;
   font-size: var(--size-sm);
   font-weight: 500;
@@ -282,17 +282,31 @@ label.form-label {
 .form-control {
   min-width: 200px;
 }
+::placeholder {
+  color: #8F92A1 !important;
+  opacity: 1; /* Firefox */
+}
+.form-input{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 input.form-control,
 select.form-control,
 select.form-select,
 .custom-textarea,
 .p-multiselect,
-.p-select {
+.p-select,
+.flatpickr-input {
   border-radius: var(--radius-sm) !important;
   padding: var(--form-control-padding) !important;
   border: 1px solid #d5d7da !important;
   background-color: #fff !important;
   line-height: unset !important;
+  min-height: 42px !important;
+}
+.p-select {
+  align-items: center;
 }
 select.form-control:disabled,
 select.form-select:disabled {
@@ -312,10 +326,24 @@ select.form-select:disabled {
 input.form-control.is-invalid,
 select.form-control.is-invalid,
 .p-select.is-invalid,
-.p-multiselect.is-invalid {
+.p-multiselect.is-invalid,
+.custom-textarea.is-invalid {
   border-color: var(--red) !important;
 }
+input.form-control.is-invalid,
+select.form-control.is-invalid {
+  background-image: none !important;
+}
+.form-group:has(.required) .form-label::after,
+.required .form-label::after {
+  content: "*";
+  color: var(--red);
+  margin-inline-start: 5px;
+}
 
+.form-control.is-invalid.has-suffix {
+  padding-inline-end: 75px !important;
+}
 .error {
   color: var(--red);
   font-size: var(--size-xs);
@@ -472,12 +500,13 @@ html[dir="rtl"] [type="url"] {
 .form-control.is-invalid:focus, .was-validated .form-control:invalid:focus {
   box-shadow: unset !important;
   border: 1px solid var(--red) !important;
+
 }
 .userlogin_input:has(.form-control.is-invalid) label {
   color: var(--red) !important;
 }
-[dir="rtl"] .form-control.is-invalid, [dir="rtl"] .was-validated .form-control:invalid{
-  padding-inline-start: calc(1.5em + .75rem) !important;
+[dir="rtl"] .form-control.is-invalid, [dir="rtl"] .was-validated .form-control:invalid {
+  background-image: none !important;
 }
 /* buttons */
 .secondary-btn {
@@ -876,4 +905,27 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   justify-content: center;
   align-items: center;
   border-radius: var(--radius-md);
+}
+
+/* =============================
+   LOADING SPINNER
+============================== */
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  border: 0.2em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+.spinner-border-sm {
+  width: .75rem;
+  height: .75rem;
+  border-width: 0.15em;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
 }

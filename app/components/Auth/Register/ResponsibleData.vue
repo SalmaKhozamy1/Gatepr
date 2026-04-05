@@ -41,6 +41,7 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useI18n } from 'vue-i18n'
@@ -57,15 +58,21 @@ const props = defineProps({
 const emit = defineEmits(['update:valid'])
 
 const schema = yup.object({
-  phone: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_phone') })),
-  mobile: yup.string().required(t('errors.isRequired', { name: t('labels.supplier_mobile') })),
-  fax: yup.string().optional(),
+  phone: yup.string()
+  .required(t('errors.isRequired', { name: t('labels.supplier_phone') }))
+  .test('no-text', t('validation.no_text'), value => /^[0-9+\-().'\s]+$/.test(value || '')),
+  mobile: yup.string()
+  .required(t('errors.isRequired', { name: t('labels.supplier_mobile') }))
+  .test('no-text', t('validation.no_text'), value => /^[0-9+\-().'\s]+$/.test(value || '')),
+  fax: yup.string()
+  .required(t('errors.isRequired'))
+  .test('no-text', t('validation.no_text'), value => /^[0-9+\-().'\s]+$/.test(value || '')),
   email: yup.string().required(t('validation.email_required')).email(t('validation.email_invalid')),
   address: yup.string().required(t('errors.isRequired', { name: t('labels.detailed_address') })),
-  website: yup.string().url(t('errors.website')).optional(), // Using labels.website for generic error or can be specific
+  website: yup.string().url(t('errors.website')).required(t('errors.isRequired')),
 })
 
-const { errors, validate, meta } = useForm({
+const { errors, validate, meta, setErrors } = useForm({
   validationSchema: schema,
   initialValues: props.initialData || {}
 })
@@ -85,6 +92,9 @@ defineExpose({
   validate: async () => {
     const { valid } = await validate()
     return valid
+  },
+  setErrors: (errs) => {
+     setErrors(errs)
   },
   getValues: () => {
     return {

@@ -3,8 +3,8 @@
     :hasAside="false"
     :formTitle="t('activity_logs.title')"
   >
-   <ClientOnly>
     <template #search>
+     <ClientOnly>
       <SearchBar
         :filters="searchFilters"
         :dateFilters="dateFilters"
@@ -12,11 +12,12 @@
         @filter="handleFilter"
         @reset="resetFilters"
       />
+     </ClientOnly>
     </template>
-   </ClientOnly>
    
     <template #main>
       <TablesAppTable
+        id="print-table"
         :headers="headers"
         :current-page="currentPage"
         :total-pages="totalPages"
@@ -87,7 +88,7 @@
 </template>
 
 <script setup>
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', adminOnly: true })
 usePageMeta('menu.activity_logs')
 
 import { ref, computed, onMounted } from 'vue'
@@ -368,5 +369,99 @@ onMounted(() => {
   margin: 0;
   border-radius: 0;
   border: none;
+}
+
+@media print {
+  /* Hides sidebar, header, search bar, and other UI elements */
+  header, 
+  nav, 
+  .navbar,
+  aside,
+  #search-teleport-target,
+  .SearchBar,
+  .SearchBar-wrapper,
+  .filters-card,
+  .Pagination,
+  .actions-cell,
+  .custom-btn,
+  .action-btn,
+  .nav-item,
+  .user_info,
+  .header-actions {
+    display: none !important;
+  }
+
+  /* Reset layout constraints for print */
+  body, 
+  .layout, 
+  .content-layout, 
+  .container, 
+  .page-layout-container, 
+  .side-page-layout, 
+  .flex-column,
+  .d-flex {
+    display: block !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: unset !important;
+  }
+
+  .custom-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .card-header {
+    border: none !important;
+    padding: 0 0 15px 0 !important;
+  }
+
+  .card-header h4 {
+    font-size: 20px !important;
+    color: #000 !important;
+  }
+
+  .card-content {
+    padding: 0 !important;
+  }
+
+  /* Format the table for print */
+  #print-table {
+    width: 100% !important;
+    display: table !important;
+    border-collapse: collapse !important;
+  }
+
+  .table-responsive {
+    overflow: visible !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .custom-table {
+    width: 100% !important;
+    border: 1px solid #000 !important;
+  }
+
+  .custom-table th, 
+  .custom-table td {
+    border: 1px solid #000 !important;
+    padding: 10px !important;
+    color: #000 !important;
+    background: transparent !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove column sizes that might break print */
+  .index-cell {
+    width: 30px !important;
+  }
 }
 </style>

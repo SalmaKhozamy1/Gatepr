@@ -50,6 +50,7 @@
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'auth', adminOnly: true })
 import { 
   IconsDependance,
   IconsApprovalCategory,
@@ -133,25 +134,5 @@ onMounted(() => {
 .form-group {
   width: unset;
   flex: 1;
-}
-.breadcrumb {
-  background: transparent;
-  padding: 0;
-  font-size: 14px;
-}
-.breadcrumb-item + .breadcrumb-item::before {
-  content: ">";
-  color: rgba(255, 255, 255, 0.5);
-  padding: 0 8px;
-}
-.breadcrumb-item a {
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-}
-.breadcrumb-item.active {
-  color: #fff;
-}
-[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
-  content: "<";
 }
 </style>

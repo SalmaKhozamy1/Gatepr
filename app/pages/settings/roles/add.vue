@@ -13,10 +13,14 @@
 </template>
 
 <script setup>
-definePageMeta({ fullPage: true })
+definePageMeta({ fullPage: true, middleware: 'auth', adminOnly: true })
 
+import { ref, computed, onMounted } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
+import { useApi } from '~/composables/useApi'
+import { useAppToast } from '~/composables/useAppToast'
+import { useI18n } from 'vue-i18n'
 
 const api = useApi()
 const localePath = useLocalePath()
@@ -34,24 +38,24 @@ const schema = computed(() => yup.object({
   name_ar: yup
     .string()
     .required(t('errors.isRequired', { name: t('labels.name_ar') }))
-    .min(2, t('errors.min', { num: 2 }))
-    .max(30, t('errors.max', { num: 30 }))
-    .matches(/^[\u0600-\u06FF0-9\s]+$/, t('validation.arabic_only')),
+    .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+    .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+    .max(100, t('errors.max', { num: 100 })),
   name_en: yup
     .string()
     .required(t('errors.isRequired', { name: t('labels.name_en') }))
-    .min(2, t('errors.min', { num: 2 }))
-    .max(30, t('errors.max', { num: 30 }))
-    .matches(/^[a-zA-Z0-9\s]+$/, t('validation.english_only')),
+    .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+    .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+    .max(100, t('errors.max', { num: 100 })),
 }))
 
 const { handleSubmit, setErrors, errors } = useForm({
   validationSchema: schema,
   validateOnMount: false,
-  validateOnInput: false,
-  validateOnChange: false,
+  validateOnInput: true,
+  validateOnChange: true,
   validateOnBlur: true,    
-  validateOnModelUpdate: false,
+  validateOnModelUpdate: true,
 })
 
 const { value: nameAr, handleBlur: blurAr } = useField('name_ar')

@@ -103,11 +103,15 @@ const handleReset = () => {
   border: 1px solid var(--border-color, #d5d7da);
   border-radius: var(--radius-sm);
   padding: 0 10px;
-  padding-inline-end: 35px; 
+  padding-inline-end: 29px !important;
   font-family: inherit;
   font-size: var(--size-sm);
   background: white;
   cursor: pointer;
+}
+
+.form-input::placeholder {
+  color: #8F92A1;
 }
 
 .form-input:focus {

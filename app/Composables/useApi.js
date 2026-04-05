@@ -9,20 +9,22 @@ export const useApi = () => {
       const { $i18n } = useNuxtApp()
       const localeValue = $i18n.locale.value || 'ar'
 
-      options.headers = {
-        ...options.headers,
+      const headers = {
         Accept: 'application/json, text/plain, */*',
         'X-Requested-With': 'XMLHttpRequest',
-        'Accept-Language': localeValue
+        'Accept-Language': localeValue,
+        ...options.headers
       }
 
-      if (options.body && !(options.body instanceof FormData) && !options.headers['Content-Type']) {
-        options.headers['Content-Type'] = 'application/json'
+      if (options.body && !(options.body instanceof FormData) && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json'
       }
 
       if (token.value) {
-        options.headers.Authorization = `Bearer ${token.value}`
+        headers.Authorization = `Bearer ${token.value}`
       }
+      
+      options.headers = headers
 
       if (import.meta.client) {
         const csrfToken = useCookie('XSRF-TOKEN').value 

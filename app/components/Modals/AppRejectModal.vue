@@ -10,11 +10,13 @@
       <label class="form-label">{{ t('modals.reject_reason') }}</label>
       <textarea
         v-model="reason"
-        class="custom-textarea"
+        class="custom-textarea required"
+        :class="{ 'is-invalid': reasonError }"
         :placeholder="t('modals.reject_reason')"
         rows="4"
+        @blur="reasonBlur"
       />
-      <span v-if="error" class="text-danger small mt-1">{{ error }}</span>
+      <span v-if="reasonError" class="error d-block">{{ reasonError }}</span>
     </div>
 
     <template #footer>
@@ -40,48 +42,58 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
 
 const { t } = useI18n()
 
 const props = defineProps({
   modelValue: Boolean,
-  title: String,
-  icon: Object,
+  title:      String,
+  icon:       Object,
   supplierId: Number,
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm'])
 
-const reason = ref('')
-const error = ref('')
 const loading = ref(false)
 
-// ✅ reset لما الـ modal يتفتح
-watch(() => props.modelValue, (val) => {
-  if (val) {
-    reason.value = ''
-    error.value = ''
-  }
+/* =============================
+   SCHEMA
+============================== */
+const schema = computed(() => yup.object({
+  reason: yup.string()
+    .required(t('errors.isRequired', { name: t('modals.reject_reason') }))
+    .min(10, t('errors.min', { name: t('modals.reject_reason'), num: 10 }))
+    .max(500, t('errors.max', { num: 500 })),
+}))
+
+const { handleSubmit: veeHandleSubmit, resetForm } = useForm({
+  validationSchema: schema,
+  validateOnMount: false,
 })
 
-const handleClose = () => {
-  emit('update:modelValue', false)
-}
+const { value: reason, errorMessage: reasonError, handleBlur: reasonBlur } = useField('reason')
 
-const handleSubmit = () => {
-  error.value = ''
+/* =============================
+   RESET لما الـ modal يتفتح
+============================== */
+watch(() => props.modelValue, (val) => {
+  if (val) resetForm()
+})
 
-  if (!reason.value.trim()) {
-    error.value = t('errors.reject_reason_required')
-    return
-  }
+/* =============================
+   ACTIONS
+============================== */
+const handleClose = () => emit('update:modelValue', false)
 
+const handleSubmit = veeHandleSubmit(() => {
   emit('confirm', {
-    reason: reason.value.trim(),
+    reason:     reason.value.trim(),
     setLoading: (val) => { loading.value = val },
-    close: () => emit('update:modelValue', false)
+    close:      () => emit('update:modelValue', false),
   })
-}
+})
 </script>

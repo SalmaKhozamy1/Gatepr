@@ -3,7 +3,7 @@
     <ClientOnly>
       <Teleport to="#search-teleport-target">
           <SearchBar
-            :placeholder="t('common.search')"
+            :placeholder="t('placeholders.search')"
             @filter="handleFilter"
             @reset="resetFilters"
           />
@@ -94,6 +94,7 @@ import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { useAppToast } from '~/composables/useAppToast'
 import { IconsUnits } from '#components'
+import * as yup from 'yup'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
@@ -133,9 +134,31 @@ const unitViewFields = computed(() => [
 ])
 
 const unitFormFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
-  { key: 'code', label: t('labels.code'), placeholder: t('placeholders.code'), type: 'text' },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('placeholders.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('placeholders.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
+  { 
+    key: 'code', 
+    label: t('labels.code'), 
+    placeholder: t('placeholders.code'), 
+    type: 'text',
+    rules: yup.string().required(t('errors.isRequired', { name: t('labels.code') }))
+  },
 ])
 
 /* =============================

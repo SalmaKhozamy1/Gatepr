@@ -26,6 +26,7 @@
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'auth', adminOnly: true })
 import { 
   IconsSuppliers,
   IconsSupplierRequest,

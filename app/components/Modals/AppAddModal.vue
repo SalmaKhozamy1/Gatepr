@@ -22,6 +22,7 @@
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
           :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
+          :error="errors[field.key]"
         />
 
         <!-- Multi Select -->
@@ -31,6 +32,7 @@
           @update:model-value="setFieldValue(field.key, $event)"
           :options="field.options || []"
           :placeholder="field.placeholder || `${t('placeholders.select_multi')} ${field.label}`"
+          :error="errors[field.key]"
         />
 
         <!-- Input -->
@@ -40,11 +42,8 @@
           @update:model-value="setFieldValue(field.key, $event)"
           :placeholder="field.placeholder || `${t('placeholders.enter_dynamic', { name: field.label }) || (locale === 'ar' ? 'أدخل' : 'Enter')} ${field.label}`"
           :type="field.type || 'text'"
+          :error="errors[field.key]"
         />
-
-        <span v-if="errors[field.key]" class="text-danger small mt-1">
-          {{ errors[field.key] }}
-        </span>
       </div>
     </div>
 
@@ -73,7 +72,7 @@ const props = defineProps({
   fields: Array,
 })
 
-const emit = defineEmits(['update:modelValue', 'submit'])
+const emit = defineEmits(['update:modelValue', 'submit', 'change'])
 
 const loading = ref(false)
 const errors = ref({})
@@ -100,6 +99,7 @@ watch(() => props.modelValue, (val) => {
   if (val) {
     formData.value = buildFormData()
     errors.value = {}
+    loading.value = false
   }
 })
 
@@ -107,40 +107,69 @@ const getFieldValue = (key) => {
   return key.split('.').reduce((o, i) => o?.[i], formData.value)
 }
 
-const setFieldValue = (key, value) => {
+const validateField = async (field, value) => {
+  if (!field.rules) return true
+  try {
+    if (typeof field.rules.validate === 'function') {
+      await field.rules.validate(value)
+    }
+    errors.value[field.key] = null
+    return true
+  } catch (err) {
+    errors.value[field.key] = err.message
+    return false
+  }
+}
+
+const setFieldValue = async (key, value) => {
   const keys = key.split('.')
   if (keys.length === 2) {
     formData.value[keys[0]][keys[1]] = value
   } else {
     formData.value[key] = value
   }
-}
 
-// ✅ toggle للـ multi-select
-const toggleMultiSelect = (key, value) => {
-  const current = getFieldValue(key) || []
-  const index = current.indexOf(value)
-  if (index === -1) {
-    setFieldValue(key, [...current, value])
-  } else {
-    setFieldValue(key, current.filter(v => v !== value))
+  // Real-time validation
+  const field = props.fields?.find(f => f.key === key)
+  if (field) {
+    await validateField(field, value)
   }
+  
+  emit('change', { key, value })
 }
 
 const handleSubmit = async () => {
   errors.value = {}
-  loading.value = true
-  try {
-    emit('submit', {
-      data: formData.value,
-      setErrors: (errs) => { errors.value = errs },
-      setLoading: (val) => { loading.value = val },
-      close: () => emit('update:modelValue', false)
-    })
-  } finally {
-    loading.value = false
+  
+  // Validate all fields
+  let isValid = true
+  for (const field of props.fields || []) {
+    const value = getFieldValue(field.key)
+    const fieldValid = await validateField(field, value)
+    if (!fieldValid) isValid = false
   }
+
+  if (!isValid) return
+
+  loading.value = true
+  emit('submit', {
+    data: formData.value,
+    setErrors: (errs) => { 
+      errors.value = { ...errors.value, ...errs } 
+      loading.value = false
+    },
+    setLoading: (val) => { loading.value = val },
+    close: () => {
+      loading.value = false
+      emit('update:modelValue', false)
+    }
+  })
 }
+
+defineExpose({
+  setFieldValue,
+  handleSubmit
+})
 </script>
 
 <style scoped>

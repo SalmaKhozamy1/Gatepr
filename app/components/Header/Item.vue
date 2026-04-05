@@ -9,7 +9,7 @@
     <template v-if="name">
         <div class="flex-between gap-sm w-100">
             <div class="flex-center gap-xs">
-                <div class="user-avatar-wrapper">
+                <div v-if="role !== 'admin'" class="user-avatar-wrapper">
                     <img v-if="avatar" :src="avatar" class="user-avatar" alt="user">
                     <div v-else class="user-avatar-placeholder flex-center">
                         <IconsProfile width="30" height="30" />
@@ -28,7 +28,7 @@
         <div v-if="isDropdownOpen" class="profile-dropdown">
             <!-- Dropdown Header -->
             <div class="dropdown-header flex-start gap-sm">
-                <div class="dropdown-avatar-wrapper">
+                <div v-if="role !== 'admin'" class="dropdown-avatar-wrapper">
                     <img v-if="avatar" :src="avatar" class="dropdown-avatar" alt="user">
                     <div v-else class="flex-center">
                         <IconsProfile width="32" height="32" />

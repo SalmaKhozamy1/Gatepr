@@ -58,6 +58,8 @@
 
       </div>
     </div>
+
+    <span v-if="error" class="error d-block" style="color: var(--red); font-size: 14px; margin-top: 4px;">{{ error }}</span>
   </div>
 </template>
 
@@ -81,6 +83,10 @@ const props = defineProps({
   acceptLabel: {
     type: String,
     default: 'PDF , XML , Word'
+  },
+  error: {
+    type: String,
+    default: ''
   }
 })
 
@@ -155,6 +161,12 @@ function getFileIcon(filename) {
 </script>
 
 <style scoped>
+.required .form-label::after {
+  content: "*";
+  color: var(--red);
+  margin-inline-start: 5px;
+}
+
 .uploader-placeholder {
   border-radius: var(--radius-sm);
   padding: var(--form-control-padding);

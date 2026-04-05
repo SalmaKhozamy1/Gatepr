@@ -1,6 +1,6 @@
 <template>
   <div class="page-layout-container flex-column gap-sm">
-    <AppBreadcrumb />
+    <!-- <AppBreadcrumb /> -->
     <div :class="['gap-md w-100', hasAside ? 'side-page-layout grid grid-2' : 'flex-column']">
       <PageLayoutAsideContent
       v-if="hasAside"

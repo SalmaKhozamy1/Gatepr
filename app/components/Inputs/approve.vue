@@ -79,7 +79,6 @@ const handleChange = (event) => {
   cursor: pointer;
   user-select: none;
   position: relative;
-  margin-bottom: 8px;
 }
 
 .disabled-label {
@@ -105,7 +104,6 @@ const handleChange = (event) => {
   justify-content: center;
   transition: all 0.2s ease;
   background-color: #fff;
-  margin-top: 2px;
 }
 
 /* Checked state */

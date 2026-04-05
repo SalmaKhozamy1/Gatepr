@@ -344,6 +344,7 @@ import * as yup from 'yup'
 import { useAppToast } from "~/composables/useAppToast"
 
 definePageMeta({ middleware: 'auth' })
+usePageMeta('menu.profile')
 
 const { t, locale } = useI18n()
 const api = useApi()

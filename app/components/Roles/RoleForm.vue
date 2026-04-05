@@ -1,6 +1,5 @@
 <template>
   <div class="role-form-container">
-    <!-- Role Name Section -->
     <CardsCustomCard :title="cardTitle">
       <div class="grid grid-2 gap-sm">
         <InputsFormInput
@@ -9,7 +8,7 @@
           :label="t('labels.roles_name_ar')"
           :placeholder="t('placeholders.name_ar')"
           required
-          :disabled="mode === 'view'"
+          :disabled="isView"
           :error="errors['name.ar']"
           @blur="$emit('blur-name', 'ar')"
         />
@@ -19,18 +18,18 @@
           :label="t('labels.roles_name_en')"
           :placeholder="t('placeholders.name_en')"
           required
-          :disabled="mode === 'view'"
+          :disabled="isView"
           :error="errors['name.en']"
           @blur="$emit('blur-name', 'en')"
         />
       </div>
-      <!-- Global Save button moved to the bottom -->
     </CardsCustomCard>
 
     <div class="accordion d-flex flex-column gap-3 mt-3" id="permissionsAccordion">
 
-      <!-- Settings permissions (Parent Group) -->
+      <!-- Settings Group -->
       <AppAccordion
+        v-if="settingsPermissions.length"
         id="settings-group"
         parentId="permissionsAccordion"
         :title="t('menu.settings')"
@@ -40,299 +39,221 @@
         <div class="nested-accordion grid grid-2 gap-sm" id="settingsInner">
           <AppAccordion
             v-for="(group, index) in settingsPermissions"
-            :key="index"
-            :id="'settings-' + index"
+            :key="group.model"
+            :id="'settings-' + index + '-' + group.model"
             parentId="settingsInner"
             :show="true"
           >
-            <!-- Select All in HEADER slot -->
             <template #header>
               <InputsApprove
-                :label="translateModel(group.model)"
+                :id="'select-all-' + group.model"
+                :label="group.model"
                 :modelValue="isGroupAllSelected(group)"
-                :disabled="mode === 'view'"
+                :disabled="isView"
                 @update:modelValue="(val) => toggleGroup(group, val)"
               />
             </template>
-
             <div class="flex-start gap-xs flex-wrap">
               <InputsApprove
                 v-for="permission in group.permissions"
                 :key="permission.id"
-                :label="translateAction(permission.action)"
+                :label="permission.action"
                 :id="'perm-' + permission.id"
-                :modelValue="internalSelectedPermissions"
-                :value="permission.id"
-                :disabled="mode === 'view'"
-                @update:modelValue="(val) => internalSelectedPermissions = val"
+                :modelValue="localSelectedPermissions"
+                :value="String(permission.id)"
+                :disabled="isView"
+                @update:modelValue="updateSelected"
               />
             </div>
           </AppAccordion>
         </div>
-
       </AppAccordion>
 
-      <!-- Other Permission Groups (Parents) -->
+      <!-- Other Groups -->
       <AppAccordion
-        v-for="(group, groupIndex) in otherPermissionGroups"
-        :key="groupIndex"
-        :id="'group-' + groupIndex"
+        v-for="(group, index) in otherPermissionGroups"
+        :key="group.model"
+        :id="'group-' + index + '-' + group.model"
         parentId="permissionsAccordion"
-        :title="translateModel(group.model)"
+        :title="group.model"
         :icon="getGroupIcon(group.model)"
-        :show="groupIndex === 0"
+        :show="index === 0"
       >
         <div class="permissions-grid">
-          <div
+          <InputsApprove
             v-for="permission in group.permissions"
             :key="permission.id"
-            class="permission-item flex-start gap-sm"
-          >
-            <InputsApprove
-              :label="translateAction(permission.action)"
-              :id="'perm-' + permission.id"
-              :modelValue="internalSelectedPermissions"
-              :value="permission.id"
-              :disabled="mode === 'view'"
-              @update:modelValue="(val) => internalSelectedPermissions = val"
-            />
-          </div>
+            :label="permission.action"
+            :id="'perm-' + permission.id"
+            :modelValue="localSelectedPermissions"
+            :value="String(permission.id)"
+            :disabled="isView"
+            @update:modelValue="updateSelected"
+          />
         </div>
-
       </AppAccordion>
+
     </div>
 
-    <!-- Global Actions Section -->
-    <div v-if="mode != 'view'">
-      <ButtonsFormActions 
-        :loading="loading" 
-        :btnCancelClass="'white'"
-        @cancel="handleCancel" 
+    <div v-if="!isView">
+      <ButtonsFormActions
+        :loading="loading"
+        btnCancelClass="white"
+        @cancel="handleCancel"
         @save="onSave"
       />
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   IconsSettings,
-  IconsGovernorates,
-  IconsSettingsRegions,
-  IconsSettingsUsers,
-  IconsSettingsRoles,
   IconsCategories,
   IconsSuppliers,
-  IconsUnits,
-  IconsReceiveType,
-  IconsTerms,
   IconsBranches,
   IconsLogs,
-  IconsNotification
+  IconsNotification,
 } from '#components'
 
+/* =============================
+   PROPS & EMITS
+============================== */
 const props = defineProps({
-  mode: {
-    type: String,
-    default: 'create'
-  },
-  roleData: {
-    type: Object,
-    required: true
-  },
-  permissionGroups: {
-    type: Array,
-    default: () => []
-  },
-  selectedPermissions: {
-    type: Array,
-    default: () => []
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  },
-  savingGroup: {
-    type: String,
-    default: null
-  },
-  errors: {
-    type: Object,
-    default: () => ({})
-  }
+  mode:                { type: String,  default: 'create' },
+  roleData:            { type: Object,  required: true },
+  permissionGroups:    { type: Array,   default: () => [] },
+  selectedPermissions: { type: Array,   default: () => [] },
+  loading:             { type: Boolean, default: false },
+  errors:              { type: Object,  default: () => ({}) },
 })
 
 const emit = defineEmits([
-  'update:selectedPermissions', 
+  'update:selectedPermissions',
   'update:roleData',
-  'save',   
+  'save',
   'cancel',
-  'blur-name'
+  'blur-name',
 ])
 
 const { t } = useI18n()
 
 /* =============================
-   COMPUTED
+   MODE HELPERS
 ============================== */
 const isView = computed(() => props.mode === 'view')
 const isEdit = computed(() => props.mode === 'edit')
 
 const cardTitle = computed(() => {
   const base = t('labels.role')
-  if (isView.value) return t('common.view') + ' ' + base
-  if (isEdit.value) return t('common.edit') + ' ' + base
-  return t('common.add') + ' ' + base
+  if (isView.value) return `${t('common.view')} ${base}`
+  if (isEdit.value) return `${t('common.edit')} ${base}`
+  return `${t('common.add')} ${base}`
 })
 
-const settingsModels = [
-  'Governorate',
-  'Area',
-  'User',
-  'Role',
-  'Supplier Type',
-  'Category',
-  'Purchasing Unit',
-  'Receipt Type',
-  'Terms',
-  'permission',
-  'permissions'
-]
+/* =============================
+   SETTINGS MODELS
+============================== */
+const SETTINGS_MODELS = new Set([
+  'Governorate',     'Governorates',      'المحافظات',
+  'Area',            'Areas',              'المناطق',
+  'User',            'Users',              'المستخدمين',
+  'Role',            'Roles',              'الأدوار',
+  'Supplier Type',   'Supplier Types',    'أنواع الموردين',
+  'Category',        'Categories',         'التصنيفات',
+  'Purchasing Unit', 'Purchasing Units',  'وحدات الشراء',
+  'Receipt Type',    'Receipt Types',     'أنواع الإيصالات',
+  'Static Page',     'Static Pages',       'الصفحات الثابتة'
+])
 
-const settingsPermissions = computed(() =>
-  props.permissionGroups.filter(group => settingsModels.includes(group.model))
-)
+const settingsPermissions = computed(() => {
+  const seenModels = new Set()
+  return props.permissionGroups.filter(g => {
+    if (SETTINGS_MODELS.has(g.model) && !seenModels.has(g.model)) {
+      seenModels.add(g.model)
+      return true
+    }
+    return false
+  })
+})
 
 const otherPermissionGroups = computed(() =>
-  props.permissionGroups.filter(g => !settingsModels.includes(g.model))
+  props.permissionGroups.filter(g => !SETTINGS_MODELS.has(g.model))
 )
 
-const internalSelectedPermissions = computed({
-  get: () => props.selectedPermissions,
-  set: (val) => emit('update:selectedPermissions', val)
-})
-
 /* =============================
-   UPDATES
+   SELECTED PERMISSIONS (SYNCED)
 ============================== */
-const updateName = (lang, value) => {
-  const newData = { 
-    ...props.roleData, 
-    name: { 
-      ...props.roleData.name, 
-      [lang]: value 
-    } 
-  }
-  emit('update:roleData', newData)
+const localSelectedPermissions = ref([])
+
+watch(() => props.selectedPermissions, (newVal) => {
+  localSelectedPermissions.value = Array.isArray(newVal) ? newVal.map(String) : newVal
+}, { immediate: true, deep: true })
+
+const updateSelected = (val) => {
+  localSelectedPermissions.value = val
+  emit('update:selectedPermissions', Array.isArray(val) ? val.map(String) : val)
 }
 
 /* =============================
-   MAPPING HELPERS
+   ICON MAP
 ============================== */
-const modelTranslations = {
-  'Governorate': 'settings.governorates',
-  'Area': 'settings.areas',
-  'User': 'settings.users',
-  'Role': 'settings.roles',
-  'Supplier Type': 'settings.supplier_types',
-  'Category': 'settings.categories',
-  'Purchasing Unit': 'settings.purchasing_units',
-  'Receipt Type': 'settings.receipt_types',
-  'Terms': 'settings.terms_and_conditions',
-  'Activity Log': 'settings.logs',
-  'Branch': 'menu.branches',
-  'Notification': 'menu.notifications',
-  'Static Page': 'settings.terms_and_conditions',
-  'Item': 'menu.categories',
-  'Supplier': 'settings.supplier',
-  "Supplier Profile Update Request": 'menu.supplier_registration_requests',
-  "Supplier Profile": "menu.supplier_profile",
-  "Item": "menu.items-management",
-  "Item Action": "menu.item-managment-action",
-  "Item Actions": "menu.item-managment-actions",
-  "permission": "labels.permission",
-  "permissions.permission": "labels.permission",
-  "permissions": "labels.permissions"
-}
-
-const actionTranslations = {
-  'view': 'common.view',
-  'index': 'common.view',
-  'show': 'common.view',
-  'add': 'common.add',
-  'create': 'common.add',
-  'store': 'common.add',
-  'edit': 'common.edit',
-  'update': 'common.edit',
-  'delete': 'common.delete',
-  'destroy': 'common.delete',
-  'delete-forever': 'common.delete',
-  'restore': 'common.restore',
-  'active-inactive': 'common.status',
-}
-
-const translateModel = (model) => {
-  const key = modelTranslations[model]
-  return key ? t(key) : model
-}
-
-const translateAction = (action) => {
-  const key = actionTranslations[action.toLowerCase()]
-  return key ? t(key) : action
-}
-
-const iconMap = {
-  'Activity Log': IconsLogs,
-  'Area': IconsSettingsRegions,
-  'Branch': IconsBranches,
-  'Category': IconsCategories,
-  'Governorate': IconsGovernorates,
-  'Item': IconsCategories,
-  'Item Action': IconsCategories,
-  'Item Actions': IconsCategories,
-  'Notification': IconsNotification,
-  'Purchasing Unit': IconsUnits,
-  'Receipt Type': IconsReceiveType,
-  'Role': IconsSettingsRoles,
-  'Static Page': IconsTerms,
-  'Supplier': IconsSuppliers,
-  'Supplier Profile': IconsSuppliers,
+const ICON_MAP = {
+  'Activity Log':                    IconsLogs,
+  'Branch':                          IconsBranches,
+  'Item':                            IconsCategories,
+  'Item Action':                     IconsCategories,
+  'Item Actions':                    IconsCategories,
+  'Notification':                    IconsNotification,
+  'Supplier':                        IconsSuppliers,
+  'Supplier Profile':                IconsSuppliers,
   'Supplier Profile Update Request': IconsSuppliers,
-  'Supplier Type': IconsSuppliers,
-  'User': IconsSettingsUsers,
-  'permissions': IconsSettings,
+  'permissions':                     IconsSettings,
 }
 
-const getGroupIcon = (model) => iconMap[model] || IconsSettings
+const getGroupIcon = (model) => ICON_MAP[model] ?? IconsSettings
 
 /* =============================
    SELECT ALL LOGIC
 ============================== */
 const isGroupAllSelected = (group) => {
-  if (!group || !group.permissions.length) return false
-  return group.permissions.every(p => internalSelectedPermissions.value.includes(p.id))
+  if (!group?.permissions?.length) return false
+  const selectedSet = new Set(localSelectedPermissions.value.map(String))
+  return group.permissions.every(p => selectedSet.has(String(p.id)))
 }
 
 const toggleGroup = (group, checked) => {
-  if (isView.value) return
-  const ids = group.permissions.map(p => p.id)
+  if (isView.value || !group?.permissions) return
+  
+  const groupIds = group.permissions.map(p => String(p.id))
+  const currentSelected = new Set(localSelectedPermissions.value.map(String))
+  
   if (checked) {
-    const newSelected = new Set([...internalSelectedPermissions.value, ...ids])
-    internalSelectedPermissions.value = Array.from(newSelected)
+    groupIds.forEach(id => currentSelected.add(id))
   } else {
-    internalSelectedPermissions.value = internalSelectedPermissions.value.filter(id => !ids.includes(id))
+    groupIds.forEach(id => currentSelected.delete(id))
   }
+  
+  updateSelected(Array.from(currentSelected))
 }
 
 /* =============================
-   EMITS
+   ROLE NAME UPDATE
 ============================== */
-const onSave = () => emit('save') 
-const handleCancel = () => emit('cancel')
+const updateName = (lang, value) => {
+  emit('update:roleData', {
+    ...props.roleData,
+    name: { ...props.roleData.name, [lang]: value },
+  })
+}
 
+/* =============================
+   ACTIONS
+============================== */
+const onSave       = () => emit('save')
+const handleCancel = () => emit('cancel')
 </script>
 
 <style scoped>
@@ -341,10 +262,6 @@ const handleCancel = () => emit('cancel')
   flex-wrap: wrap;
   gap: 16px;
   padding: 8px 0;
-}
-
-.permission-item {
-  min-width: 150px;
 }
 
 :deep(.nested-accordion .accordion-item) {

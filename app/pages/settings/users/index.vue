@@ -3,7 +3,7 @@
     <ClientOnly>
       <Teleport to="#search-teleport-target">
           <SearchBar
-            :placeholder="t('common.search')"
+            :placeholder="t('placeholders.search')"
             :filters="searchFilters"
             :loading="loading"
             @filter="handleFilter"
@@ -106,6 +106,7 @@ import { useView } from '~/composables/useView'
 import { useAppToast } from '~/composables/useAppToast'
 import { IconsSettingsUsers } from '#components'
 import { useI18n } from 'vue-i18n'
+import * as yup from 'yup'
 
 const { t, locale } = useI18n()
 const api = useApi()
@@ -153,45 +154,133 @@ const userViewFields = computed(() => [
 ])
 
 const userFormFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
-  { key: 'email', label: t('labels.email'), placeholder: 'example@email.com', type: 'email' },
-  { key: 'phone', label: t('labels.phone'), placeholder: '96512345678', type: 'tel' },
-  { key: 'password', label: t('labels.password'), placeholder: t('placeholders.password'), type: 'password' },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('placeholders.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('placeholders.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
+  { 
+    key: 'email', 
+    label: t('labels.email'), 
+    placeholder: 'example@email.com', 
+    type: 'email',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.email') }))
+      .email(t('validation.email_invalid'))
+  },
+  { 
+    key: 'phone', 
+    label: t('labels.phone'), 
+    placeholder: '96512345678', 
+    type: 'tel',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.phone') }))
+      .matches(/^[0-9]+$/, t('validation.no_text'))
+      .min(8, t('errors.min', { num: 8 }))
+      .max(15, t('errors.max', { num: 15 }))
+  },
+  { 
+    key: 'password', 
+    label: t('labels.password'), 
+    placeholder: t('placeholders.password'), 
+    type: 'password',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.password') }))
+      .min(6, t('errors.min', { num: 6 }))
+  },
   {
     key: 'role_id',
     label: t('labels.role'),
     type: 'select',
     placeholder: t('placeholders.role'),
-    options: roleOptions.value
+    options: roleOptions.value,
+    rules: yup.mixed().required(t('errors.isRequired', { name: t('labels.role') }))
   },
   {
     key: 'branch_ids',
     label: t('labels.branches'),
     type: 'multi-select',
-    options: branchOptions.value
+    options: branchOptions.value,
+    rules: yup.array().min(1, t('errors.isRequired', { name: t('labels.branches') }))
   },
 ])
 
 const userEditFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
-  { key: 'email', label: t('labels.email'), placeholder: 'example@email.com', type: 'email' },
-  { key: 'phone', label: t('labels.phone'), placeholder: '96512345678', type: 'tel' },
-  { key: 'password', label: t('labels.password'), placeholder: t('placeholders.password'), type: 'password' },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('placeholders.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('placeholders.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
+  { 
+    key: 'email', 
+    label: t('labels.email'), 
+    placeholder: 'example@email.com', 
+    type: 'email',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.email') }))
+      .email(t('validation.email_invalid'))
+  },
+  { 
+    key: 'phone', 
+    label: t('labels.phone'), 
+    placeholder: '96512345678', 
+    type: 'tel',
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.phone') }))
+      .matches(/^[0-9]+$/, t('validation.no_text'))
+      .min(8, t('errors.min', { num: 8 }))
+      .max(15, t('errors.max', { num: 15 }))
+  },
+  { 
+    key: 'password', 
+    label: t('labels.password'), 
+    placeholder: t('placeholders.password'), 
+    type: 'password',
+    rules: yup.string()
+      .test('password-min', t('errors.min', { num: 6 }), value => !value || value.length >= 6)
+      .nullable()
+  },
   {
     key: 'role_id',
     label: t('labels.role'),
     type: 'select',
     placeholder: t('placeholders.role'),
-    options: roleOptions.value
+    options: roleOptions.value,
+    rules: yup.mixed().required(t('errors.isRequired', { name: t('labels.role') }))
   },
   {
     key: 'branch_ids',
     label: t('labels.branches'),
     type: 'multi-select',
     placeholder: t('placeholders.branch'),
-    options: branchOptions.value
+    options: branchOptions.value,
+    rules: yup.array().min(1, t('errors.isRequired', { name: t('labels.branches') }))
   },
 ])
 
@@ -286,6 +375,10 @@ const fetchUsers = async () => {
 const handleView = async (id) => {
   try {
     const data = await viewItem('users', id)
+    // ✅ Ensure role is accessible for the view modal (might be in 'roles' array)
+    if (!data.role && data.roles?.[0]) {
+      data.role = data.roles[0]
+    }
     selectedUser.value = data
     showViewModal.value = true
   } catch (err) {

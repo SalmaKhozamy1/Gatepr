@@ -29,15 +29,23 @@
 
          <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="user_info">
-               <h3 class="title nowrap mb-2">
-                 <template v-if="isPublicPage">
-                   {{ $t('buttons.signUp') }}
-                 </template>
-                 <template v-else>
-                   {{ $t('labels.welcome') }}, {{ adminName }}
-                 </template>
-               </h3>
-               <p v-if="!isPublicPage" class="nowrap">{{ currentDate }}</p>
+                <template v-if="isHomePage">
+                  <h3 class="title nowrap mb-2">
+                    {{ $t('labels.welcome') }}, {{ adminName }}
+                  </h3>
+                  <p v-if="!isPublicPage" class="nowrap">{{ currentDate }}</p>
+                </template>
+                <template v-else-if="isPublicPage">
+                  <h3 class="title nowrap mb-2">
+                    {{ $t('labels.create_account') }}
+                  </h3>
+                </template>
+                <template v-else>
+                   <h3 class="title nowrap mb-2 welcome-small">
+                    {{ $t('labels.welcome') }}, {{ adminName }}
+                  </h3>
+                  <AppBreadcrumb />
+                </template>
             </div>
             <button
                v-if="!isPublicPage"
@@ -122,6 +130,15 @@ const role = useCookie('role')
 
 const isPublicPage = computed(() => {
   return route.path.includes('/register')
+})
+
+const isHomePage = computed(() => {
+   const homePaths = [
+      '/', '/en', '/ar',
+      normalizePath(localePath('/')),
+      normalizePath(localePath('/home'))
+   ]
+   return homePaths.includes(normalizePath(route.path))
 })
 
 /* =============================
@@ -293,6 +310,10 @@ onMounted(() => fetchBranches())
 .user_info p {
    color: rgba(255, 255, 255, 0.80);
 }
+.welcome-small {
+   font-size: 1.1rem;
+   font-weight: 500;
+}
 
 .navbar-toggler {
    border-color: transparent;
@@ -320,6 +341,7 @@ onMounted(() => fetchBranches())
    background-color: rgba(249, 249, 250, 0.05) !important;
    backdrop-filter: blur(16.350000381469727px) !important;
    height: 100%;
+   width: unset;
    align-items: center;
 }
 </style>

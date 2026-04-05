@@ -21,7 +21,6 @@
     "deleting": "Deleting...",
     "somethingWentWrong": "Something went wrong",
     "no_results_found": "No Results Found",
-    "no_options": "No Option choose",
     "selected_items": "{0} items selected",
     "active": "Active",
     "inactive": "Inactive",
@@ -38,6 +37,7 @@
   },
   "labels": {
     "welcome": "Welcome",
+    "create_account": "Create Account",
     "email": "Email",
     "password": "Password",
     "rememberMe": "Remember Me",
@@ -84,6 +84,7 @@
     "industry_authority_cert": "Public Authority for Industry Certificate",
     "industrial_facility_cert": "Industrial Facility Certificate",
     "fax": "Fax",
+    "file": "File",
     "license_end_date": "License Expiry Date",
     "detailed_address": "Detailed Address",
     "website": "Website",
@@ -129,7 +130,9 @@
     "suppliers": "Suppliers",
     "logs": "System Logs",
     "items-management": "Item Management",
+    "activity_logs": "Activity Logs",
     "terms_and_conditions": "Terms & Conditions",
+    "profile": "Profile",
     "login": "Login",
     "item": "Item",
     "category_requests": "Category Requests",
@@ -162,7 +165,9 @@
     "agree_to_terms_required": "You must agree to the Terms and Conditions",
     "code_required": "Supplier code is required",
     "arabic_only": "Must contain Arabic characters only",
-    "english_only": "Must contain English characters only"
+    "english_only": "Must contain English characters only",
+    "date_invalid_range": "End date must be greater than or equal to start date",
+    "no_text": "Must contain numbers / symbols only"
   },
   "placeholders": {
     "email": "Enter email address",
@@ -221,18 +226,19 @@
   "errors": {
     "pleaseKindlyTryAgain": "Please Kindly Try Again",
     "isRequired": "{name} is required",
-    "min": "{name} must be at least {num} characters long",
+    "min": "{name} must be at least {num} characters",
     "notEqualPasswords": "Passwords do not match",
     "verificationDataNotFound": "Verification data not found",
     "verificationCode": "Verification code",
-    "phoneLength": "Phone number must be {length} numbers long",
+    "phoneLength": "Phone number must be {length} numbers",
     "passwordComplexity": "Password must include numbers, letters, and symbols.",
     "internalServerError": "Internal server error",
     "errorDesc": "The server encountered an internal error or misconfiguration and was unable to complete your request",
     "emailFormat": "Email address format is invalid",
     "phoneFormat": "Phone format is invalid",
     "shortPassword": "Password is too short",
-    "pleaseFillAllFields": "Please Fill All Fields"
+    "pleaseFillAllFields": "Please Fill All Fields",
+    "website": "Website URL is invalid"
   },
   "months": {
     "JAN": "January",
@@ -247,6 +253,11 @@
     "OCT": "October",
     "NOV": "November",
     "DEC": "December"
+  },
+  "registration_success": {
+    "title": "Registration Request Sent Successfully",
+    "message": "The company registration request has been sent successfully and is now under review. You will receive an email notification as soon as your request status changes.",
+    "return_to_login": "Return to Login"
   },
   "settings": {
     "governorates": "Governorates",
@@ -267,6 +278,7 @@
     "add_category": "Category",
     "add_purchasing_unit": "Purchasing Unit",
     "add_receipt_type": "Receipt Type",
+    "add": "Add",
     "add_term": "Term",
     "title": "Settings",
     "record": "Record",

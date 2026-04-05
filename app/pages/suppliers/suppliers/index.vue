@@ -3,7 +3,7 @@
     <ClientOnly>
       <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('common.search')"
+          :placeholder="t('placeholders.search')"
           :filters="searchFilters"
           :loading="loading"
           @filter="handleFilter"

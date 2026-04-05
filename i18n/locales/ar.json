@@ -21,7 +21,6 @@
     "deleting": "جاري الحذف...",
     "somethingWentWrong": "حدث خطأ ما",
     "no_results_found": "لا يوجد نتائج",
-    "no_options": "لم يتم اختيار عنصر",
     "selected_items": "{0} عناصر محددة",
     "active": "مفعّل",
     "inactive": "غير مفعّل",
@@ -38,6 +37,7 @@
   },
   "labels": {
     "welcome": "مرحبا",
+    "create_account": "إنشاء حساب",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
     "rememberMe": "تذكرني",
@@ -84,6 +84,7 @@
     "industry_authority_cert": "شهادة الهيئة العامة للصناعة",
     "industrial_facility_cert": "شهادة المنشأة الصناعية",
     "fax": "الفاكس",
+    "file": "الملف",
     "license_end_date": "تاريخ انتهاء الرخصة",
     "detailed_address": "العنوان بالتفصيل",
     "website": "الموقع الإلكتروني",
@@ -130,7 +131,9 @@
     "logs": "سجل النظام",
     "item": "الصنف",
     "items-management": "إدارة الأصناف",
+    "activity_logs": "سجل النشاط",
     "terms_and_conditions": "الشروط والأحكام",
+    "profile": "الملف الشخصي",
     "login": "تسجيل دخول",
     "category_requests": "طلبات الأصناف",
     "accreditation": "الاعتماد",
@@ -161,8 +164,10 @@
     "password_min": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
     "agree_to_terms_required": "يجب الموافقة على الشروط والأحكام",
     "code_required": "كود المورد مطلوب",
-    "arabic_only": "يجب أن يحتوي على أحرف عربية فقط",
-    "english_only": "يجب أن يحتوي على أحرف إنجليزية فقط"
+    "arabic_only": "يجب أن يحتوي على حروف عربية فقط",
+    "english_only": "يجب أن يحتوي على حروف إنجليزية فقط",
+    "date_invalid_range": "تاريخ الانتهاء يجب أن يكون أكبر من أو يساوي تاريخ البدء",
+    "no_text": "يجب أن يحتوي على أرقام/ رموز فقط"
   },
   "placeholders": {
     "email": "أدخل البريد الإلكتروني",
@@ -221,7 +226,7 @@
   "errors": {
     "pleaseKindlyTryAgain": "برجاء المعاودة لاحقا",
     "isRequired": "{name} مطلوب",
-    "min": "يجب أن يكون {name} {num} حروف على الأقل",
+    "min": "{name} يجب ألا يقل عن {num} حروف",
     "notEqualPasswords": "كلمات المرور غير متطابقة",
     "verificationDataNotFound": "بيانات التفعيل غير موجودة",
     "verificationCode": "كود التفعيل",
@@ -232,7 +237,8 @@
     "emailFormat": "تنسيق البريد الإلكتروني غير صالح",
     "phoneFormat": "تنسيق الهاتف غير صالح",
     "shortPassword": "كلمة المرور قصيرة جدا",
-    "pleaseFillAllFields": "برجاء ملء جميع الحقول"
+    "pleaseFillAllFields": "برجاء ملء جميع الحقول",
+    "website": "رابط الموقع غير صحيح"
   },
   "months": {
     "JAN": "يناير",
@@ -247,6 +253,11 @@
     "OCT": "أكتوبر",
     "NOV": "نوفمبر",
     "DEC": "ديسمبر"
+  },
+  "registration_success": {
+    "title": "تم إرسال طلب التسجيل بنجاح",
+    "message": "تم إرسال طلب تسجيل الشركة بنجاح وهو الآن قيد المراجعة ستتلقى إشعاراً عبر البريد الإلكتروني بمجر تغير حالة طلبك",
+    "return_to_login": "العودة إلي تسجيل الدخول"
   },
   "settings": {
     "governorates": "المحافظات",
@@ -267,6 +278,7 @@
     "add_category": "تصنيف",
     "add_purchasing_unit": "وحدة شراء",
     "add_receipt_type": "نوع استلام",
+    "add": "إضافة",
     "add_term": "شرط",
     "title": "الاعدادات",
     "record": "سجل",

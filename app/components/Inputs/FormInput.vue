@@ -73,16 +73,6 @@ const togglePassword = () => {
 </template>
 
 <style scoped>
-.required .form-label::after {
-  content: "*";
-  color: var(--red);
-  margin-inline-start: 5px;
-}
-
-.form-control.is-invalid.has-suffix {
-  padding-inline-end: 75px !important;
-}
-
 /* ✅ Icon styles */
 .form-control.has-icon {
   padding-inline-end: 40px;

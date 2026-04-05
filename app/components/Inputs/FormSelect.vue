@@ -7,11 +7,10 @@
       :options="normalizedOptions"
       option-label="label"
       option-value="value"
-      :placeholder="placeholder"
+      :placeholder="computedPlaceholder"
       :class="['w-100', { 'is-invalid': error }]"
       :filter="options.length > 5"
       :filter-placeholder="t('common.search')"
-      :empty-message="t('common.no_options')"
       :empty-filter-message="t('common.no_results_found')"
       append-to="body"
     />
@@ -36,7 +35,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const placeholder = computed(() =>
+const computedPlaceholder = computed(() =>
   props.placeholder || t('placeholders.select')
 )
 
@@ -71,8 +70,9 @@ const normalizedOptions = computed(() => {
   outline: none !important;
 }
 
-:deep(.p-select-placeholder) {
-  color: var(--placeholder, #9ca3af) !important;
+:deep(.p-select-placeholder),
+:deep(.p-placeholder) {
+  color: var(--placeholder) !important;
   font-weight: 400;
 }
 

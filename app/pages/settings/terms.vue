@@ -5,7 +5,7 @@
       <div class="flex-start gap-sm w-100 flex-wrap">
         <InputsFormInput 
           v-model="searchQuery"
-          :placeholder="t('common.search')" 
+          :placeholder="t('placeholders.search')" 
           class="flex-grow-1 min-w-40 col"
         />
         <Filter_Button 

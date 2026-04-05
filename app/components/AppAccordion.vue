@@ -10,7 +10,7 @@
         >
           <span v-if="icon" class="accordion-icon"><component :is="icon" /></span>
           <span v-if="title" class="accordion-title">{{ title }}</span>
-          <div v-else class="header-slot-wrapper" @click.stop>
+          <div v-if="$slots.header" class="header-slot-wrapper" @click.stop>
             <slot name="header" />
           </div>
         </div>

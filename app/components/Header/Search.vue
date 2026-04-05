@@ -10,7 +10,7 @@
             v-model="searchQuery"
             type="text"
             class="search-input"
-            :placeholder="t('common.search')"
+            :placeholder="t('placeholders.search')"
             @click.stop
             @keydown.down.prevent="onArrowDown"
             @keydown.up.prevent="onArrowUp"

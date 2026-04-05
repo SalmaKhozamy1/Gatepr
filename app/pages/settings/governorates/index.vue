@@ -3,7 +3,7 @@
     <ClientOnly>
       <Teleport to="#search-teleport-target">
         <SearchBar
-          :placeholder="t('common.search')"
+          :placeholder="t('placeholders.search')"
           :loading="loading"
           @filter="handleFilter"
           @reset="resetFilters"
@@ -84,7 +84,7 @@
 <ModalsAppDeleteModal
   v-model="showDeleteModal"
   :title="t('common.delete') + ' ' + t('labels.governorate')"
-  :itemType="t('settings.governorate')"
+  :itemType="t('settings.governorates')"
   :itemName="selectedDeleteGovernorate?.name?.[locale] || selectedDeleteGovernorate?.name?.ar"
   data-bs-backdrop="static"
   data-bs-keyboard="false"
@@ -99,7 +99,7 @@ import { useApi } from '~/composables/useApi'
 import { useView } from '~/composables/useView'
 import { useAppToast } from '~/composables/useAppToast'
 import { IconsGovernorates } from '#components' 
-
+import * as yup from 'yup'
 const api = useApi()
 const { viewItem, loading: viewLoading } = useView()
 const { success, error: toastError } = useAppToast()
@@ -138,8 +138,24 @@ const governorateFields = computed(() => [
 ])
 
 const governorateAddFields = computed(() => [
-  { key: 'name.ar', label: t('labels.name_ar'), placeholder: t('placeholders.name_ar') },
-  { key: 'name.en', label: t('labels.name_en'), placeholder: t('placeholders.name_en') },
+  { 
+    key: 'name.ar', 
+    label: t('labels.name_ar'), 
+    placeholder: t('placeholders.name_ar'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_ar') }))
+      .test('no-english', t('validation.arabic_only'), value => !/[a-zA-Z]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_ar'), num: 2 }))
+  },
+  { 
+    key: 'name.en', 
+    label: t('labels.name_en'), 
+    placeholder: t('placeholders.name_en'),
+    rules: yup.string()
+      .required(t('errors.isRequired', { name: t('labels.name_en') }))
+      .test('no-arabic', t('validation.english_only'), value => !/[ء-ي]/.test(value || ''))
+      .min(2, t('errors.min', { name: t('labels.name_en'), num: 2 }))
+  },
 ])
 
 /* =============================
